@@ -1,0 +1,4 @@
+
+netstat -ano | find "9090"
+taskkill /f /pid 11992
+

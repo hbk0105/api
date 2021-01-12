@@ -10,27 +10,22 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import java.io.File;
 import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 
 @RequiredArgsConstructor
 @RestController
 public class UserController {
-   //  https://webfirewood.tistory.com/115
+    // https://webfirewood.tistory.com/115
+    // https://velog.io/@ehdrms2034/Spring-Security-JWT-Redis%EB%A5%BC-%ED%86%B5%ED%95%9C-%ED%9A%8C%EC%9B%90%EC%9D%B8%EC%A6%9D%ED%97%88%EA%B0%80-%EA%B5%AC%ED%98%84-4-%ED%9A%8C%EC%9B%90%EA%B0%80%EC%9E%85-%EC%9D%B8%EC%A6%9D-%EC%9D%B4%EB%A9%94%EC%9D%BC-%EC%95%84%EC%9D%B4%EB%94%94-%EB%B9%84%EB%B0%80%EB%B2%88%ED%98%B8-%EC%B0%BE%EA%B8%B0
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenUtil jwtTokenProvider;
     private final UserRepository userRepository;
@@ -59,6 +54,13 @@ public class UserController {
 
         return jwtTokenProvider.generateAccessToken(userDetails);
     }
+
+    // 로그인
+    @PostMapping("/{email}")
+    public ResponseEntity user( @PathVariable String email) {
+        return new ResponseEntity<>(userRepository.findByEmail(email), HttpStatus.OK);
+    }
+
 
     // https://hhseong.tistory.com/167
     @Autowired

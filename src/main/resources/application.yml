@@ -10,7 +10,7 @@ spring:
     url: jdbc:h2:mem:testdb;MODE=MySQL;DB_CLOSE_DELAY=-1
     username: sa
     password:
-    data: classpath:schema-h2.sql, classpath:data-h2.sql
+    # data: classpath:schema-h2.sql, classpath:data-h2.sql
 
   jpa:
     database-platform: org.hibernate.dialect.H2Dialect
@@ -20,7 +20,7 @@ spring:
         use_sql_comments: true
         dialect: org.hibernate.dialect.H2Dialect
     hibernate:
-      ddl-auto: none
+      ddl-auto: update #none
 
   h2:
     console:

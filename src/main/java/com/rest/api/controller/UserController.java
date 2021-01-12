@@ -4,6 +4,8 @@ import com.rest.api.domain.User;
 import com.rest.api.jwt.JwtTokenUtil;
 import com.rest.api.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -25,12 +27,12 @@ public class UserController {
 
     // 회원가입
     @PostMapping("/join")
-    public Long join(@RequestBody Map<String, String> user) {
-        return userRepository.save(User.builder()
+    public ResponseEntity join(@RequestBody Map<String, String> user) {
+        return new ResponseEntity<>(userRepository.save(User.builder()
                 .email(user.get("email"))
                 .password(passwordEncoder.encode(user.get("password")))
                 .roles(Collections.singletonList("ROLE_USER")) // 최초 가입시 USER 로 설정
-                .build()).getId();
+                .build()), HttpStatus.OK);
     }
 
     // 로그인

@@ -30,6 +30,20 @@ spring:
     serialization:
       fail-on-empty-beans: false
 
+  # https://gofnrk.tistory.com/82
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ksifsmtp@gmail.com
+    password: sangs#1234
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+        transport:
+          protocal: smtp
 logging:
   level:
     org:

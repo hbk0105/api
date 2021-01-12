@@ -1,6 +1,6 @@
 .gradle
 .idea
-application-local.yml
+application-**.yml
 #/src/main/resources/
 HELP.md
 build/

@@ -1,55 +1,7 @@
-server:
-  port: 9090
 
+# https://galid1.tistory.com/664
+# https://baeji77.github.io/spring/dev/Java-application-yaml/
 # https://post.naver.com/viewer/postView.nhn?volumeNo=27845264&memberNo=2490752
 spring:
-
-  datasource:
-    platform: h2
-    driverClassName: org.h2.Driver
-    url: jdbc:h2:mem:testdb;MODE=MySQL;DB_CLOSE_DELAY=-1
-    username: sa
-    password:
-    # data: classpath:schema-h2.sql, classpath:data-h2.sql
-
-  jpa:
-    database-platform: org.hibernate.dialect.H2Dialect
-    properties:
-      hibernate:
-        format_sql: true
-        use_sql_comments: true
-        dialect: org.hibernate.dialect.H2Dialect
-    hibernate:
-      ddl-auto: update #none
-
-  h2:
-    console:
-      enabled: true
-
-  jackson:
-    serialization:
-      fail-on-empty-beans: false
-
-  # https://gofnrk.tistory.com/82
-  mail:
-    host: smtp.gmail.com
-    port: 587
-    username: ksifsmtp@gmail.com
-    password: sangs#1234
-    properties:
-      mail:
-        smtp:
-          auth: true
-          starttls:
-            enable: true
-        transport:
-          protocal: smtp
-logging:
-  level:
-    org:
-      hibernate:
-        SQL: DEBUG
-        type:
-          descriptor:
-            sql: TRACE
-            BasicBinder: TRACE
+  profiles:
+    active: local

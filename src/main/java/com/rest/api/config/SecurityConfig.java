@@ -36,7 +36,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         // csrf : https://changrea.io/spring/spring-security-session-csrf/
         // https://gigas-blog.tistory.com/124
         // https://stackoverflow.com/questions/32896966/how-do-i-set-x-frame-options-response-header-to-allow-from-values-using-spring
-        http.cors().and().csrf().disable().headers().frameOptions().disable().and()
+        http.cors().and().csrf().disable().headers().frameOptions().sameOrigin().and()
                 .cors().configurationSource(corsConfigurationSource()).and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS) // 토큰 기반 인증이므로 세션 역시 사용하지 않습니다.
                 .and()

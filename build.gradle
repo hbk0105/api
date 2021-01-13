@@ -50,6 +50,7 @@ dependencies {
 	// querydsl
 	// https://velog.io/@aidenshin/Querydsl-Gradle-%EC%84%A4%EC%A0%95
 
+
 }
 
 test {

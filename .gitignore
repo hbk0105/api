@@ -4,3 +4,4 @@ application-**.yml
 #/src/main/resources/
 HELP.md
 build/
+.log

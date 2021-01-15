@@ -1,6 +1,7 @@
 package com.rest.api.repository;
 
 
+import com.querydsl.core.QueryResults;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
@@ -11,6 +12,8 @@ import com.rest.api.domain.QBoard;
 import com.rest.api.util.QueryDslUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
@@ -18,6 +21,7 @@ import org.springframework.util.CollectionUtils;
 
 import javax.persistence.EntityManager;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import static com.rest.api.domain.QBoard.board;
 import static org.springframework.util.ObjectUtils.isEmpty;
@@ -29,6 +33,7 @@ public class BoardQueryRepository {
 
     private final JPAQueryFactory queryFactory;
 
+    // https://lelecoder.com/145
     @Autowired
     EntityManager em;
 
@@ -46,6 +51,36 @@ public class BoardQueryRepository {
         em.persist(board);
     }
 
+    public long update(Board b){
+        long id = queryFactory.update(board)
+                .set(board.name, b.getName())
+                .where(board.id.eq(b.getId()))
+                .execute();
+
+        em.flush();
+        em.clear();
+        return id;
+    }
+
+    public long delete(Board b){
+        long id = queryFactory.delete(board)
+                .where(board.id.eq(b.getId()))
+                .execute();
+
+        em.flush();
+        em.clear();
+        return id;
+    }
+
+    /** 이름으로 하나의 멤버를 찾아오는 메소드
+     * @return*/
+    public Board selectOne(Long id) {
+        return queryFactory.select(board).from(board)
+                .where(board.id.eq(id))
+                .orderBy(board.id.desc())
+                .limit(1).fetchOne();
+    }
+
     // https://jojoldu.tistory.com/529?category=637935
     public List<BoardPaginationDto> paginationCoveringIndex(String name, int pageNo, int pageSize, Pageable pageable) {
 
@@ -59,9 +94,13 @@ public class BoardQueryRepository {
                 //.where(board.name.contains(name))
                 .orderBy(ORDERS.stream().toArray(OrderSpecifier[]::new))
                 //.orderBy(board.id.desc())
-                .limit(pageSize)
                 //.offset(pageNo * pageSize)
+                /*
+                .limit(pageSize)
                 .offset((pageNo - 1) * pageSize)
+                */
+                .limit(pageable.getPageSize()) // Limit 을 지정할 수 있고
+                .offset(pageable.getOffset()) // offset과
                 .fetch();
 
         // 1-1) 대상이 없을 경우 추가 쿼리 수행 할 필요 없이 바로 반환
@@ -109,6 +148,23 @@ public class BoardQueryRepository {
         }
 
         return ORDERS;
+    }
+
+
+
+    public Page<Board> getList(Pageable pageable) {
+
+        List<OrderSpecifier> ORDERS = getAllOrderSpecifiers(pageable);
+
+        QueryResults<Board> result = queryFactory.select(board)
+                .from(board)
+                //.where(board.name.contains(name))
+                .orderBy(ORDERS.stream().toArray(OrderSpecifier[]::new))
+                //.orderBy(board.id.desc()) // 정렬도 가능하다
+                .limit(pageable.getPageSize()) // Limit 을 지정할 수 있고
+                .offset(pageable.getOffset()) // offset과
+                .fetchResults();
+        return new PageImpl<>(result.getResults(), pageable, result.getTotal());
     }
 
 }

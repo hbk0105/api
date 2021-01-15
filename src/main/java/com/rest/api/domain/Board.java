@@ -21,7 +21,8 @@ public class Board {
     private String content;
 
     @Builder
-    public Board(String name, String content) {
+    public Board(Long id , String name, String content) {
+        this.id = id;
         this.name = name;
         this.content = content;
     }

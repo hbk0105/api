@@ -1,9 +1,15 @@
 plugins {
 	id 'org.springframework.boot' version '2.4.1'
 	id 'io.spring.dependency-management' version '1.0.10.RELEASE'
+    //querydsl 추가
+    id "com.ewerk.gradle.plugins.querydsl" version "1.0.10"
 	id 'java'
 	id 'war'
 }
+/*
+점점 Spring Boot 최신 버전들이 최소한으로 요구하는 Gradle 버전이 높아지고 있고
+Spring Boot 2.4는 Gradle 5.6.x 버전만 혹은 6.3 이상의 버전만 지원합니다.
+*/
 
 group = 'com.rest'
 version = '0.0.1-SNAPSHOT'
@@ -29,6 +35,7 @@ dependencies {
 	annotationProcessor 'org.projectlombok:lombok'
 	providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testCompile group: 'junit', name: 'junit', version: '4.12'
 
     // 시큐리티
     implementation 'org.springframework.boot:spring-boot-starter-security'
@@ -49,10 +56,32 @@ dependencies {
 
 	// querydsl
 	// https://velog.io/@aidenshin/Querydsl-Gradle-%EC%84%A4%EC%A0%95
-
+    implementation 'com.querydsl:querydsl-jpa'
+	implementation 'com.querydsl:querydsl-apt'
 
 }
 
 test {
 	useJUnitPlatform()
 }
+
+//querydsl 추가 시작
+def querydslDir = "$buildDir/generated/querydsl"
+
+querydsl {
+    jpa = true
+    querydslSourcesDir = querydslDir
+}
+
+sourceSets {
+    main.java.srcDir querydslDir
+}
+
+configurations {
+    querydsl.extendsFrom compileClasspath
+}
+
+compileQuerydsl {
+    options.annotationProcessorPath = configurations.querydsl
+}
+//querydsl 추가 끝

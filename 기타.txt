@@ -1,4 +1,18 @@
 
+PORT KILL
+
 netstat -ano | find "9090"
 taskkill /f /pid 11992
+
+
+
+jpa
+- 설정: https://velog.io/@aidenshin/Querydsl-Gradle-%EC%84%A4%EC%A0%95
+
+# domain 추가 후 테스트는
+Gradle > other > compileQuerydsl 실행
+
+TEST 로직
+https://jojoldu.tistory.com/372
+https://velog.io/@ljinsk3/Querydsl-1
 

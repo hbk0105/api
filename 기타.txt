@@ -3,6 +3,9 @@
 netstat -ano | find "9090"
 taskkill /f /pid 11992
 
+# security
+https://owin2828.github.io/devlog/2019/12/30/spring-18.html
+https://gaemi606.tistory.com/154
 
 # jpa
 - 설정: https://velog.io/@aidenshin/Querydsl-Gradle-%EC%84%A4%EC%A0%95

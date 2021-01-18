@@ -1,7 +1,5 @@
 package com.rest.api;
 
-import ch.qos.logback.core.CoreConstants;
-import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.rest.api.domain.Board;
 import com.rest.api.domain.BoardPaginationDto;
@@ -15,13 +13,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.test.annotation.Commit;
-
 import javax.transaction.Transactional;
 import java.util.List;
-
-import static com.rest.api.domain.QBoard.board;
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
 
 @SpringBootTest
 @Transactional
@@ -32,7 +25,7 @@ public class BoardTest {
     private BoardQueryRepository boardQueryRepository;
 
     JPAQueryFactory queryFactory;
-    private Object BoardPaginationDto;
+    private BoardPaginationDto BoardPaginationDto;
 
     @BeforeEach
     public void before() {
@@ -86,9 +79,9 @@ public class BoardTest {
         Board b =  boardQueryRepository.selectOne((long) 1);
 
         System.out.println(b.getName());
-        
+
         //then
-         //assertThat(board, is(10));
+        //assertThat(board, is(10));
         //assertThat(board).hasSize(10);
 
         System.out.println("-----------------------------------------");

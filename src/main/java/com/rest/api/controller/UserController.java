@@ -31,17 +31,17 @@ public class UserController {
     private final UserRepository userRepository;
 
     // 회원가입
-    @PostMapping("/join")
+   /* @PostMapping("/join")
     public ResponseEntity join(@RequestBody Map<String, String> user) {
         return new ResponseEntity<>(userRepository.save(User.builder()
                 .email(user.get("email"))
                 .password(passwordEncoder.encode(user.get("password")))
                 .roles(Collections.singletonList("ROLE_USER")) // 최초 가입시 USER 로 설정
                 .build()), HttpStatus.OK);
-    }
+    }*/
 
     // 로그인
-    @PostMapping("/login")
+   /* @PostMapping("/login")
     public String login(@RequestBody Map<String, String> user) {
         User member = userRepository.findByEmail(user.get("email"))
                 .orElseThrow(() -> new IllegalArgumentException("가입되지 않은 E-MAIL 입니다."));
@@ -54,7 +54,7 @@ public class UserController {
 
         return jwtTokenProvider.generateAccessToken(userDetails);
     }
-
+*/
     // 로그인
     @PostMapping("/{email}")
     public ResponseEntity user( @PathVariable String email) {

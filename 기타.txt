@@ -1,12 +1,10 @@
 
-PORT KILL
-
+# PORT KILL
 netstat -ano | find "9090"
 taskkill /f /pid 11992
 
 
-
-jpa
+# jpa
 - 설정: https://velog.io/@aidenshin/Querydsl-Gradle-%EC%84%A4%EC%A0%95
 
 # domain 추가 후 테스트는
@@ -16,3 +14,12 @@ TEST 로직
 https://jojoldu.tistory.com/372
 https://velog.io/@ljinsk3/Querydsl-1
 
+# RequestDto , ResponseDto 관리
+https://velog.io/@ausg/Spring-Boot%EC%97%90%EC%84%9C-%EA%B9%94%EB%81%94%ED%95%98%EA%B2%8C-DTO-%EA%B4%80%EB%A6%AC%ED%95%98%EA%B8%B0
+
+# 사용자 권한
+https://www.baeldung.com/role-and-privilege-for-spring-security-registration#user-role-and-privilege
+-> 깃허브 : https://github.com/Baeldung/spring-security-registration
+
+# N:M 관계 사용 금지
+https://ict-nroo.tistory.com/127

@@ -1,10 +1,14 @@
 package com.rest.api.domain;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.jboss.aerogear.security.otp.api.Base32;
 
 import javax.persistence.*;
 import java.util.Collection;
 
+@Getter
+@Setter
 @Entity
 @Table(name = "user_account")
 public class User {
@@ -39,7 +43,7 @@ public class User {
         this.secret = Base32.random();
         this.enabled = false;
     }
-
+/*
     public Long getId() {
         return id;
     }
@@ -110,7 +114,7 @@ public class User {
 
     public void setSecret(String secret) {
         this.secret = secret;
-    }
+    }*/
 
     @Override
     public int hashCode() {

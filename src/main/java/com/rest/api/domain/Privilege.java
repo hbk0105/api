@@ -1,8 +1,13 @@
 package com.rest.api.domain;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import javax.persistence.*;
 import java.util.Collection;
 
+@Getter
+@Setter
 @Entity
 public class Privilege {
 
@@ -25,7 +30,7 @@ public class Privilege {
     }
 
     //
-
+    /*
     public Long getId() {
         return id;
     }
@@ -49,7 +54,7 @@ public class Privilege {
     public void setRoles(final Collection<Role> roles) {
         this.roles = roles;
     }
-
+*/
     @Override
     public int hashCode() {
         final int prime = 31;

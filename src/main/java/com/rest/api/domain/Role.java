@@ -1,5 +1,6 @@
 package com.rest.api.domain;
 
+import com.fasterxml.jackson.annotation.*;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -9,13 +10,15 @@ import java.util.Collection;
 @Getter
 @Setter
 @Entity
+//https://m.blog.naver.com/PostView.nhn?blogId=rorean&logNo=221593255071&proxyReferer=https:%2F%2Fwww.google.com%2F
+@JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class)
 public class Role {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @OneToMany(mappedBy = "roles")
+    @ManyToMany(mappedBy = "roles")
     private Collection<User> users;
 
     @ManyToMany
@@ -33,40 +36,6 @@ public class Role {
         this.name = name;
     }
 
-    //
-    /*
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(final Long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(final String name) {
-        this.name = name;
-    }
-
-    public Collection<User> getUsers() {
-        return users;
-    }
-
-    public void setUsers(final Collection<User> users) {
-        this.users = users;
-    }
-
-    public Collection<Privilege> getPrivileges() {
-        return privileges;
-    }
-
-    public void setPrivileges(final Collection<Privilege> privileges) {
-        this.privileges = privileges;
-    }
-*/
     @Override
     public int hashCode() {
         final int prime = 31;

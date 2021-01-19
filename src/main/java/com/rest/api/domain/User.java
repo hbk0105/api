@@ -1,15 +1,20 @@
 package com.rest.api.domain;
 
+import com.fasterxml.jackson.annotation.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.ColumnDefault;
 import org.jboss.aerogear.security.otp.api.Base32;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.Collection;
 
 @Getter
 @Setter
 @Entity
+@JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class)
 @Table(name = "user_account")
 public class User {
 
@@ -33,8 +38,13 @@ public class User {
 
     private String secret;
 
+    @ColumnDefault("false") //default false
+    private boolean mailCertification;
 
-    @OneToMany(fetch = FetchType.EAGER)
+    @Column
+    private LocalDateTime mailCertificationtDate;
+
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "users_roles", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
     private Collection<Role> roles;
 
@@ -43,78 +53,6 @@ public class User {
         this.secret = Base32.random();
         this.enabled = false;
     }
-/*
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(final Long id) {
-        this.id = id;
-    }
-
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public void setFirstName(final String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(final String lastName) {
-        this.lastName = lastName;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(final String username) {
-        this.email = username;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(final String password) {
-        this.password = password;
-    }
-
-    public Collection<Role> getRoles() {
-        return roles;
-    }
-
-    public void setRoles(final Collection<Role> roles) {
-        this.roles = roles;
-    }
-
-    public boolean isEnabled() {
-        return enabled;
-    }
-
-    public void setEnabled(final boolean enabled) {
-        this.enabled = enabled;
-    }
-
-    public boolean isUsing2FA() {
-        return isUsing2FA;
-    }
-
-    public void setUsing2FA(boolean isUsing2FA) {
-        this.isUsing2FA = isUsing2FA;
-    }
-
-    public String getSecret() {
-        return secret;
-    }
-
-    public void setSecret(String secret) {
-        this.secret = secret;
-    }*/
 
     @Override
     public int hashCode() {
@@ -150,12 +88,41 @@ public class User {
                 .append(", firstName=").append(firstName)
                 .append(", lastName=").append(lastName)
                 .append(", email=").append(email)
+                .append(", mailCertification=").append(mailCertification)
+                .append(", mailCertificationDate=").append(mailCertificationtDate)
                 .append(", enabled=").append(enabled)
                 .append(", isUsing2FA=").append(isUsing2FA)
                 .append(", secret=").append(secret)
                 .append(", roles=").append(roles)
                 .append("]");
         return builder.toString();
+    }
+
+    @Getter
+    @Setter
+    public static class Request {
+        private String email;
+        private String firstName;
+        private String lastName;
+        private String password;
+    }
+
+    @Getter
+    @Setter
+    public static class Response {
+        private Long id;
+        private String email;
+        private String firstName;
+        private String lastName;
+        private Collection<Role> roles;
+    }
+
+    @Builder
+    public User(String email, String firstName, String lastName ,String password) {
+        this.email = email;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.password = password;
     }
 
 }

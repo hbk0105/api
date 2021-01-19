@@ -25,6 +25,7 @@ public class BoardTest {
     private BoardQueryRepository boardQueryRepository;
 
     JPAQueryFactory queryFactory;
+
     private BoardPaginationDto BoardPaginationDto;
 
     @BeforeEach

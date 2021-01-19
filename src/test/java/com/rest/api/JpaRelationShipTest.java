@@ -7,6 +7,7 @@ import com.rest.api.domain.User;
 import com.rest.api.repository.PrivilegeRepository;
 import com.rest.api.repository.RoleRepository;
 import com.rest.api.repository.UserRepository;
+import com.rest.api.service.UserService;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,12 +37,28 @@ public class JpaRelationShipTest {
     private Role role;
     private Privilege privilege;
 
+    @Autowired
+    private UserService userService;
+
     // tests
 
     @Test
     public void TEST_가자() {
 
-        userRepository.findByEmail("test@test.com");
+        //userRepository.findByEmail("test@test.com");
+
+        User.Request user = new User.Request();
+
+        user.setEmail("wowo@test.com");
+        user.setFirstName("first");
+        user.setLastName("last");
+        user.setPassword(passwordEncoder.encode("1234"));
+        userService.singUp(user);
+
+
+      /*  role = roleRepository.findByName("ROLE_USER");
+        Privilege readPrivilege = privilegeRepository.findByName("READ_PRIVILEGE");
+        Privilege writePrivilege = privilegeRepository.findByName("WRITE_PRIVILEGE");*/
 /*
 
         roleRepository.findAll();

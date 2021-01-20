@@ -7,7 +7,6 @@ import com.rest.api.domain.User;
 import com.rest.api.repository.PrivilegeRepository;
 import com.rest.api.repository.RoleRepository;
 import com.rest.api.repository.UserRepository;
-import com.rest.api.util.PasswordEncoding;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
@@ -33,13 +32,9 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
     @Autowired
     private PrivilegeRepository privilegeRepository;
 
-    /*
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-    */
 
     @Autowired
-    private PasswordEncoding passwordEncoding;
+    private PasswordEncoder passwordEncoder;
 
     // API
 
@@ -60,10 +55,11 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
         //final List<Privilege> userPrivileges = new ArrayList<>(Arrays.asList(readPrivilege, passwordPrivilege));
         final List<Privilege> userPrivileges = new ArrayList<>(Arrays.asList(readPrivilege, writePrivilege));
         final Role adminRole = createRoleIfNotFound("ROLE_ADMIN", adminPrivileges);
-        createRoleIfNotFound("ROLE_USER", userPrivileges);
+        final Role userRole = createRoleIfNotFound("ROLE_USER", userPrivileges);
 
         // == create initial user
-        createUserIfNotFound("test@test.com", "Test", "Test", "test", new ArrayList<>(Arrays.asList(adminRole)));
+        createUserIfNotFound("adsfdas@naver.com", "michael", "admin", "1234", new ArrayList<>(Arrays.asList(adminRole)));
+        createUserIfNotFound("byungki9770@gmail.com", "michael", "user", "1234", new ArrayList<>(Arrays.asList(userRole)));
 
         alreadySetup = true;
     }
@@ -96,9 +92,9 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
             user = new User();
             user.setFirstName(firstName);
             user.setLastName(lastName);
-            //user.setPassword(passwordEncoder.encode(password));
-            user.setPassword(passwordEncoding.encode(password));
+            user.setPassword(passwordEncoder.encode(password));
             user.setEmail(email);
+            user.setMailCertification(true);
             user.setEnabled(true);
         }
         user.setRoles(roles);

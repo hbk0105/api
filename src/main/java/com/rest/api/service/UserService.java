@@ -21,14 +21,15 @@ public class UserService {
     private RoleRepository roleRepository;
 
     @Autowired
-    private PasswordEncoding passwordEncoding;
+    private PasswordEncoder passwordEncoder;
 
     public User singUp(User.Request userReqDto){
         User user = userRepository.findByEmail(userReqDto.getEmail());
         if(user == null){
             user = new User();
             user.setEmail(userReqDto.getEmail());
-            user.setPassword(passwordEncoding.encode(userReqDto.getPassword()));
+            user.setPassword(passwordEncoder.encode(userReqDto.getPassword()));
+            //user.setPassword(passwordEncoding.encode(userReqDto.getPassword()));
             user.setFirstName(userReqDto.getFirstName());
             user.setLastName(userReqDto.getLastName());
             user.setEnabled(true);

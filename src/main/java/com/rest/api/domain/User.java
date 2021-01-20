@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 import org.hibernate.annotations.ColumnDefault;
 import org.jboss.aerogear.security.otp.api.Base32;
 
@@ -14,6 +15,7 @@ import java.util.Collection;
 @Getter
 @Setter
 @Entity
+@ToString
 @JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class)
 @Table(name = "user_account")
 public class User {
@@ -54,6 +56,9 @@ public class User {
         this.enabled = false;
     }
 
+    public User(String s, String s1, String facebook) {
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -80,7 +85,7 @@ public class User {
         return true;
     }
 
-    @Override
+  /*  @Override
     public String toString() {
         final StringBuilder builder = new StringBuilder();
         builder.append("User [id=")
@@ -97,7 +102,7 @@ public class User {
                 .append("]");
         return builder.toString();
     }
-
+*/
     @Getter
     @Setter
     public static class Request {
@@ -105,6 +110,8 @@ public class User {
         private String firstName;
         private String lastName;
         private String password;
+        private boolean mailCertification;
+        private boolean enabled;
     }
 
     @Getter

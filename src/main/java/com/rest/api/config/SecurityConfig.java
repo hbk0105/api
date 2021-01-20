@@ -45,6 +45,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/user/**").hasRole("USER")
                 .antMatchers("/**", "/h2-console/**").permitAll();
 
+                 // https://ddakker.tistory.com/295
+                 //.and().exceptionHandling().accessDeniedHandler(accessDeniedHandler()).authenticationEntryPoint(authenticationExceptionHandler())
+
+
     }
 
     // CORS 허용 적용 - https://oddpoet.net/blog/2017/04/27/cors-with-spring-security/

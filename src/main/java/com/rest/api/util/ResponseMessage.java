@@ -1,20 +1,86 @@
 package com.rest.api.util;
 
+import java.io.Serializable;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
+import lombok.Setter;
+import lombok.ToString;
+import org.apache.commons.pool2.BaseObject;
+import org.springframework.http.HttpStatus;
+import lombok.Getter;
 
+@Setter
+@Getter
 @Data
-public class ResponseMessage {
+public class ResponseMessage extends BaseObject {
+    // https://eblo.tistory.com/48
+    private static final long serialVersionUID = 1L;
 
-    // https://devlog-wjdrbs96.tistory.com/182
-    private StatusEnum status;
+    private static final String DEFAULT_KEY = "result";
+    private int code;
+    private boolean status;
     private String message;
-    private Object data;
+    private Date timestamp;
+    private Map<Object, Object> data;
+    private ErrorMessage error;
 
     public ResponseMessage() {
-        this.status = StatusEnum.BAD_REQUEST;
-        this.data = null;
-        this.message = null;
+        this(HttpStatus.OK);
     }
+
+    public ResponseMessage(HttpStatus httpStatus) {
+        this.data = new HashMap<>();
+        this.code = httpStatus.value();
+        this.status = (httpStatus.isError())? false:true;
+        this.message = httpStatus.getReasonPhrase();
+        this.timestamp = new Date();
+    }
+
+    public ResponseMessage(HttpStatus httpStatus, String msg, String referedUrl) {
+        this.data = new HashMap<>();
+        this.code = httpStatus.value();
+        this.status = (httpStatus.isError())? false:true;
+        this.message = httpStatus.getReasonPhrase();
+        this.error = new ErrorMessage(httpStatus.value(), msg, referedUrl);
+        this.timestamp = new Date();
+    }
+
+    public ResponseMessage(HttpStatus status, Object result) {
+        this(status);
+        this.data.put(DEFAULT_KEY, result);
+    }
+
+    public void add(String key, Object result) {
+        this.data.put(key, result);
+    }
+
+    public void remove(String key) {
+        this.data.remove(key);
+    }
+
+
+    @Getter
+    @Setter
+    public class ErrorMessage extends BaseObject {
+
+        private static final long serialVersionUID = 1L;
+
+        private int code;
+        private String errorMessage;
+        private String referedUrl;
+
+        public ErrorMessage(int code, String errorMessage, String referedUrl) {
+            super();
+            this.code = code;
+            this.errorMessage = errorMessage;
+            this.referedUrl = referedUrl;
+        }
+    }
+
 
     public enum StatusEnum {
 
@@ -31,7 +97,7 @@ public class ResponseMessage {
             this.statusCode = statusCode;
             this.code = code;
         }
+
     }
 
 }
-

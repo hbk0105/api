@@ -3,6 +3,12 @@
 netstat -ano | find "9090"
 taskkill /f /pid 11992
 
+# RESTful API 설계 가이드
+https://sanghaklee.tistory.com/57
+
+# Hibernate 초기화 전략
+https://pravusid.kr/java/2018/10/10/spring-database-initialization.html
+
 # security
 https://owin2828.github.io/devlog/2019/12/30/spring-18.html
 https://gaemi606.tistory.com/154
@@ -26,3 +32,6 @@ https://www.baeldung.com/role-and-privilege-for-spring-security-registration#use
 
 # N:M 관계 사용 금지
 https://ict-nroo.tistory.com/127
+
+# REST API RESPONSE
+https://eblo.tistory.com/48

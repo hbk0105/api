@@ -16,8 +16,7 @@ public class MailUtil {
 
     // https://hhseong.tistory.com/167
 
-    public static boolean signCertificationMail(String fromAddr, String fromNm, String toAddr, String toNm, JavaMailSender javaMailSender) throws MessagingException, UnsupportedEncodingException {
-        boolean result = false;
+    public static void signCertificationMail(String fromAddr, String fromNm, String toAddr, String toNm, JavaMailSender javaMailSender) throws MessagingException, UnsupportedEncodingException {
 
         String subject = "MICHAEL SITE SIGN UP MAIL";
 
@@ -42,8 +41,6 @@ public class MailUtil {
         mimeMessageHelper.addInline("joker.jpg", file);*/
 
         javaMailSender.send(message);
-        result = true;
 
-        return result;
     }
 }

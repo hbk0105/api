@@ -1,6 +1,5 @@
 package com.rest.api;
 
-import com.rest.api.util.PasswordEncoding;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -32,24 +31,6 @@ class ApiApplicationTests {
         // startTime이 endTime 보다 이후 시간 인지 비교
         System.out.println("startTime이 endTime 보다 이후 시간 인지 비교 " +  currentTime.isAfter(test)); // false
 
-    }
-
-    @Test
-    public void 암호화_테스트(){
-
-        PasswordEncoding passwordEncoding = new PasswordEncoding();
-
-        String rawPassword1 = "12345678";
-        String rawPassword2 = "12345678";
-
-        String newPassword1 = passwordEncoding.encode(rawPassword1);
-        String newPassword2 = passwordEncoding.encode(rawPassword2);
-
-        System.out.println("newPassword1 : "+newPassword1);
-        System.out.println("newPassword2 : "+newPassword2);
-
-        System.out.println("boolean : "+newPassword1==newPassword2);
-        System.out.println("matches : "+passwordEncoding.matches(rawPassword2,newPassword1));
     }
 }
 

@@ -4,7 +4,6 @@ import com.rest.api.domain.Role;
 import com.rest.api.domain.User;
 import com.rest.api.repository.RoleRepository;
 import com.rest.api.repository.UserRepository;
-import com.rest.api.util.PasswordEncoding;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -29,7 +28,6 @@ public class UserService {
             user = new User();
             user.setEmail(userReqDto.getEmail());
             user.setPassword(passwordEncoder.encode(userReqDto.getPassword()));
-            //user.setPassword(passwordEncoding.encode(userReqDto.getPassword()));
             user.setFirstName(userReqDto.getFirstName());
             user.setLastName(userReqDto.getLastName());
             user.setEnabled(true);

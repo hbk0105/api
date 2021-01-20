@@ -5,7 +5,6 @@ import com.rest.api.jwt.JwtTokenUtil;
 import com.rest.api.repository.UserQueryRepository;
 import com.rest.api.service.UserService;
 import com.rest.api.util.MailUtil;
-import com.rest.api.util.PasswordEncoding;
 import com.rest.api.util.ResponseMessage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;

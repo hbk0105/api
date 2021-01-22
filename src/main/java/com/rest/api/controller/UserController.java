@@ -1,21 +1,29 @@
 package com.rest.api.controller;
 
+import com.rest.api.domain.Role;
 import com.rest.api.domain.User;
 import com.rest.api.jwt.JwtTokenUtil;
 import com.rest.api.repository.UserQueryRepository;
 import com.rest.api.service.UserService;
+import com.rest.api.util.CookieUtils;
 import com.rest.api.util.MailUtil;
 import com.rest.api.util.ResponseMessage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.persistence.NoResultException;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -38,6 +46,9 @@ public class UserController {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private JwtTokenUtil jwtTokenUtil;
+
     // ERROR 테스트
     @GetMapping("/api/error")
     public ResponseMessage error(HttpServletRequest req) throws Exception {
@@ -45,7 +56,7 @@ public class UserController {
         //throw new RuntimeException("RuntimeException");
     }
 
-    @PostMapping("/signUp")
+    @PostMapping("/users")
     public ResponseMessage signUp(User.Request user) throws RuntimeException{
         ResponseMessage ms = new ResponseMessage();
         try {
@@ -54,19 +65,19 @@ public class UserController {
             ms.setMessage("본인 확인 메일이 발송 되었습니다");
         }catch (Exception e){
             e.printStackTrace();
-            throw new RuntimeException("시스템에 일시적인 오류가 발생하였습니다.");
+            throw new RuntimeException(e.getMessage());
         }
         return ms;
     }
 
-    @GetMapping("/signUp/completed/{email}")
+    @GetMapping("/users/completed/{email}")
     public ResponseMessage completed(@PathVariable String email , HttpServletRequest req) {
         ResponseMessage ms = null;
         User user = userService.findByEmail(email);
         // null 일 경우
-        if(user == null)  return ms = new ResponseMessage(HttpStatus.INTERNAL_SERVER_ERROR, "NotFoundException", req.getRequestURL().toString());
+        if(user == null)  return ms = new ResponseMessage(HttpStatus.NOT_FOUND, "사용자가 존재하지 않습니다.", req.getRequestURL().toString());
         LocalDateTime nowDate = LocalDateTime.now();
-        if(user.getMailCertificationtDate() == null) return ms = new ResponseMessage(HttpStatus.INTERNAL_SERVER_ERROR, "NullPointerException", req.getRequestURL().toString());
+        if(user.getMailCertificationtDate() == null) return ms = new ResponseMessage(HttpStatus.NOT_FOUND, "사용자가 존재하지 않습니다.", req.getRequestURL().toString());
         LocalDateTime endDate  =  user.getMailCertificationtDate();
         // startTime이 endTime 보다 이전 시간 인지 비교
         if(nowDate.isBefore(endDate)){
@@ -74,7 +85,7 @@ public class UserController {
             userQueryRepository.update(user);
             ms = new ResponseMessage();
         }else{
-            ms = new ResponseMessage(HttpStatus.INTERNAL_SERVER_ERROR, "Authentication Timeout", req.getRequestURL().toString());
+            ms = new ResponseMessage(HttpStatus.BAD_REQUEST, "Authentication Timeout", req.getRequestURL().toString());
         }
         return ms;
     }
@@ -82,26 +93,22 @@ public class UserController {
 
     @GetMapping("/users/{id}")
     public ResponseMessage users(@PathVariable Long id , HttpServletRequest req) throws Throwable {
-        Optional<User> user  = Optional.ofNullable(userService.findById(id).orElseThrow(() -> new NoResultException("NoResultException")));
+        Optional<User> user  = Optional.ofNullable(userService.findById(id).orElseThrow(() -> new NoResultException("사용자가 존재하지 않습니다.")));
         ResponseMessage ms = new ResponseMessage();
         ms.add("result",user.get());
         return ms;
     }
 
-    @PostMapping("/api/login")
-    public ResponseMessage login(@RequestBody Map<String, String> data , HttpServletRequest req){
+    @PostMapping("/login")
+    public ResponseMessage login(@RequestBody Map<String, String> data , HttpServletRequest req , HttpServletResponse res){
         ResponseMessage ms = new ResponseMessage();
-        if(data.get("email") == null || data.get("password") == null)
-            return ms = new ResponseMessage(HttpStatus.INTERNAL_SERVER_ERROR, "NullPointerException", req.getRequestURL().toString());
-        String pw = data.get("password");
-        User user = userService.findByEmail(data.get("email"));
-        String userPw = passwordEncoder.encode(data.get("password"));
-        if(passwordEncoder.matches(pw,userPw)){
-            ms.add("result",user);
-            // jwt  토큰 생성..
-        }else{
-            throw new IllegalArgumentException("IllegalArgumentException");
-        }
+        if("".equals(data.get("email")) || "".equals(data.get("password")))
+            return ms = new ResponseMessage(HttpStatus.BAD_REQUEST, "IllegalArgumentException", req.getRequestURL().toString());
+
+        User user = userService.login(data , ms, res);
+        if(user == null)
+            return ms = new ResponseMessage(HttpStatus.NOT_FOUND, "사용자가 존재하지 않습니다.", req.getRequestURL().toString());
+
         return ms;
     }
 

@@ -16,8 +16,10 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import javax.servlet.*;
 import javax.servlet.http.Cookie;
@@ -41,8 +43,8 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
     @Autowired
     RedisTemplate<String, Object> redisTemplate;
-
-    public Authentication getAuthentication(String token) {
+/*
+   public Authentication getAuthentication(String token) {
         Map<String, Object> parseInfo = jwtTokenUtil.getUserParseInfo(token);
 
         List<String> rs =(List)parseInfo.get("role");
@@ -54,7 +56,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
                 userDetails, null, userDetails.getAuthorities());
         return usernamePasswordAuthenticationToken;
-    }
+    }*/
 
     @Bean
     public FilterRegistrationBean JwtRequestFilterRegistration (JwtRequestFilter filter) {
@@ -70,83 +72,23 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         // https://do-study.tistory.com/106
         // https://velog.io/@ehdrms2034/Spring-Security-JWT-Redis%EB%A5%BC-%ED%86%B5%ED%95%9C-%ED%9A%8C%EC%9B%90%EC%9D%B8%EC%A6%9D%ED%97%88%EA%B0%80-%EA%B5%AC%ED%98%84
 
-        //String requestTokenHeader = request.getHeader("Authorization");
-
-        Cookie ckToken = null;
-
-        logger.info("CookieUtils.getCookie(request,jwtTokenUtil.ACCESS_TOKEN_NAME) :: " + CookieUtils.getCookie(request,jwtTokenUtil.ACCESS_TOKEN_NAME).isPresent());
-
-        if(CookieUtils.getCookie(request,jwtTokenUtil.ACCESS_TOKEN_NAME).isPresent()){
-
-            ckToken = CookieUtils.getCookie(request,jwtTokenUtil.ACCESS_TOKEN_NAME).get();
-
-        }
-
-        String requestTokenHeader = "";
-
-        if(ckToken != null){
-
-           logger.info("getName :: " + ckToken.getName() );
-
-            logger.info("getValue :: " + ckToken.getValue());
-
-            requestTokenHeader = "Bearer "+ckToken.getValue();
-
-        }
-
-
-        // csrf 방어 검증 시작 [필요한 URL만 필터 하기..]
-        // 헤더로 전달된 csrf 토큰 값
-        String paramToken = request.getHeader("_csrf");
-
-        // Double Submit Cookie
-        boolean crsfdDfense = false;
-        // 쿠키로 전달되 csrf 토큰 값
-        String cookieToken = "";
-
-        if(request.getCookies() != null){
-            for (Cookie cookie : request.getCookies()) {
-                if ("CSRF_TOKEN".equals(cookie.getName())) {
-                    cookieToken = URLDecoder.decode(cookie.getValue(), "UTF-8");
-                    // 재사용이 불가능하도록 쿠키 만료
-                    cookie.setPath("/");
-                    cookie.setValue("");
-                    cookie.setMaxAge(0);
-                    response.addCookie(cookie);
-                    break;
-                }
-            }
-        }
-
-        // 두 값이 일치하는 지 검증
-        if (cookieToken.equals(paramToken)) {
-            crsfdDfense = true;
-        }
-        // csrf 방어 검증 종료  [필요한 URL만 필터 하기..]
-
-        logger.info("crsfdDfense :: " + crsfdDfense);
-        logger.info("paramToken :: "+ paramToken);
-
 
         String username = null;
         String jwtToken = null;
-
+        String requestTokenHeader = request.getHeader("Authorization");
         logger.info("### requestTokenHeader :: " + requestTokenHeader);
-
-
         if (requestTokenHeader != null && requestTokenHeader.startsWith("Bearer ")) {
             jwtToken = requestTokenHeader.substring(7).trim();
+
 
             try {
 
                 if(jwtTokenUtil.validateToken(jwtToken)){ // 만료 체크
                     username = jwtTokenUtil.getUsername(jwtToken);
+                    System.out.println("#### username :: " + username);
                 }else{
                     // 만료
-
                     logger.info("### username :: " + username);
-
-
                 }
 
             } catch (IllegalArgumentException e) {
@@ -165,7 +107,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             logger.warn("this token already logout!");*/
         } else {
 
-
+            /*
             DecodedJWT jwt = JWT.decode(jwtToken);
             logger.info("########################### " +jwt.getSubject());
 
@@ -177,28 +119,24 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
             logger.info("@#@#@ result :: " + result);
 
+            */
+
             // 토큰 값 변환
 
             //만든 authentication 객체로 매번 인증받기
-
-            response.setHeader("username", username);
             /*
+            UserDetails userDetails = jwtUserDetailsService.loadUserByUsername(username);
+
             UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new
                     UsernamePasswordAuthenticationToken(userDetails , null ,userDetails.getAuthorities());
             usernamePasswordAuthenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
             SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
 
-            logger.info("UsernamePasswordAuthenticationToken  :: " + usernamePasswordAuthenticationToken);
-*/
-            // 로그아웃 ..
-            /*
-            https://www.programcreek.com/java-api-examples/?api=org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler
-
-
-
             */
 
+            // 로그아웃 ..
+            //https://www.programcreek.com/java-api-examples/?api=org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler
 
         }
 

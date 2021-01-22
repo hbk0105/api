@@ -4,6 +4,7 @@ netstat -ano | find "9090"
 taskkill /f /pid 11992
 
 # RESTful API 설계 가이드
+https://velog.io/@kjh107704/REST-%EC%84%9C%EB%B2%84-REST-API%EB%9E%80
 https://sanghaklee.tistory.com/57
 
 # Hibernate 초기화 전략
@@ -35,3 +36,9 @@ https://ict-nroo.tistory.com/127
 
 # REST API RESPONSE
 https://eblo.tistory.com/48
+
+
+
+# 2021.01.22
+1. JwtRequestFilter 마무리..
+2. User 1 : N  USER_ROLES N : 1 ROLE  로 변경.

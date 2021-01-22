@@ -1,5 +1,9 @@
 package com.rest.api.config;
 
+import com.rest.api.exception.RestAccessDeniedExceptionHandler;
+import com.rest.api.exception.RestAuthenticationExceptionHandler;
+import com.rest.api.filter.JwtRequestFilter;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -10,6 +14,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -21,6 +26,21 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
+    }
+
+    @Autowired
+    private JwtRequestFilter jwtRequestFilter;
+
+    // 커스텀 예외처리
+    @Bean
+    RestAccessDeniedExceptionHandler accessDeniedHandler() {
+        return new RestAccessDeniedExceptionHandler();
+    }
+
+    // 커스텀 예외처리
+    @Bean
+    RestAuthenticationExceptionHandler authenticationExceptionHandler() {
+        return new RestAuthenticationExceptionHandler();
     }
 
     @Override
@@ -41,13 +61,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS) // 토큰 기반 인증이므로 세션 역시 사용하지 않습니다.
                 .and()
                 .authorizeRequests() // 요청에 대한 사용권한 체크
-                .antMatchers("/admin/**").hasRole("ADMIN")
-                .antMatchers("/user/**").hasRole("USER")
-                .antMatchers("/**", "/h2-console/**").permitAll();
-
-                 // https://ddakker.tistory.com/295
-                 //.and().exceptionHandling().accessDeniedHandler(accessDeniedHandler()).authenticationEntryPoint(authenticationExceptionHandler())
-
+                //.antMatchers("/admin/**").hasRole("ADMIN")
+                .antMatchers("/users/**").hasRole("USER")
+                .antMatchers("/login", "/h2-console/**").permitAll()
+                // https://ddakker.tistory.com/295
+                .and().exceptionHandling().accessDeniedHandler(accessDeniedHandler()).authenticationEntryPoint(authenticationExceptionHandler())
+                .and().addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
 
     }
 

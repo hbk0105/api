@@ -104,8 +104,7 @@ public class UserController {
         ResponseMessage ms = new ResponseMessage();
         if("".equals(data.get("email")) || "".equals(data.get("password")))
             return ms = new ResponseMessage(HttpStatus.BAD_REQUEST, "IllegalArgumentException", req.getRequestURL().toString());
-
-        User user = userService.login(data , ms, res);
+        User user = userService.login(data , ms, req , res);
         if(user == null)
             return ms = new ResponseMessage(HttpStatus.NOT_FOUND, "사용자가 존재하지 않습니다.", req.getRequestURL().toString());
 

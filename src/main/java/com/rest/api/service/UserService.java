@@ -69,31 +69,30 @@ public class UserService {
         return userRepository.findByEmail(email);
     }
 
-    public User login(Map<String, String> data , ResponseMessage ms , HttpServletResponse res){
-
-        System.out.println("@#@#@#@#@ " + data);
+    public User login(Map<String, String> data , ResponseMessage ms , HttpServletRequest req , HttpServletResponse res){
         User user = userRepository.findByEmail(data.get("email"));
-        System.out.println("@#@#@ " + user);
-
         if(user == null)
             return null;
-
         String pw = data.get("password");
         String userPw = passwordEncoder.encode(data.get("password"));
         if(passwordEncoder.matches(pw,userPw)){
-            //ms.add("result",user);
+            ms.add("result",user);
             List<GrantedAuthority> roles = new ArrayList<>();
             for(Role r :  user.getRoles()){
                 roles.add(new SimpleGrantedAuthority( r.getName()));
             }
-            String username = user.getLastName()+" "+user.getFirstName();
+            String username = user.getId()+"-"+user.getFirstName();
             UserDetails userDetails = userDetails(user.getEmail());
             String accessToken = jwtTokenUtil.generateAccessToken(userDetails);
             String refreshToken = jwtTokenUtil.generateRefreshToken(username);
             // https://velog.io/@ehdrms2034/Spring-Security-JWT-Redis%EB%A5%BC-%ED%86%B5%ED%95%9C-%ED%9A%8C%EC%9B%90%EC%9D%B8%EC%A6%9D%ED%97%88%EA%B0%80-%EA%B5%AC%ED%98%84
-            CookieUtils.addCookie(res, JwtTokenUtil.ACCESS_TOKEN_NAME,accessToken , (int)JwtTokenUtil.JWT_ACCESS_TOKEN_VALIDITY);
-            CookieUtils.addCookie(res,JwtTokenUtil.REFRESH_TOKEN_NAME,accessToken , (int)JwtTokenUtil.JWT_REFRESH_TOKEN_VALIDITY);
-            ms.add("accessToken","Bearer "+accessToken);
+            CookieUtils.deleteCookie(req,res,JwtTokenUtil.ACCESS_TOKEN_NAME);
+            CookieUtils.deleteCookie(req,res,JwtTokenUtil.REFRESH_TOKEN_NAME);
+            CookieUtils.addCookie(res, JwtTokenUtil.ACCESS_TOKEN_NAME, accessToken , (int)JwtTokenUtil.JWT_ACCESS_TOKEN_VALIDITY);
+            CookieUtils.addCookie(res,JwtTokenUtil.REFRESH_TOKEN_NAME, refreshToken , (int)JwtTokenUtil.JWT_REFRESH_TOKEN_VALIDITY);
+            res.setHeader("Authorization","Bearer " + accessToken);
+
+            //ms.add("accessToken","Bearer "+accessToken);
             // jwt  토큰 생성..
         }else{
             throw new IllegalArgumentException("IllegalArgumentException");
@@ -110,7 +109,7 @@ public class UserService {
         for(Role r :  user.getRoles()){
             roles.add(new SimpleGrantedAuthority( r.getName()));
         }
-        String username = user.getLastName()+" "+user.getFirstName();
+        String username = user.getId()+"-"+user.getFirstName();
         UserDetails userDetails = new org.springframework.security.core.userdetails.User(username, user.getPassword(), roles);
         return userDetails;
     }

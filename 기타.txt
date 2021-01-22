@@ -37,8 +37,6 @@ https://ict-nroo.tistory.com/127
 # REST API RESPONSE
 https://eblo.tistory.com/48
 
-
-
 # 2021.01.22
-1. JwtRequestFilter 마무리..
+1. Redis [ 리프레스 토큰 ]
 2. User 1 : N  USER_ROLES N : 1 ROLE  로 변경.

@@ -3,7 +3,9 @@ package com.rest.api.filter;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.rest.api.domain.Token;
+import com.rest.api.domain.User;
 import com.rest.api.jwt.JwtTokenUtil;
+import com.rest.api.service.UserService;
 import com.rest.api.util.CookieUtils;
 import io.jsonwebtoken.ExpiredJwtException;
 import lombok.SneakyThrows;
@@ -17,10 +19,11 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
+
+import javax.persistence.NoResultException;
 import javax.servlet.*;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -40,6 +43,9 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
     @Autowired
     private JwtTokenUtil jwtTokenUtil;
+
+    @Autowired
+    private UserService userService;
 
     @Autowired
     RedisTemplate<String, Object> redisTemplate;
@@ -75,72 +81,86 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
         String username = null;
         String jwtToken = null;
+        String refToken = null;
+        // String requestTokenHeader = null;
+        Cookie cookie = null;
+      /*  if(CookieUtils.getCookie(request,JwtTokenUtil.ACCESS_TOKEN_NAME).isPresent()){
+            cookie = CookieUtils.getCookie(request,jwtTokenUtil.ACCESS_TOKEN_NAME).get();
+        }
+        if(cookie != null){
+            requestTokenHeader = cookie.getValue();
+        }*/
+
+
         String requestTokenHeader = request.getHeader("Authorization");
         logger.info("### requestTokenHeader :: " + requestTokenHeader);
         if (requestTokenHeader != null && requestTokenHeader.startsWith("Bearer ")) {
+        //if (requestTokenHeader != null ) {
             jwtToken = requestTokenHeader.substring(7).trim();
-
-
             try {
 
-                if(jwtTokenUtil.validateToken(jwtToken)){ // 만료 체크
-                    username = jwtTokenUtil.getUsername(jwtToken);
-                    System.out.println("#### username :: " + username);
-                }else{
-                    // 만료
-                    logger.info("### username :: " + username);
+                username = jwtTokenUtil.getUsername(jwtToken);
+                if(username != null){
+                    String r[] = username.split("-");
+                    Long id = Long.parseLong(r[0]);
+                    setAuthentication(request , response , id,false);
                 }
 
             } catch (IllegalArgumentException e) {
-                logger.warn("Unable to get JWT Token");
-            }
-            catch (ExpiredJwtException e) {
-                logger.warn("Expired  JWT Token");
+                e.printStackTrace();
+                logger.error("Unable to get JWT Token");
+            } catch (ExpiredJwtException e) {
+                e.printStackTrace();
+                logger.error("Expired  JWT Token");
+                cookie = null;
+                if(CookieUtils.getCookie(request,JwtTokenUtil.REFRESH_TOKEN_NAME).isPresent()){
+                    cookie = CookieUtils.getCookie(request,jwtTokenUtil.REFRESH_TOKEN_NAME).get();
+                }
+                if(cookie != null){
+                    refToken = cookie.getValue();
+                }
             }
         } else {
-            logger.warn("JWT Token does not begin with Bearer String");
+            logger.error("JWT Token does not begin with Bearer String");
         }
 
-        if (username == null) {
-            logger.info("token maybe expired: username is null.");
-       /* } else if (redisTemplate.opsForValue().get(username) != null) {
-            logger.warn("this token already logout!");*/
-        } else {
+        if(refToken != null){
+            try {
+                username = jwtTokenUtil.getUsername(refToken);
+                if(username != null){
+                    String r[] = username.split("-");
+                    Long id = Long.parseLong(r[0]);
+                    setAuthentication(request , response , id,true);
+                }
 
-            /*
-            DecodedJWT jwt = JWT.decode(jwtToken);
-            logger.info("########################### " +jwt.getSubject());
-
-            String decodeJwtSubject = jwt.getSubject();
-
-            // 토큰 값 변환 -> 리프레시 토큰 값 주기..
-            ValueOperations<String, Object> vop2 = redisTemplate.opsForValue();
-            Token result = (Token) vop2.get(decodeJwtSubject); // 유저 이름으로 redis에서 리프레시 토큰값 추출.\
-
-            logger.info("@#@#@ result :: " + result);
-
-            */
-
-            // 토큰 값 변환
-
-            //만든 authentication 객체로 매번 인증받기
-            /*
-            UserDetails userDetails = jwtUserDetailsService.loadUserByUsername(username);
-
-            UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new
-                    UsernamePasswordAuthenticationToken(userDetails , null ,userDetails.getAuthorities());
-            usernamePasswordAuthenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-
-            SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
-
-            */
-
-            // 로그아웃 ..
-            //https://www.programcreek.com/java-api-examples/?api=org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler
-
+            } catch (ExpiredJwtException e) {
+                e.printStackTrace();
+                logger.error("Expired  JWT Token");
+            }
         }
 
         XssAndSqlHttpServletRequestWrapper xssRequestWrapper = new XssAndSqlHttpServletRequestWrapper(request);
         chain.doFilter(xssRequestWrapper, response);
+    }
+
+    public void setAuthentication(HttpServletRequest request ,  HttpServletResponse response , Long id , boolean ref){
+
+        Optional<User> user  = Optional.ofNullable(userService.findById(id).orElseThrow(() -> new NoResultException("사용자가 존재하지 않습니다.")));
+        UserDetails userDetails = userService.userDetails(user.get().getEmail());
+
+        UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new
+                UsernamePasswordAuthenticationToken(userDetails , null ,userDetails.getAuthorities());
+        usernamePasswordAuthenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+
+        SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
+
+        if(ref){
+            userDetails = userService.userDetails(user.get().getEmail());
+            String accessToken = jwtTokenUtil.generateAccessToken(userDetails);
+            CookieUtils.deleteCookie(request , response , JwtTokenUtil.ACCESS_TOKEN_NAME);
+            CookieUtils.addCookie(response , JwtTokenUtil.ACCESS_TOKEN_NAME , accessToken , (int)JwtTokenUtil.JWT_ACCESS_TOKEN_VALIDITY);
+            response.setHeader("Authorization","Bearer " + accessToken);
+        }
+
     }
 }

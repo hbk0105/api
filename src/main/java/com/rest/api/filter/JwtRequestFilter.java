@@ -78,24 +78,14 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         // https://do-study.tistory.com/106
         // https://velog.io/@ehdrms2034/Spring-Security-JWT-Redis%EB%A5%BC-%ED%86%B5%ED%95%9C-%ED%9A%8C%EC%9B%90%EC%9D%B8%EC%A6%9D%ED%97%88%EA%B0%80-%EA%B5%AC%ED%98%84
 
-
         String username = null;
         String jwtToken = null;
         String refToken = null;
-        // String requestTokenHeader = null;
         Cookie cookie = null;
-      /*  if(CookieUtils.getCookie(request,JwtTokenUtil.ACCESS_TOKEN_NAME).isPresent()){
-            cookie = CookieUtils.getCookie(request,jwtTokenUtil.ACCESS_TOKEN_NAME).get();
-        }
-        if(cookie != null){
-            requestTokenHeader = cookie.getValue();
-        }*/
-
 
         String requestTokenHeader = request.getHeader("Authorization");
         logger.info("### requestTokenHeader :: " + requestTokenHeader);
         if (requestTokenHeader != null && requestTokenHeader.startsWith("Bearer ")) {
-        //if (requestTokenHeader != null ) {
             jwtToken = requestTokenHeader.substring(7).trim();
             try {
 

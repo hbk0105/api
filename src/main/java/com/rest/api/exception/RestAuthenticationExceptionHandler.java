@@ -21,7 +21,7 @@ public class RestAuthenticationExceptionHandler implements AuthenticationEntryPo
     @Override
     public void commence(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, AuthenticationException e) throws IOException, ServletException {
         log.info("RestAuthenticationExceptionHandler !!!!!!!!!!!!! ");
-        ResponseMessage ms = new ResponseMessage(HttpStatus.UNAUTHORIZED, "Unauthorised", httpServletRequest.getRequestURL().toString());
+        ResponseMessage ms = new ResponseMessage(HttpStatus.UNAUTHORIZED, "Unauthorized", httpServletRequest.getRequestURL().toString());
         httpServletResponse.setContentType("application/json; charset=utf-8");
         PrintWriter out = httpServletResponse.getWriter();
         Gson gson = new Gson();

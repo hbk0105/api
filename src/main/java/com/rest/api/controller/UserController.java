@@ -20,6 +20,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.web.bind.annotation.*;
 
+import javax.naming.AuthenticationException;
 import javax.persistence.NoResultException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -95,7 +96,7 @@ public class UserController {
     @GetMapping("/users/{id}")
     public ResponseMessage users(@PathVariable Long id , HttpServletRequest req) throws Throwable {
         Optional<User> user  = Optional.ofNullable(userService.findById(id).orElseThrow(() -> new NoResultException("사용자가 존재하지 않습니다.")));
-        if(!accessAuthCheck(user.get(), id , req)) throw new AccessDeniedException("Access Denied");
+        if(!accessAuthCheck(user.get(), id , req)) throw new AuthenticationException("Unauthorized");
         ResponseMessage ms = new ResponseMessage();
         ms.add("result",user.get());
         return ms;

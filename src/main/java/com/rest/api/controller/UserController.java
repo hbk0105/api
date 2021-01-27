@@ -70,7 +70,7 @@ public class UserController {
         return ms;
     }
 
-    @GetMapping("/users/completed/{email}")
+    @GetMapping("/completed/{email}")
     public ResponseMessage completed(@PathVariable String email , HttpServletRequest req) {
         ResponseMessage ms = null;
         User user = userService.findByEmail(email);
@@ -94,6 +94,14 @@ public class UserController {
     @GetMapping("/users/{id}")
     public ResponseMessage users(@PathVariable Long id , HttpServletRequest req) throws Throwable {
         Optional<User> user  = Optional.ofNullable(userService.findById(id).orElseThrow(() -> new NoResultException("사용자가 존재하지 않습니다.")));
+
+        String requestTokenHeader = req.getHeader("Authorization");
+        String jwtToken = requestTokenHeader.substring(7).trim();
+
+        List<GrantedAuthority> roles = new ArrayList<>();
+        for(Role r :  user.get().getRoles()){
+            roles.add(new SimpleGrantedAuthority( r.getName()));
+        }
         ResponseMessage ms = new ResponseMessage();
         ms.add("result",user.get());
         return ms;

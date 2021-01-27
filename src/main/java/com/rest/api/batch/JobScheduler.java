@@ -8,6 +8,7 @@ import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.batch.core.repository.JobExecutionAlreadyRunningException;
 import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import java.util.Date;
 import java.util.HashMap;
@@ -23,8 +24,8 @@ public class JobScheduler {
     @Autowired
     private JobConfiguration jobConfiguration;
 
-    //@Scheduled(initialDelay = 10000, fixedDelay = 15000)
-    //@Scheduled(cron="*/15 * * * * *")
+    // https://huskdoll.tistory.com/819
+    @Scheduled(cron="* 0/10 * * * * *")
     public void runJob() {
 
         log.info("#### runJob!!! " + new Date());

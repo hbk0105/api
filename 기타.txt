@@ -42,10 +42,14 @@ https://eblo.tistory.com/48
 2. User 1 : N  USER_ROLES N : 1 ROLE  로 변경.
 
 
-# 배치 테이블
+# 배치
 - https://dalgun.dev/blog/2019-10-30/spring-batch
+- https://cheese10yun.github.io/spring-batch-basic/
+- https://jojoldu.tistory.com/328
+# 배치 테이블
 컨트롤 + 쉬프트 + A : FILE
 schema-mysql.sql , schema-h2.sql
+- https://ahndy84.tistory.com/24
 
 
 

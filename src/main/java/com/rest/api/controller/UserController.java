@@ -12,10 +12,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.web.bind.annotation.*;
 
 import javax.persistence.NoResultException;
@@ -90,22 +92,34 @@ public class UserController {
         return ms;
     }
 
-
     @GetMapping("/users/{id}")
     public ResponseMessage users(@PathVariable Long id , HttpServletRequest req) throws Throwable {
         Optional<User> user  = Optional.ofNullable(userService.findById(id).orElseThrow(() -> new NoResultException("사용자가 존재하지 않습니다.")));
-
-        String requestTokenHeader = req.getHeader("Authorization");
-        String jwtToken = requestTokenHeader.substring(7).trim();
-
-        List<GrantedAuthority> roles = new ArrayList<>();
-        for(Role r :  user.get().getRoles()){
-            roles.add(new SimpleGrantedAuthority( r.getName()));
-        }
+        if(!accessAuthCheck(user.get(), id , req)) throw new AccessDeniedException("Access Denied");
         ResponseMessage ms = new ResponseMessage();
         ms.add("result",user.get());
         return ms;
     }
+
+    public boolean accessAuthCheck(User user ,  Long userId , HttpServletRequest req) throws Exception {
+        String requestTokenHeader = req.getHeader("Authorization");
+        String jwtToken = requestTokenHeader.substring(7).trim();
+        String username = jwtTokenUtil.getUsername(jwtToken);
+        if(username != null){
+            String r[] = username.split("-");
+            Long id = Long.parseLong(r[0]);
+            if(id == userId){
+                return true;
+            }else{
+                Optional<User> tokenUser  = Optional.ofNullable(userService.findById(id).orElseThrow(() -> new NoResultException("사용자가 존재하지 않습니다.")));
+                for(Role role :  tokenUser.get().getRoles()){
+                    if("ROLE_ADMIN".equals(role.getName())) return true;
+                }
+            }
+        }
+        return false;
+    }
+
 
     @PostMapping("/login")
     public ResponseMessage login(@RequestBody Map<String, String> data , HttpServletRequest req , HttpServletResponse res){

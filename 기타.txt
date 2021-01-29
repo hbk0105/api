@@ -51,6 +51,21 @@ https://eblo.tistory.com/48
 schema-mysql.sql , schema-h2.sql
 - https://ahndy84.tistory.com/24
 
+###### 배치 다른 버전 #########
+https://jojoldu.tistory.com/493
+https://www.baeldung.com/spring-boot-spring-batch
+https://devfunny.tistory.com/331
+https://javasneo.blogspot.com/2020/06/how-to-integrate-spring-boot-spring-batch-quartz.html
+https://www.javadevjournal.com/spring-batch/spring-batch-job-configuration/
+https://www.baeldung.com/spring-batch-retry-logic
+
+
+# 추후 할일..
+1. 다 대 다 관계 정규화
+https://leoheo.github.io/JPA-ManyToMany/
+https://blog.leocat.kr/notes/2020/01/13/querydsl-duplication-problem-on-fetchjoin-with-onetomany
+
+
 
 
 

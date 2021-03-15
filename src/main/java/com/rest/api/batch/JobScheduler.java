@@ -25,10 +25,8 @@ public class JobScheduler {
     private JobConfiguration jobConfiguration;
 
     // https://huskdoll.tistory.com/819
-    @Scheduled(cron="0 0/10 * * * *")
+    //@Scheduled(cron="0 0/10 * * * *")
     public void runJob() {
-
-        log.info("#### runJob!!! " + new Date());
 
         Map<String, JobParameter> confMap = new HashMap<>();
         confMap.put("time", new JobParameter(System.currentTimeMillis()));

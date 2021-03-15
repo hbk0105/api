@@ -1,9 +1,11 @@
 package com.rest.api.config;
 
 
+import com.rest.api.domain.Board;
 import com.rest.api.domain.Privilege;
 import com.rest.api.domain.Role;
 import com.rest.api.domain.User;
+import com.rest.api.repository.BoardQueryRepository;
 import com.rest.api.repository.PrivilegeRepository;
 import com.rest.api.repository.RoleRepository;
 import com.rest.api.repository.UserRepository;
@@ -32,9 +34,11 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
     @Autowired
     private PrivilegeRepository privilegeRepository;
 
-
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private BoardQueryRepository boardQueryRepository;
 
     // API
 
@@ -60,6 +64,10 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
         // == create initial user
         createUserIfNotFound("adsfdas@naver.com", "adsfdas", "admin", "1234", new ArrayList<>(Arrays.asList(adminRole)));
         createUserIfNotFound("byungki9770@gmail.com", "byungki9770", "user", "1234", new ArrayList<>(Arrays.asList(userRole)));
+
+        for(int i = 0; i < 100; i++){
+            boardQueryRepository.save(Board.builder().name("name " + i).content("content- " +i).build());
+        }
 
         alreadySetup = true;
     }

@@ -28,7 +28,7 @@ public class BoardTest {
 
     private BoardPaginationDto BoardPaginationDto;
 
-    @BeforeEach
+    //@BeforeEach
     public void before() {
 
         for(int i = 0; i < 100; i++){
@@ -36,10 +36,12 @@ public class BoardTest {
         }
 
         // 수정
-        boardQueryRepository.update(Board.builder().id((long) 1).name("수정이지롱").build());
+        boardQueryRepository.update(Board.builder().id((long) 1).name("수정이지롱").content("내용은..").build());
 
         // 삭제
         boardQueryRepository.delete(Board.builder().id((long) 2).build());
+
+
 
     }
 
@@ -48,7 +50,7 @@ public class BoardTest {
     @Test
     void 기존_페이징_방식() throws Exception {
         //given
-        String name = "1";
+        String name = "";
 
         /*
         page : 검색을 원하는 페이지 번호입니다.
@@ -56,51 +58,30 @@ public class BoardTest {
         */
 
         PageRequest pageRequest = new PageRequest();
-        pageRequest.setPage(0);
-        pageRequest.setSize(10);
-        pageRequest.setDirection(Sort.Direction.ASC);
+        //pageRequest.setPage(0);
+        //pageRequest.setSize(10);
+        //pageRequest.setDirection(Sort.Direction.ASC);
 
         //when
-        Pageable pageable = org.springframework.data.domain.PageRequest.of(0, 2, Sort.Direction.ASC, "id");
+        //Pageable pageable = org.springframework.data.domain.PageRequest.of(0, 2, Sort.Direction.ASC, "id");
 
-
-        List<BoardPaginationDto> books = boardQueryRepository.paginationCoveringIndex(name, 1, 10 , pageRequest.of());
-
-        System.out.println("books : " + books.size());
-
+       /* List<BoardPaginationDto> books = boardQueryRepository.paginationCoveringIndex(name , pageRequest.of());
 
         for(int i = 0; i < books.size(); i ++){
             System.out.println(" name :: " + books.get(i).getName());
         }
 
-
-
         System.out.println("-----------------------------------------");
-
-        Board b =  boardQueryRepository.selectOne((long) 1);
-
-        System.out.println(b.getName());
-
+*/
         //then
         //assertThat(board, is(10));
         //assertThat(board).hasSize(10);
 
         System.out.println("-----------------------------------------");
         System.out.println("-----------------------------------------");
-
-        Page<Board> list =  boardQueryRepository.getList(pageRequest.of());
-
-
-        System.out.println(list.getContent().get(0));
-
+        Page<Board> list =  boardQueryRepository.getList(pageRequest.of(),"","1");
+        System.out.println(list.getContent().get(0).getName());
         System.out.println("list.getTotalElements() :: " + list.getTotalElements());
-/*
-
-        for(int i = 0; i < books.size(); i ++){
-            System.out.println(" name :: " + books.get(i).getName());
-        }
-*/
-
 
     }
 

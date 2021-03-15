@@ -1,6 +1,7 @@
 package com.rest.api.repository;
 
 
+import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.QueryResults;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
@@ -8,15 +9,16 @@ import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.rest.api.domain.Board;
 import com.rest.api.domain.BoardPaginationDto;
-import com.rest.api.domain.QBoard;
 import com.rest.api.util.QueryDslUtil;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import javax.persistence.EntityManager;
@@ -47,13 +49,16 @@ public class BoardQueryRepository {
                 .fetch();
     }
 
+    @Transactional
     public void save(Board board){
         em.persist(board);
     }
 
+    @Transactional
     public long update(Board b){
         long id = queryFactory.update(board)
                 .set(board.name, b.getName())
+                .set(board.content,b.getContent())
                 .where(board.id.eq(b.getId()))
                 .execute();
 
@@ -62,6 +67,7 @@ public class BoardQueryRepository {
         return id;
     }
 
+    @Transactional
     public long delete(Board b){
         long id = queryFactory.delete(board)
                 .where(board.id.eq(b.getId()))
@@ -82,16 +88,37 @@ public class BoardQueryRepository {
     }
 
     // https://jojoldu.tistory.com/529?category=637935
-    public List<BoardPaginationDto> paginationCoveringIndex(String name, int pageNo, int pageSize, Pageable pageable) {
+    public List<BoardPaginationDto> paginationCoveringIndex(String name, Pageable pageable) {
 
         List<OrderSpecifier> ORDERS = getAllOrderSpecifiers(pageable);
 
+        // where 빌더 - https://jojoldu.tistory.com/394
+
+        String content = "1";
+
+        BooleanBuilder builder = new BooleanBuilder();
+       /* if (!StringUtils.isEmpty(name)) {
+            builder.and(board.name.like(name + "%"));
+        }*/
+
+        if (!StringUtils.isEmpty(name)) {
+            builder.and(board.name.contains(name));
+        }
+
+        if (!StringUtils.isEmpty(content)) {
+            builder.and(board.content.contains(content));
+        }
+
+
+
+        // like , contains 차이 - https://cherrypick.co.kr/querydsl-difference-like-contains/
         // 1) 커버링 인덱스로 대상 조회
         List<Long> ids = queryFactory
                 .select(board.id)
                 .from(board)
                 //.where(board.name.like(name + "%"))
                 //.where(board.name.contains(name))
+                .where(builder)
                 .orderBy(ORDERS.stream().toArray(OrderSpecifier[]::new))
                 //.orderBy(board.id.desc())
                 //.offset(pageNo * pageSize)
@@ -152,19 +179,37 @@ public class BoardQueryRepository {
 
 
 
-    public Page<Board> getList(Pageable pageable) {
+    public Page<Board> getList(Pageable pageable,String name , String content) {
 
         List<OrderSpecifier> ORDERS = getAllOrderSpecifiers(pageable);
 
         QueryResults<Board> result = queryFactory.select(board)
                 .from(board)
                 //.where(board.name.contains(name))
+                .where(dynamicBuilder(name,content))
                 .orderBy(ORDERS.stream().toArray(OrderSpecifier[]::new))
                 //.orderBy(board.id.desc()) // 정렬도 가능하다
                 .limit(pageable.getPageSize()) // Limit 을 지정할 수 있고
                 .offset(pageable.getOffset()) // offset과
                 .fetchResults();
         return new PageImpl<>(result.getResults(), pageable, result.getTotal());
+    }
+
+    public BooleanBuilder dynamicBuilder(String name,String content){
+        // where 빌더 - https://jojoldu.tistory.com/394
+        // like , contains 차이 - https://cherrypick.co.kr/querydsl-difference-like-contains/
+
+        BooleanBuilder builder = new BooleanBuilder();
+
+        if (!StringUtils.isEmpty(name)) {
+            builder.and(board.name.contains(name));
+        }
+
+        if (!StringUtils.isEmpty(content)) {
+            builder.and(board.content.contains(content));
+        }
+
+         return builder;
     }
 
 }

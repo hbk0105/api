@@ -8,7 +8,6 @@ import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.rest.api.domain.Board;
-import com.rest.api.domain.BoardPaginationDto;
 import com.rest.api.util.QueryDslUtil;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
@@ -88,18 +87,14 @@ public class BoardQueryRepository {
     }
 
     // https://jojoldu.tistory.com/529?category=637935
-    public List<BoardPaginationDto> paginationCoveringIndex(String name, Pageable pageable) {
+    // 사용 안함.
+    public List<Board> paginationCoveringIndex(String name, Pageable pageable) {
 
         List<OrderSpecifier> ORDERS = getAllOrderSpecifiers(pageable);
 
         // where 빌더 - https://jojoldu.tistory.com/394
-
         String content = "1";
-
         BooleanBuilder builder = new BooleanBuilder();
-       /* if (!StringUtils.isEmpty(name)) {
-            builder.and(board.name.like(name + "%"));
-        }*/
 
         if (!StringUtils.isEmpty(name)) {
             builder.and(board.name.contains(name));
@@ -108,8 +103,6 @@ public class BoardQueryRepository {
         if (!StringUtils.isEmpty(content)) {
             builder.and(board.content.contains(content));
         }
-
-
 
         // like , contains 차이 - https://cherrypick.co.kr/querydsl-difference-like-contains/
         // 1) 커버링 인덱스로 대상 조회
@@ -137,7 +130,7 @@ public class BoardQueryRepository {
 
         // 2)
         return queryFactory
-                .select(Projections.fields(BoardPaginationDto.class,
+                .select(Projections.fields(Board.class,
                         board.id.as("bookId"),
                         board.name))
                 .from(board)
@@ -178,7 +171,7 @@ public class BoardQueryRepository {
     }
 
 
-
+    // 최종
     public Page<Board> getList(Pageable pageable,String name , String content) {
 
         List<OrderSpecifier> ORDERS = getAllOrderSpecifiers(pageable);

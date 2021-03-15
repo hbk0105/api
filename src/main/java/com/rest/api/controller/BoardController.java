@@ -1,7 +1,6 @@
 package com.rest.api.controller;
 
 import com.rest.api.domain.Board;
-import com.rest.api.domain.BoardPaginationDto;
 import com.rest.api.domain.User;
 import com.rest.api.repository.BoardQueryRepository;
 import com.rest.api.util.PageRequest;

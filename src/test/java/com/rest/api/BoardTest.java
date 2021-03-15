@@ -2,7 +2,6 @@ package com.rest.api;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.rest.api.domain.Board;
-import com.rest.api.domain.BoardPaginationDto;
 import com.rest.api.repository.BoardQueryRepository;
 import com.rest.api.util.PageRequest;
 import org.junit.jupiter.api.BeforeEach;
@@ -25,8 +24,6 @@ public class BoardTest {
     private BoardQueryRepository boardQueryRepository;
 
     JPAQueryFactory queryFactory;
-
-    private BoardPaginationDto BoardPaginationDto;
 
     //@BeforeEach
     public void before() {

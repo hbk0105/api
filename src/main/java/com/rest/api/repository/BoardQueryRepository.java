@@ -3,11 +3,13 @@ package com.rest.api.repository;
 
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.QueryResults;
+import com.querydsl.core.types.Expression;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.rest.api.domain.Board;
+import com.rest.api.domain.Comment;
 import com.rest.api.util.QueryDslUtil;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
@@ -25,6 +27,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import static com.rest.api.domain.QBoard.board;
+import static com.rest.api.domain.QComment.comment;
 import static org.springframework.util.ObjectUtils.isEmpty;
 
 
@@ -42,9 +45,24 @@ public class BoardQueryRepository {
         return queryFactory.selectFrom(board).fetch();
     }
 
-    public List<Board> findByName(String name) {
+    public Board findById(Long id){
+        return queryFactory.select(board).from(board)
+                .where(board.id.eq(id))
+                .orderBy(board.id.desc())
+                .limit(1).fetchOne();
+    }
+
+    public List<Comment> findCommentsByComment(Board board){
+        return queryFactory.select(comment).from(comment)
+                .where(comment.board.eq(board))
+                .orderBy(comment.comment_id.desc())
+                .fetch();
+    }
+
+
+    public List<Board> findByTitle(String name) {
         return queryFactory.selectFrom(board)
-                .where(board.name.eq(name))
+                .where(board.title.eq(name))
                 .fetch();
     }
 
@@ -54,9 +72,46 @@ public class BoardQueryRepository {
     }
 
     @Transactional
+    public void commentSave(Comment comment){
+        em.persist(comment);
+    }
+
+    @Transactional
+    public long commentUpdate(Comment c){
+        long id = queryFactory.update(comment)
+                .set(comment.title, c.getTitle())
+                .set(comment.content,c.getContent())
+                .where(comment.comment_id.eq(c.getComment_id()) , comment.board.eq(c.getBoard()))
+                .execute();
+
+        em.flush();
+        em.clear();
+        return id;
+    }
+
+    @Transactional
+    public long commentDelete(Comment c){
+        long id = queryFactory.delete(comment)
+                .where(comment.comment_id.eq(c.getComment_id()))
+                .execute();
+        em.flush();
+        em.clear();
+        return id;
+    }
+
+    public long commentCount(Board b){
+        long total = queryFactory.selectFrom(comment)
+                .where(comment.board.eq(b))
+                .fetchCount();
+        return total;
+    }
+
+
+
+    @Transactional
     public long update(Board b){
         long id = queryFactory.update(board)
-                .set(board.name, b.getName())
+                .set(board.title, b.getTitle())
                 .set(board.content,b.getContent())
                 .where(board.id.eq(b.getId()))
                 .execute();
@@ -88,7 +143,7 @@ public class BoardQueryRepository {
 
     // https://jojoldu.tistory.com/529?category=637935
     // 사용 안함.
-    public List<Board> paginationCoveringIndex(String name, Pageable pageable) {
+    public List<Board> paginationCoveringIndex(String title, Pageable pageable) {
 
         List<OrderSpecifier> ORDERS = getAllOrderSpecifiers(pageable);
 
@@ -96,8 +151,8 @@ public class BoardQueryRepository {
         String content = "1";
         BooleanBuilder builder = new BooleanBuilder();
 
-        if (!StringUtils.isEmpty(name)) {
-            builder.and(board.name.contains(name));
+        if (!StringUtils.isEmpty(title)) {
+            builder.and(board.title.contains(title));
         }
 
         if (!StringUtils.isEmpty(content)) {
@@ -131,8 +186,8 @@ public class BoardQueryRepository {
         // 2)
         return queryFactory
                 .select(Projections.fields(Board.class,
-                        board.id.as("bookId"),
-                        board.name))
+                        board.id.as("boardId"),
+                        board.title))
                 .from(board)
                 .where(board.id.in(ids))
                 //.orderBy(board.id.desc())
@@ -153,8 +208,8 @@ public class BoardQueryRepository {
                         OrderSpecifier<?> orderId = QueryDslUtil.getSortedColumn(direction, board.id, "id");
                         ORDERS.add(orderId);
                         break;
-                    case "name":
-                        OrderSpecifier<?> orderUser = QueryDslUtil.getSortedColumn(direction, board.name, "name");
+                    case "title":
+                        OrderSpecifier<?> orderUser = QueryDslUtil.getSortedColumn(direction, board.title, "name");
                         ORDERS.add(orderUser);
                         break;
                     case "content":
@@ -172,14 +227,14 @@ public class BoardQueryRepository {
 
 
     // 최종
-    public Page<Board> getList(Pageable pageable,String name , String content) {
+    public Page<Board> getList(Pageable pageable,String title , String content) {
 
         List<OrderSpecifier> ORDERS = getAllOrderSpecifiers(pageable);
 
         QueryResults<Board> result = queryFactory.select(board)
                 .from(board)
                 //.where(board.name.contains(name))
-                .where(dynamicBuilder(name,content))
+                .where(dynamicBuilder(title,content))
                 .orderBy(ORDERS.stream().toArray(OrderSpecifier[]::new))
                 //.orderBy(board.id.desc()) // 정렬도 가능하다
                 .limit(pageable.getPageSize()) // Limit 을 지정할 수 있고
@@ -188,14 +243,14 @@ public class BoardQueryRepository {
         return new PageImpl<>(result.getResults(), pageable, result.getTotal());
     }
 
-    public BooleanBuilder dynamicBuilder(String name,String content){
+    public BooleanBuilder dynamicBuilder(String title,String content){
         // where 빌더 - https://jojoldu.tistory.com/394
         // like , contains 차이 - https://cherrypick.co.kr/querydsl-difference-like-contains/
 
         BooleanBuilder builder = new BooleanBuilder();
 
-        if (!StringUtils.isEmpty(name)) {
-            builder.and(board.name.contains(name));
+        if (!StringUtils.isEmpty(title)) {
+            builder.and(board.title.contains(title));
         }
 
         if (!StringUtils.isEmpty(content)) {

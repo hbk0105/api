@@ -29,11 +29,11 @@ public class BoardTest {
     public void before() {
 
         for(int i = 0; i < 100; i++){
-            boardQueryRepository.save(Board.builder().name("name " + i).content("content- " +i).build());
+            boardQueryRepository.save(Board.builder().title("name " + i).content("content- " +i).build());
         }
 
         // 수정
-        boardQueryRepository.update(Board.builder().id((long) 1).name("수정이지롱").content("내용은..").build());
+        boardQueryRepository.update(Board.builder().id((long) 1).title("수정이지롱").content("내용은..").build());
 
         // 삭제
         boardQueryRepository.delete(Board.builder().id((long) 2).build());
@@ -77,7 +77,7 @@ public class BoardTest {
         System.out.println("-----------------------------------------");
         System.out.println("-----------------------------------------");
         Page<Board> list =  boardQueryRepository.getList(pageRequest.of(),"","1");
-        System.out.println(list.getContent().get(0).getName());
+        System.out.println(list.getContent().get(0).getTitle());
         System.out.println("list.getTotalElements() :: " + list.getTotalElements());
 
     }

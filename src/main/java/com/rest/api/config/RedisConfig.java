@@ -1,16 +1,25 @@
 package com.rest.api.config;
 
 import com.rest.api.domain.Token;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
+import java.time.Duration;
+
 @Configuration
 public class RedisConfig {
+
+    @Autowired
+    private StringRedisTemplate stringRedisTemplate;
+
     // https://hwigyeom.ntils.com/entry/Windows-%EC%97%90-Redis-%EC%84%A4%EC%B9%98%ED%95%98%EA%B8%B0-1
     // https://github.com/microsoftarchive/redis/releases/tag/win-3.2.100
     @Bean
@@ -18,7 +27,6 @@ public class RedisConfig {
         LettuceConnectionFactory lettuceConnectionFactory = new LettuceConnectionFactory("localhost", 6379);
         return lettuceConnectionFactory;
     }
-
 
     @Bean
     public RedisTemplate<String, Object> redisTemplate() {

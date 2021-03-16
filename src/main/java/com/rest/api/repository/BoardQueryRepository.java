@@ -38,6 +38,7 @@ public class BoardQueryRepository {
     private final JPAQueryFactory queryFactory;
 
     // https://lelecoder.com/145
+    // https://velog.io/@ljinsk3/Querydsl-4
     @Autowired
     EntityManager em;
 

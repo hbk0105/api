@@ -8,20 +8,28 @@ import com.rest.api.service.UserService;
 import com.rest.api.util.CookieUtils;
 import com.rest.api.util.MailUtil;
 import com.rest.api.util.ResponseMessage;
+import io.jsonwebtoken.ExpiredJwtException;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.access.AccessDeniedHandler;
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.web.bind.annotation.*;
 
 import javax.naming.AuthenticationException;
 import javax.persistence.NoResultException;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.time.LocalDateTime;
@@ -29,6 +37,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
 @RequiredArgsConstructor
 @RestController
@@ -36,6 +45,8 @@ public class UserController {
     // https://webfirewood.tistory.com/115
     // https://velog.io/@ehdrms2034/Spring-Security-JWT-Redis%EB%A5%BC-%ED%86%B5%ED%95%9C-%ED%9A%8C%EC%9B%90%EC%9D%B8%EC%A6%9D%ED%97%88%EA%B0%80-%EA%B5%AC%ED%98%84-4-%ED%9A%8C%EC%9B%90%EA%B0%80%EC%9E%85-%EC%9D%B8%EC%A6%9D-%EC%9D%B4%EB%A9%94%EC%9D%BC-%EC%95%84%EC%9D%B4%EB%94%94-%EB%B9%84%EB%B0%80%EB%B2%88%ED%98%B8-%EC%B0%BE%EA%B8%B0
     private final JwtTokenUtil jwtTokenProvider;
+
+    private Logger logger = LoggerFactory.getLogger(BoardController.class);
 
     @Autowired
     private UserService userService;
@@ -51,6 +62,9 @@ public class UserController {
 
     @Autowired
     private JwtTokenUtil jwtTokenUtil;
+
+    @Autowired
+    RedisTemplate<String, Object> redisTemplate;
 
     // ERROR 테스트
     @GetMapping("/api/error")
@@ -103,9 +117,19 @@ public class UserController {
     }
 
     public boolean accessAuthCheck(User user ,  Long userId , HttpServletRequest req) throws Exception {
-        String requestTokenHeader = req.getHeader("Authorization");
-        String jwtToken = requestTokenHeader.substring(7).trim();
-        String username = jwtTokenUtil.getUsername(jwtToken);
+        //String requestTokenHeader = req.getHeader("Authorization");
+        //String jwtToken = requestTokenHeader.substring(7).trim();
+
+        Cookie ckToken = null;
+        if(CookieUtils.getCookie(req,jwtTokenUtil.ACCESS_TOKEN_NAME).isPresent()){
+            ckToken = CookieUtils.getCookie(req,jwtTokenUtil.ACCESS_TOKEN_NAME).get();
+        }
+        String requestTokenHeader = "";
+        if(ckToken != null){
+            requestTokenHeader = ckToken.getValue();
+        }
+
+        String username = jwtTokenUtil.getUsername(requestTokenHeader);
         if(username != null){
             String r[] = username.split("-");
             Long id = Long.parseLong(r[0]);
@@ -122,7 +146,7 @@ public class UserController {
     }
 
 
-    @PostMapping("/login")
+    @PostMapping("/api/login")
     public ResponseMessage login(@RequestBody Map<String, String> data , HttpServletRequest req , HttpServletResponse res){
         ResponseMessage ms = new ResponseMessage();
         if("".equals(data.get("email")) || "".equals(data.get("password")))
@@ -134,5 +158,71 @@ public class UserController {
         return ms;
     }
 
+    @GetMapping(value="/api/logout")
+    public ResponseMessage logout(HttpServletRequest req , HttpServletResponse res){
+        ResponseMessage ms = new ResponseMessage();
+
+        String username = null;
+        Cookie ckToken = null;
+        Cookie ckToken2 = null;
+        String accessToken = "";
+        String refreshToken = "";
+        try {
+
+            if(CookieUtils.getCookie(req,jwtTokenUtil.ACCESS_TOKEN_NAME).isPresent()){
+                ckToken = CookieUtils.getCookie(req,jwtTokenUtil.ACCESS_TOKEN_NAME).get();
+            }
+
+            if(ckToken != null){
+                accessToken = ckToken.getValue();
+                username = jwtTokenUtil.getUsername(accessToken);
+            }
+
+            if(CookieUtils.getCookie(req,JwtTokenUtil.REFRESH_TOKEN_NAME).isPresent()){
+                ckToken2 = CookieUtils.getCookie(req,jwtTokenUtil.REFRESH_TOKEN_NAME).get();
+            }
+
+            if(ckToken2 != null){
+                refreshToken = ckToken2.getValue();
+            }
+
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+        } catch (ExpiredJwtException e) { //expire됐을 때
+            e.printStackTrace();
+            username = e.getClaims().getSubject();
+            logger.info("username from expired access token: " + username);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        try {
+
+            if (redisTemplate.opsForValue().get(username) != null) {
+                //delete refresh token
+                redisTemplate.delete(username);
+            }
+        } catch (IllegalArgumentException e) {
+            logger.warn("user does not exist");
+        }
+
+        //cache logout token for 10 minutes!
+        logger.info(" logout ing accessToken ::: " + accessToken);
+        logger.info(" logout ing refreshToken :::  : " + refreshToken);
+
+        if(refreshToken != ""){
+            redisTemplate.opsForValue().set(accessToken, true);
+            redisTemplate.expire(accessToken, JwtTokenUtil.JWT_REFRESH_TOKEN_VALIDITY, TimeUnit.MILLISECONDS);
+        }
+
+        CookieUtils.deleteCookie(req,res, JwtTokenUtil.ACCESS_TOKEN_NAME);
+        CookieUtils.deleteCookie(req,res,JwtTokenUtil.REFRESH_TOKEN_NAME);
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth != null && auth.isAuthenticated()) {
+            new SecurityContextLogoutHandler().logout(req, res, auth);
+        }
+        return ms;
+    }
 
 }

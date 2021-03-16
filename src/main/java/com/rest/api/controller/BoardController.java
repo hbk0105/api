@@ -3,7 +3,9 @@ package com.rest.api.controller;
 import com.rest.api.domain.Board;
 import com.rest.api.domain.Comment;
 import com.rest.api.domain.User;
+import com.rest.api.jwt.JwtTokenUtil;
 import com.rest.api.repository.BoardQueryRepository;
+import com.rest.api.util.CookieUtils;
 import com.rest.api.util.PageRequest;
 import com.rest.api.util.ResponseMessage;
 import lombok.RequiredArgsConstructor;
@@ -15,11 +17,15 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.data.web.SortDefault;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.web.bind.annotation.*;
 
 import javax.naming.AuthenticationException;
 import javax.persistence.NoResultException;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.Optional;
 

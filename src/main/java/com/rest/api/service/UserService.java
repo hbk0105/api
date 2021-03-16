@@ -1,6 +1,8 @@
 package com.rest.api.service;
 
+import com.rest.api.config.RedisConfig;
 import com.rest.api.domain.Role;
+import com.rest.api.domain.Token;
 import com.rest.api.domain.User;
 import com.rest.api.jwt.JwtTokenUtil;
 import com.rest.api.repository.RoleRepository;
@@ -8,6 +10,8 @@ import com.rest.api.repository.UserRepository;
 import com.rest.api.util.CookieUtils;
 import com.rest.api.util.ResponseMessage;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -20,6 +24,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 @Service
 public class UserService {
@@ -35,6 +40,12 @@ public class UserService {
 
     @Autowired
     private JwtTokenUtil jwtTokenUtil;
+
+    @Autowired
+    RedisTemplate<String, Object> redisTemplate;
+
+    @Autowired
+    private RedisConfig redisConfig;
 
     public User singUp(User.Request userReqDto){
         User user = userRepository.findByEmail(userReqDto.getEmail());
@@ -90,8 +101,19 @@ public class UserService {
             CookieUtils.deleteCookie(req,res,JwtTokenUtil.REFRESH_TOKEN_NAME);
             CookieUtils.addCookie(res, JwtTokenUtil.ACCESS_TOKEN_NAME, accessToken , (int)JwtTokenUtil.JWT_ACCESS_TOKEN_VALIDITY);
             CookieUtils.addCookie(res,JwtTokenUtil.REFRESH_TOKEN_NAME, refreshToken , (int)JwtTokenUtil.JWT_REFRESH_TOKEN_VALIDITY);
-            res.setHeader("Authorization","Bearer " + accessToken);
 
+            Token retok = new Token();
+            retok.setUsername(username);
+            retok.setRefreshToken(refreshToken);
+
+            ValueOperations<String, Object> vop = redisTemplate.opsForValue();
+            vop.set(username, retok);
+
+            //redisTemplate.expire(refreshToken, JwtTokenUtil.JWT_REFRESH_TOKEN_VALIDITY, TimeUnit.MILLISECONDS);
+            //redisConfig.setDataExpire(refreshToken, username, JwtTokenUtil.JWT_REFRESH_TOKEN_VALIDITY);
+            //System.out.println("#### zzzzzz :: " + redisConfig.getData(refreshToken));
+
+            //res.setHeader("Authorization","Bearer " + accessToken);
             //ms.add("accessToken","Bearer "+accessToken);
             // jwt  토큰 생성..
         }else{

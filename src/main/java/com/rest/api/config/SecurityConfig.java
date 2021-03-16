@@ -1,23 +1,35 @@
 package com.rest.api.config;
 
+import com.google.gson.Gson;
 import com.rest.api.exception.RestAccessDeniedExceptionHandler;
 import com.rest.api.exception.RestAuthenticationExceptionHandler;
 import com.rest.api.filter.JwtRequestFilter;
+import com.rest.api.handler.CustomLogoutSuccessHandler;
+import com.rest.api.util.ResponseMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.logout.SimpleUrlLogoutSuccessHandler;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.PrintWriter;
 
 @Configuration
 @EnableWebSecurity
@@ -43,6 +55,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return new RestAuthenticationExceptionHandler();
     }
 
+    @Autowired
+    public CustomLogoutSuccessHandler customLogoutSuccessHandler(){
+        return new CustomLogoutSuccessHandler();
+    }
+
+
     @Override
     public void configure(WebSecurity web) throws Exception {
         // static 디렉터리의 하위 파일 목록은 인증 무시 ( = 항상통과 )
@@ -63,8 +81,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests() // 요청에 대한 사용권한 체크
                 .antMatchers("/admin/**").hasRole("ADMIN")
                 .antMatchers("/users/**").hasAnyRole("USER","ADMIN")//.hasRole("USER")
-                .antMatchers("/login", "/h2-console/**").permitAll()
+                .antMatchers("/api/**", "/h2-console/**").permitAll()
                 // https://ddakker.tistory.com/295
+                .and().logout()
+                /*.logoutUrl("/api/logout")
+                .logoutSuccessUrl("/api/logout")
+                .logoutSuccessHandler(customLogoutSuccessHandler())*/
+                .invalidateHttpSession(true)
+                .clearAuthentication(true)
                 .and().exceptionHandling().accessDeniedHandler(accessDeniedHandler()).authenticationEntryPoint(authenticationExceptionHandler())
                 .and().addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
 

@@ -49,20 +49,6 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
     @Autowired
     RedisTemplate<String, Object> redisTemplate;
-/*
-   public Authentication getAuthentication(String token) {
-        Map<String, Object> parseInfo = jwtTokenUtil.getUserParseInfo(token);
-
-        List<String> rs =(List)parseInfo.get("role");
-        Collection<GrantedAuthority> tmp= new ArrayList<>();
-        for (String a: rs) {
-            tmp.add(new SimpleGrantedAuthority(a));
-        }
-        UserDetails userDetails = User.builder().username(String.valueOf(parseInfo.get("username"))).authorities(tmp).password("asd").build();
-        UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
-                userDetails, null, userDetails.getAuthorities());
-        return usernamePasswordAuthenticationToken;
-    }*/
 
     @Bean
     public FilterRegistrationBean JwtRequestFilterRegistration (JwtRequestFilter filter) {
@@ -78,12 +64,25 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         // https://do-study.tistory.com/106
         // https://velog.io/@ehdrms2034/Spring-Security-JWT-Redis%EB%A5%BC-%ED%86%B5%ED%95%9C-%ED%9A%8C%EC%9B%90%EC%9D%B8%EC%A6%9D%ED%97%88%EA%B0%80-%EA%B5%AC%ED%98%84
 
+
+        Cookie ckToken = null;
+        logger.info("CookieUtils.getCookie(request,jwtTokenUtil.ACCESS_TOKEN_NAME) :: " + CookieUtils.getCookie(request,jwtTokenUtil.ACCESS_TOKEN_NAME).isPresent());
+        if(CookieUtils.getCookie(request,jwtTokenUtil.ACCESS_TOKEN_NAME).isPresent()){
+            ckToken = CookieUtils.getCookie(request,jwtTokenUtil.ACCESS_TOKEN_NAME).get();
+        }
+        String requestTokenHeader = "";
+        if(ckToken != null){
+            logger.info("getName :: " + ckToken.getName() );
+            logger.info("getValue :: " + ckToken.getValue());
+            requestTokenHeader = "Bearer "+ckToken.getValue();
+        }
+
         String username = null;
         String jwtToken = null;
         String refToken = null;
         Cookie cookie = null;
 
-        String requestTokenHeader = request.getHeader("Authorization");
+        //String requestTokenHeader = request.getHeader("Authorization");
         logger.info("### requestTokenHeader :: " + requestTokenHeader);
         if (requestTokenHeader != null && requestTokenHeader.startsWith("Bearer ")) {
             jwtToken = requestTokenHeader.substring(7).trim();

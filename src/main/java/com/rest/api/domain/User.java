@@ -1,6 +1,7 @@
 package com.rest.api.domain;
 
 import com.fasterxml.jackson.annotation.*;
+import com.mysema.commons.lang.Assert;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -121,8 +122,26 @@ public class User {
         private String email;
         private String firstName;
         private String lastName;
-        private Collection<Role> roles;
+        private Collection<Role.Response> roles;
+
+        // 안전한 객채 생성 패턴
+        @Builder
+        public Response(Long id, String email , String firstName , String lastName , Collection<Role.Response> roles) {
+            Assert.hasText(String.valueOf(id), "id must not be empty");
+            Assert.hasText(email, "email must not be empty");
+            Assert.hasText(firstName, "firstName must not be empty");
+            Assert.hasText(lastName, "lastName must not be empty");
+            Assert.hasText(String.valueOf(roles), "roles must not be empty");
+
+            this.id = id;
+            this.email = email;
+            this.firstName = firstName;
+            this.lastName = lastName;
+            this.roles = roles;
+        }
+
     }
+
 
     @Builder
     public User(String email, String firstName, String lastName ,String password) {
@@ -133,3 +152,4 @@ public class User {
     }
 
 }
+

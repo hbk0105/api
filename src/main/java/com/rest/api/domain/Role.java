@@ -1,6 +1,7 @@
 package com.rest.api.domain;
 
 import com.fasterxml.jackson.annotation.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -68,4 +69,20 @@ public class Role {
         builder.append("Role [name=").append(name).append("]").append("[id=").append(id).append("]");
         return builder.toString();
     }
+
+
+    @Getter
+    @Setter
+    public static class Response {
+        private Long id;
+        private String name;
+
+        @Builder
+        public Response(Long id ,String name){
+            this.id = id;
+            this.name=name;
+        }
+
+    }
+
 }

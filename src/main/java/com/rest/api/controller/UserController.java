@@ -8,7 +8,6 @@ import com.rest.api.service.UserService;
 import com.rest.api.util.CookieUtils;
 import com.rest.api.util.MailUtil;
 import com.rest.api.util.ResponseMessage;
-import io.jsonwebtoken.ExpiredJwtException;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,15 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.access.AccessDeniedHandler;
-import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.web.bind.annotation.*;
 
 import javax.naming.AuthenticationException;
@@ -33,11 +24,8 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.concurrent.TimeUnit;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @RestController
@@ -112,7 +100,19 @@ public class UserController {
         Optional<User> user  = Optional.ofNullable(userService.findById(id).orElseThrow(() -> new NoResultException("사용자가 존재하지 않습니다.")));
         if(!accessAuthCheck(user.get(), id , req)) throw new AuthenticationException("Unauthorized");
         ResponseMessage ms = new ResponseMessage();
-        ms.add("result",user.get());
+
+        Collection<Role.Response> role =  new ArrayList<>();
+        user.get().getRoles().forEach((k) ->{
+            Role.Response r = Role.Response.builder().id(k.getId()).name(k.getName()).build();
+            role.add(r);
+        });
+
+        ms.add("result",User.Response.builder()
+                .id(user.get().getId())
+                .email(user.get().getEmail())
+                .firstName(user.get().getFirstName())
+                .lastName(user.get().getLastName())
+                .roles(role).build());
         return ms;
     }
 
@@ -137,6 +137,13 @@ public class UserController {
                 return true;
             }else{
                 Optional<User> tokenUser  = Optional.ofNullable(userService.findById(id).orElseThrow(() -> new NoResultException("사용자가 존재하지 않습니다.")));
+
+                // https://woowacourse.github.io/javable/post/2020-05-14-foreach-vs-forloop/
+                /*
+                tokenUser.get().getRoles().forEach((k) ->{
+                    if("ROLE_ADMIN".equals(k.getName()))  return true; return@loop;
+                });*/
+
                 for(Role role :  tokenUser.get().getRoles()){
                     if("ROLE_ADMIN".equals(role.getName())) return true;
                 }
@@ -151,10 +158,9 @@ public class UserController {
         ResponseMessage ms = new ResponseMessage();
         if("".equals(data.get("email")) || "".equals(data.get("password")))
             return ms = new ResponseMessage(HttpStatus.BAD_REQUEST, "IllegalArgumentException", req.getRequestURL().toString());
-        User user = userService.login(data , ms, req , res);
+        User user = userService.login(data , req , res);
         if(user == null)
             return ms = new ResponseMessage(HttpStatus.NOT_FOUND, "사용자가 존재하지 않습니다.", req.getRequestURL().toString());
-
         return ms;
     }
 

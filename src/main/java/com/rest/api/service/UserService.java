@@ -80,14 +80,13 @@ public class UserService {
         return userRepository.findByEmail(email);
     }
 
-    public User login(Map<String, String> data , ResponseMessage ms , HttpServletRequest req , HttpServletResponse res){
+    public User login(Map<String, String> data , HttpServletRequest req , HttpServletResponse res){
         User user = userRepository.findByEmail(data.get("email"));
         if(user == null)
             return null;
         String pw = data.get("password");
         String userPw = passwordEncoder.encode(data.get("password"));
         if(passwordEncoder.matches(pw,userPw)){
-            ms.add("result",user);
             List<GrantedAuthority> roles = new ArrayList<>();
             for(Role r :  user.getRoles()){
                 roles.add(new SimpleGrantedAuthority( r.getName()));

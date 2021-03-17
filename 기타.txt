@@ -65,8 +65,8 @@ https://www.baeldung.com/spring-batch-retry-logic
 https://leoheo.github.io/JPA-ManyToMany/
 https://blog.leocat.kr/notes/2020/01/13/querydsl-duplication-problem-on-fetchjoin-with-onetomany
 
-
-
+@JsonIgnoreProperties
+https://cheese10yun.github.io/jackson-annotation-03/
 
 
 

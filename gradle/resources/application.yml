@@ -1,0 +1,8 @@
+
+# https://galid1.tistory.com/664
+# https://baeji77.github.io/spring/dev/Java-application-yaml/
+# https://post.naver.com/viewer/postView.nhn?volumeNo=27845264&memberNo=2490752
+spring:
+  profiles:
+    active: local
+

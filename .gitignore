@@ -1,6 +1,7 @@
 .gradle
 .idea
-application-**.yml
+# xml 커스텀
+#application-**.yml
 #/src/main/resources/
 HELP.md
 build/

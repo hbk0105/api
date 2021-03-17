@@ -102,19 +102,15 @@ public class UserService {
             CookieUtils.addCookie(res, JwtTokenUtil.ACCESS_TOKEN_NAME, accessToken , (int)JwtTokenUtil.JWT_ACCESS_TOKEN_VALIDITY);
             CookieUtils.addCookie(res,JwtTokenUtil.REFRESH_TOKEN_NAME, refreshToken , (int)JwtTokenUtil.JWT_REFRESH_TOKEN_VALIDITY);
 
+            // header - Authorization 사용시 redis를 사용, 현재 프로젝트는 jwt를 쿠키에 저장
+            /*
+            res.setHeader("Authorization","Bearer " + accessToken);
             Token retok = new Token();
             retok.setUsername(username);
-            retok.setRefreshToken(refreshToken);
-
+            retok.setRefreshToken(accessToken);
             ValueOperations<String, Object> vop = redisTemplate.opsForValue();
             vop.set(username, retok);
-
-            //redisTemplate.expire(refreshToken, JwtTokenUtil.JWT_REFRESH_TOKEN_VALIDITY, TimeUnit.MILLISECONDS);
-            //redisConfig.setDataExpire(refreshToken, username, JwtTokenUtil.JWT_REFRESH_TOKEN_VALIDITY);
-            //System.out.println("#### zzzzzz :: " + redisConfig.getData(refreshToken));
-
-            //res.setHeader("Authorization","Bearer " + accessToken);
-            //ms.add("accessToken","Bearer "+accessToken);
+            */
             // jwt  토큰 생성..
         }else{
             throw new IllegalArgumentException("IllegalArgumentException");

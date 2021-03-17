@@ -159,69 +159,11 @@ public class UserController {
     }
 
     @GetMapping(value="/api/logout")
-    public ResponseMessage logout(HttpServletRequest req , HttpServletResponse res){
+    public ResponseMessage logout(HttpServletRequest req , HttpServletResponse res) throws Exception {
         ResponseMessage ms = new ResponseMessage();
-
-        String username = null;
-        Cookie ckToken = null;
-        Cookie ckToken2 = null;
-        String accessToken = "";
-        String refreshToken = "";
-        try {
-
-            if(CookieUtils.getCookie(req,jwtTokenUtil.ACCESS_TOKEN_NAME).isPresent()){
-                ckToken = CookieUtils.getCookie(req,jwtTokenUtil.ACCESS_TOKEN_NAME).get();
-            }
-
-            if(ckToken != null){
-                accessToken = ckToken.getValue();
-                username = jwtTokenUtil.getUsername(accessToken);
-            }
-
-            if(CookieUtils.getCookie(req,JwtTokenUtil.REFRESH_TOKEN_NAME).isPresent()){
-                ckToken2 = CookieUtils.getCookie(req,jwtTokenUtil.REFRESH_TOKEN_NAME).get();
-            }
-
-            if(ckToken2 != null){
-                refreshToken = ckToken2.getValue();
-            }
-
-        } catch (IllegalArgumentException e) {
-            e.printStackTrace();
-        } catch (ExpiredJwtException e) { //expire됐을 때
-            e.printStackTrace();
-            username = e.getClaims().getSubject();
-            logger.info("username from expired access token: " + username);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        try {
-
-            if (redisTemplate.opsForValue().get(username) != null) {
-                //delete refresh token
-                redisTemplate.delete(username);
-            }
-        } catch (IllegalArgumentException e) {
-            logger.warn("user does not exist");
-        }
-
-        //cache logout token for 10 minutes!
-        logger.info(" logout ing accessToken ::: " + accessToken);
-        logger.info(" logout ing refreshToken :::  : " + refreshToken);
-
-        if(refreshToken != ""){
-            redisTemplate.opsForValue().set(accessToken, true);
-            redisTemplate.expire(accessToken, JwtTokenUtil.JWT_REFRESH_TOKEN_VALIDITY, TimeUnit.MILLISECONDS);
-        }
-
+        CookieUtils.logout(jwtTokenUtil,redisTemplate,req,res);
         CookieUtils.deleteCookie(req,res, JwtTokenUtil.ACCESS_TOKEN_NAME);
-        CookieUtils.deleteCookie(req,res,JwtTokenUtil.REFRESH_TOKEN_NAME);
-
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        if (auth != null && auth.isAuthenticated()) {
-            new SecurityContextLogoutHandler().logout(req, res, auth);
-        }
+        CookieUtils.deleteCookie(req,res, JwtTokenUtil.REFRESH_TOKEN_NAME);
         return ms;
     }
 

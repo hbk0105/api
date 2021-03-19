@@ -44,6 +44,16 @@ spring :
         transport:
           protocal: smtp
 
+  servlet:
+    multipart:
+      enabled: true
+      file-size-threshold: 2KB
+      maxFileSize: 200MB
+      maxRequestSize: 215MB
+
+file :
+  uploadDir: C:\\upload
+
 #로그파일 경로
 logging:
   level:

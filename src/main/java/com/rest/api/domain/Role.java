@@ -74,12 +74,11 @@ public class Role {
     @Getter
     @Setter
     public static class Response {
-        private Long id;
+        //private Long id;
         private String name;
 
         @Builder
-        public Response(Long id ,String name){
-            this.id = id;
+        public Response(String name){
             this.name=name;
         }
 

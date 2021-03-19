@@ -103,16 +103,16 @@ public class UserController {
 
         Collection<Role.Response> role =  new ArrayList<>();
         user.get().getRoles().forEach((k) ->{
-            Role.Response r = Role.Response.builder().id(k.getId()).name(k.getName()).build();
+            Role.Response r = Role.Response.builder().name(k.getName()).build();
             role.add(r);
         });
 
-        ms.add("result",User.Response.builder()
-                .id(user.get().getId())
+       ms.add("result",User.Response.builder()
                 .email(user.get().getEmail())
                 .firstName(user.get().getFirstName())
                 .lastName(user.get().getLastName())
                 .roles(role).build());
+
         return ms;
     }
 

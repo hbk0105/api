@@ -6,6 +6,7 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.tika.Tika;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -88,7 +89,8 @@ public class FileUtil {
         }
 
         // 파일의 mediaType를 알아내기 위한 api
-        String mediaType = new Tika().detect(new File(f.getAbsolutePath()));
+        //String mediaType = new Tika().detect(new File(f.getAbsolutePath()));
+        header.setContentType(MediaType.valueOf(new Tika().detect(new File(f.getAbsolutePath()))));
         header.add("Content-Type","text/html; charset=EUC_KR");
         header.add("Cache-Control", "no-cache, no-store, must-revalidate");
         header.add("Pragma", "no-cache");

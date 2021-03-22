@@ -49,7 +49,6 @@ public class FileController {
 
         files.forEach(file -> {
             try {
-                System.out.println(file.getSize());
                 if(!file.isEmpty()) fileService.fileUpload(file);
             } catch (Exception e) {
                 e.printStackTrace();

@@ -42,7 +42,7 @@ public class TestController {
     }
 
     @PostMapping(path = "/add")
-    public ResponseEntity<?> sendMessage(@RequestParam("userMsg") String userMsg) {
+    public ResponseEntity<?> sendMessage(@RequestParam("userMsg") String userMsg) throws InterruptedException {
 
         for (int i = 0; i < 1000; i ++){
 
@@ -57,6 +57,20 @@ public class TestController {
             messageSender.sendMessage(rabbitTemplate, exchange, routingKey, user);
 
         }
+
+        Thread.sleep(3000);
+
+
+        for (int i = 0; i < 1000; i ++){
+
+            // 라우팅키는 나중에 따로 받아서 각 키별로 보낼 수 있다. 여기서는 고정.
+            String routingKey = getApplicationConfig().getTest2AppRoutingKey();
+            String exchange = getApplicationConfig().getTest2AppExchange();
+
+            messageSender.sendMessage(rabbitTemplate, exchange, routingKey, "TEST2 :: " + i);
+
+        }
+
 
         /* Sending to Message Queue */
         try {

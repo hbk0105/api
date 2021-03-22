@@ -9,7 +9,6 @@ import org.springframework.context.annotation.PropertySource;
 @Configuration
 @PropertySource("classpath:application-local.yml")
 /*
- * 이 프로젝트는 app1 -> app2 로 간단한 메세지를 보내보는 예제 세팅
  * 실 사용에서는 Sender 와 Receiver는 나누는게 좋을듯하다.
  */
 public class RabbitConfigReader {

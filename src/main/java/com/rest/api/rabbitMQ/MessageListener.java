@@ -31,7 +31,7 @@ public class MessageListener {
             //TODO: Code to make REST call
             // Note : 추후 프로그램 로직이 들어갈 부분
 
-            log.info("<< 메세지 수신 성공 API call.");
+            log.info("<< 메세지 수신 성공111111111 API call.");
 
         } catch(HttpClientErrorException ex) {
 
@@ -70,7 +70,7 @@ public class MessageListener {
             //TODO: Code to make REST call
             // Note : 추후 프로그램 로직이 들어갈 부분
 
-            log.info("<< 메세지 수신 성공 API call.");
+            log.info("<< 메세지 수신 성공222222222 API call.");
 
         } catch(HttpClientErrorException  ex) {
 

@@ -65,9 +65,9 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
         createUserIfNotFound("adsfdas@naver.com", "adsfdas", "admin", "1234", new ArrayList<>(Arrays.asList(adminRole)));
         createUserIfNotFound("byungki9770@gmail.com", "byungki9770", "user", "1234", new ArrayList<>(Arrays.asList(userRole)));
 
-        for(int i = 0; i < 100; i++){
+       /* for(int i = 0; i < 100; i++){
             boardQueryRepository.save(Board.builder().title("title " + i).content("content- " +i).build());
-        }
+        }*/
 
         alreadySetup = true;
     }

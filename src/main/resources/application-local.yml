@@ -64,6 +64,5 @@ logging:
           descriptor:
             sql: TRACE
             BasicBinder: TRACE
-  #file:
-  #  path: c:/logs
-  #  name: local-log
+  ## log  파일 위치
+  #config: classpath:logback-spring.xml # https://aljjabaegi.tistory.com/413

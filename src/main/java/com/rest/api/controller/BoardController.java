@@ -31,6 +31,16 @@ import java.util.Optional;
 
 import static com.rest.api.domain.QBoard.board;
 
+/**
+ *
+ * Description : 게시판 컨트롤러
+ *
+ * Modification Information
+ * 수정일			 수정자						수정내용
+ * -----------	-----------------------------  -------
+ * 2021. 3.  22.    MICHAEL						최초작성
+ *
+ */
 @RequiredArgsConstructor
 @RestController
 public class BoardController {
@@ -40,6 +50,18 @@ public class BoardController {
     @Autowired
     private BoardQueryRepository boardQueryRepository;
 
+    /**
+     * 게시판 리스트 조회
+     * @param pageRequest
+     * @param ordr
+     * @param ordrNm
+     * @param title
+     * @param content
+     * @param req
+     * @return ResponseMessage
+     * @throws Exception
+     */
+    // TODO: 게시판 리스트 조회
     @GetMapping("/board/all")
     public ResponseMessage listAll(
              @PageableDefault(page = 0, size = 10) PageRequest pageRequest,
@@ -56,6 +78,14 @@ public class BoardController {
         return ms;
     }
 
+    /**
+     * 게시글 조회
+     * @param id
+     * @param req
+     * @return ResponseMessage
+     * @throws Exception
+     */
+    // TODO: 게시글 조회
     @GetMapping("/board/{id}")
     public ResponseMessage getBoard( @PathVariable Long id , HttpServletRequest req) throws Exception{
         ResponseMessage ms = new ResponseMessage();
@@ -63,6 +93,14 @@ public class BoardController {
         return ms;
     }
 
+    /**
+     * 게시글 등록
+     * @param board
+     * @param req
+     * @return ResponseMessage
+     * @throws Exception
+     */
+    // TODO: 게시글 등록
     @PostMapping("/boards")
     public ResponseMessage save(Board board , HttpServletRequest req) throws Exception{
         ResponseMessage ms = new ResponseMessage();
@@ -70,6 +108,15 @@ public class BoardController {
         return ms;
     }
 
+    /**
+     * 게시글 수정
+     * @param id
+     * @param board
+     * @param req
+     * @return ResponseMessage
+     * @throws Exception
+     */
+    // TODO: 게시글 수정
     @PutMapping("/boards/{id}")
     public ResponseMessage update(@PathVariable Long id ,Board board , HttpServletRequest req) throws Exception{
         ResponseMessage ms = new ResponseMessage();
@@ -78,6 +125,15 @@ public class BoardController {
         return ms;
     }
 
+    /**
+     * 게시글 삭제
+     * @param id
+     * @param board
+     * @param req
+     * @return ResponseMessage
+     * @throws Exception
+     */
+    // TODO: 게시글 삭제
     @DeleteMapping("/boards/{id}")
     public ResponseMessage delete(@PathVariable Long id ,Board board , HttpServletRequest req) throws Exception{
         ResponseMessage ms = new ResponseMessage();
@@ -91,6 +147,13 @@ public class BoardController {
         return ms;
     }
 
+    /**
+     * 게시글 댓글 전체 조회
+     * @param id
+     * @return ResponseMessage
+     * @throws Exception
+     */
+    // TODO: 게시글 댓글 전체 조회
     //@CrossOrigin(origins = "*", allowedHeaders = "*")
     @GetMapping("/board/{id}/comment")
     public ResponseMessage  getPostComments(@PathVariable Long id){
@@ -100,6 +163,14 @@ public class BoardController {
         return ms;
     }
 
+    /**
+     * 게시글 댓글 등록
+     * @param id
+     * @param comment
+     * @return ResponseMessage
+     * @throws Exception
+     */
+    // TODO: 게시글 댓글 등록
     //@CrossOrigin(origins = "*", allowedHeaders = "*")
     @PostMapping("/board/{id}/comment")
     public ResponseMessage createComment(@PathVariable Long id, Comment comment){
@@ -110,6 +181,15 @@ public class BoardController {
         return ms;
     }
 
+    /**
+     * 게시글 댓글 수정
+     * @param id
+     * @param commentId
+     * @param comment
+     * @return ResponseMessage
+     * @throws Exception
+     */
+    // TODO: 게시글 댓글 수정
     //@CrossOrigin(origins = "*", allowedHeaders = "*")
     @PutMapping("/board/{id}/comment/{commentId}")
     public ResponseMessage updateComment(@PathVariable Long id, @PathVariable Long commentId, Comment comment){
@@ -122,6 +202,15 @@ public class BoardController {
     }
 
 
+    /**
+     * 게시글 댓글 삭제
+     * @param id
+     * @param commentId
+     * @param comment
+     * @return ResponseMessage
+     * @throws Exception
+     */
+    // TODO: 게시글 댓글 삭제
     //@CrossOrigin(origins = "*", allowedHeaders = "*")
     @DeleteMapping("/board/{id}/comment/{commentId}")
     public ResponseMessage deleteComment(@PathVariable Long id, @PathVariable Long commentId , Comment comment){

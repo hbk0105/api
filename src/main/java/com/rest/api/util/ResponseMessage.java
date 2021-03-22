@@ -13,6 +13,16 @@ import org.apache.commons.pool2.BaseObject;
 import org.springframework.http.HttpStatus;
 import lombok.Getter;
 
+/**
+ *
+ * Description : API 응답 메시지 클래스
+ *
+ * Modification Information
+ * 수정일			 수정자						수정내용
+ * -----------	-----------------------------  -------
+ * 2021. 3.  22.    MICHAEL						최초작성
+ *
+ */
 @Setter
 @Getter
 @Data

@@ -5,6 +5,16 @@ import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Sort;
 
+/**
+ *
+ * Description : 페이징 클래스
+ *
+ * Modification Information
+ * 수정일			 수정자						수정내용
+ * -----------	-----------------------------  -------
+ * 2021. 3.  22.    MICHAEL						최초작성
+ *
+ */
 @Setter
 @Getter
 public class PageRequest {

@@ -68,10 +68,9 @@ https://www.baeldung.com/spring-batch-retry-logic
 https://leoheo.github.io/JPA-ManyToMany/
 https://blog.leocat.kr/notes/2020/01/13/querydsl-duplication-problem-on-fetchjoin-with-onetomany
 
+2. 파일 업로드/다운로드
 
-3. 파일 업로드/다운로드
-
-4. Rabbitmq
+3. Rabbitmq
 
 
 

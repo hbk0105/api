@@ -17,7 +17,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
-
 import javax.naming.AuthenticationException;
 import javax.persistence.NoResultException;
 import javax.servlet.http.Cookie;
@@ -25,8 +24,17 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.stream.Collectors;
 
+/**
+ *
+ * Description : 사용자 컨트롤러
+ *
+ * Modification Information
+ * 수정일			 수정자						수정내용
+ * -----------	-----------------------------  -------
+ * 2021. 3.  22.    MICHAEL						최초작성
+ *
+ */
 @RequiredArgsConstructor
 @RestController
 public class UserController {
@@ -54,13 +62,26 @@ public class UserController {
     @Autowired
     RedisTemplate<String, Object> redisTemplate;
 
-    // ERROR 테스트
+    /**
+     * 에러 테스트
+     * @param req
+     * @return ResponseMessage
+     * @throws Exception
+     */
+    // TODO: 에러 테스트
     @GetMapping("/api/error")
     public ResponseMessage error(HttpServletRequest req) throws Exception {
         throw new Exception("Exception");
         //throw new RuntimeException("RuntimeException");
     }
 
+    /**
+     * 사용자 등록
+     * @param user
+     * @return ResponseMessage
+     * @throws Exception
+     */
+    // TODO: 사용자 등록
     @PostMapping("/users")
     public ResponseMessage signUp(User.Request user) throws RuntimeException{
         ResponseMessage ms = new ResponseMessage();
@@ -75,6 +96,14 @@ public class UserController {
         return ms;
     }
 
+    /**
+     * 이메일 본인 인증
+     * @param email
+     * @param req
+     * @return ResponseMessage
+     * @throws Exception
+     */
+    // TODO: 이메일 본인 인증
     @GetMapping("/completed/{email}")
     public ResponseMessage completed(@PathVariable String email , HttpServletRequest req) {
         ResponseMessage ms = null;
@@ -95,6 +124,14 @@ public class UserController {
         return ms;
     }
 
+    /**
+     * 사용자 조회
+     * @param id
+     * @param req
+     * @return ResponseMessage
+     * @throws Exception
+     */
+    // TODO: 사용자 조회
     @GetMapping("/users/{id}")
     public ResponseMessage users(@PathVariable Long id , HttpServletRequest req) throws Throwable {
         Optional<User> user  = Optional.ofNullable(userService.findById(id).orElseThrow(() -> new NoResultException("사용자가 존재하지 않습니다.")));
@@ -116,6 +153,15 @@ public class UserController {
         return ms;
     }
 
+    /**
+     * 권한 체크
+     * @param user
+     * @param userId
+     * @param req
+     * @return boolean
+     * @throws Exception
+     */
+    // TODO: 권한 체크
     public boolean accessAuthCheck(User user ,  Long userId , HttpServletRequest req) throws Exception {
         //String requestTokenHeader = req.getHeader("Authorization");
         //String jwtToken = requestTokenHeader.substring(7).trim();
@@ -153,6 +199,15 @@ public class UserController {
     }
 
 
+    /**
+     * 로그인
+     * @param data
+     * @param req
+     * @param res
+     * @return ResponseMessage
+     * @throws Exception
+     */
+    // TODO: 로그인
     @PostMapping("/api/login")
     public ResponseMessage login(@RequestBody Map<String, String> data , HttpServletRequest req , HttpServletResponse res){
         ResponseMessage ms = new ResponseMessage();
@@ -164,6 +219,14 @@ public class UserController {
         return ms;
     }
 
+    /**
+     * 로그아웃
+     * @param req
+     * @param res
+     * @return ResponseMessage
+     * @throws Exception
+     */
+    // TODO: 로그아웃
     @GetMapping(value="/api/logout")
     public ResponseMessage logout(HttpServletRequest req , HttpServletResponse res) throws Exception {
         ResponseMessage ms = new ResponseMessage();

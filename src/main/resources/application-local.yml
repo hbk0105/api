@@ -51,6 +51,37 @@ spring :
       maxFileSize: 200MB
       maxRequestSize: 215MB
 
+  rabbitmq:
+    host: localhost # rabbitMQ host (docker로 띄웠음)
+    port: 5672 # default port
+    username: hee # default username
+    password: hee # default password
+  lisner:
+    simple:
+      concurrency: 4
+      max-concurrency: 8
+      retry:
+        initial-interval: 5000
+        max-attempt: 3
+
+app1:
+  exchange:
+    name: testmq1-exchange
+  queue:
+    name: testmq1-queue
+  routing:
+    key: testmq1-routing-key
+
+#Message Queue specific configs for app2
+app2:
+  exchange:
+    name: testmq2-exchange
+  queue:
+    name: testmq2-queue
+  routing:
+    key: testmq2-routing-key
+
+
 file :
   uploadDir: C:\\upload
 

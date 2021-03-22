@@ -71,6 +71,28 @@ https://blog.leocat.kr/notes/2020/01/13/querydsl-duplication-problem-on-fetchjoi
 2. 파일 업로드/다운로드
 
 3. Rabbitmq
+    - 다운로드 링크 : https://www.erlang.org/downloads
+    - 환경설정 : https://t2t2tt.tistory.com/27 , https://heodolf.tistory.com/50
+      * 시스템 환경 변수 : ERLANG_HOME / D:\RabbitMQ\erl-23.2
+        rabbitmq-plugins enable rabbitmq_management
+
+        rabbitmq-service.bat stop
+
+        rabbitmq-service.bat install
+
+        rabbitmq-service.bat start
+
+        유저 생성 -  rabbitmqctl add_user <username> <password> 실행.
+        rabbitmqctl add_user hee hee
+
+        유저 역할 설정.- rabbitmqctl set_user_tags <username> administrator 실행.
+        rabbitmqctl set_user_tags hee administrator
+
+        유저 vhost 권한 설정 - rabbitmqctl set_permissions [-p <vhostpath>] <user> <conf> <write> <read> 실행.
+        rabbitmqctl set_permissions -p / "hee" ".*" ".*" ".*"
+
+    - https://oingdaddy.tistory.com/166
+    - https://github.com/Jayden-Song/springRabbit
 
 
 

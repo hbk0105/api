@@ -17,14 +17,16 @@ public class Role {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    private Long role_id;
 
-    @ManyToMany(mappedBy = "roles")
-    private Collection<User> users;
+    /*@ManyToMany(mappedBy = "roles")
+    private Collection<User> users;*/
+/*
 
     @ManyToMany
-    @JoinTable(name = "roles_privileges", joinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "privilege_id", referencedColumnName = "id"))
+    @JoinTable(name = "roles_privileges", joinColumns = @JoinColumn(name = "role_id"), inverseJoinColumns = @JoinColumn(name = "privilege_id", referencedColumnName = "id"))
     private Collection<Privilege> privileges;
+*/
 
     private String name;
 
@@ -66,7 +68,7 @@ public class Role {
     @Override
     public String toString() {
         final StringBuilder builder = new StringBuilder();
-        builder.append("Role [name=").append(name).append("]").append("[id=").append(id).append("]");
+        builder.append("Role [name=").append(name).append("]").append("[id=").append(role_id).append("]");
         return builder.toString();
     }
 

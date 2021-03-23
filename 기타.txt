@@ -68,6 +68,8 @@ https://www.baeldung.com/spring-batch-retry-logic
 https://leoheo.github.io/JPA-ManyToMany/
 https://blog.leocat.kr/notes/2020/01/13/querydsl-duplication-problem-on-fetchjoin-with-onetomany
 
+# 다 대 다 - 복합키로 분리..
+
 2. 파일 업로드/다운로드
 
 3. Rabbitmq
@@ -75,11 +77,8 @@ https://blog.leocat.kr/notes/2020/01/13/querydsl-duplication-problem-on-fetchjoi
     - 환경설정 : https://t2t2tt.tistory.com/27 , https://heodolf.tistory.com/50
       * 시스템 환경 변수 : ERLANG_HOME / D:\RabbitMQ\erl-23.2
         rabbitmq-plugins enable rabbitmq_management
-
         rabbitmq-service.bat stop
-
         rabbitmq-service.bat install
-
         rabbitmq-service.bat start
 
         유저 생성 -  rabbitmqctl add_user <username> <password> 실행.
@@ -94,5 +93,8 @@ https://blog.leocat.kr/notes/2020/01/13/querydsl-duplication-problem-on-fetchjoi
     - https://oingdaddy.tistory.com/166
     - https://github.com/Jayden-Song/springRabbit
 
+4. 채팅 구현
+  - https://daddyprogrammer.org/post/4077/spring-websocket-chatting/
+  - https://github.com/codej99/websocket-chat-server/tree/feature/redis-pub-sub
 
 

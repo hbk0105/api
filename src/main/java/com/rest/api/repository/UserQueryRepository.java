@@ -2,6 +2,7 @@ package com.rest.api.repository;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.rest.api.domain.User;
+import com.rest.api.domain.UserRoles;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -9,6 +10,7 @@ import javax.persistence.EntityManager;
 import org.springframework.transaction.annotation.Transactional;
 
 import static com.rest.api.domain.QUser.user;
+import static com.rest.api.domain.QUserRoles.userRoles;
 
 @RequiredArgsConstructor
 @Repository
@@ -27,7 +29,7 @@ public class UserQueryRepository {
         em.clear();
         long id = queryFactory.update(user)
                 .set(user.mailCertification, true)
-                .where(user.id.eq(u.getId()))
+                .where(user.user_id.eq(u.getUser_id()))
                 .execute();
         em.flush();
         em.clear();

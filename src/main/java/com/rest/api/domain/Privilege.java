@@ -20,9 +20,11 @@ public class Privilege {
     private Long id;
 
     private String name;
+/*
 
     @ManyToMany(mappedBy = "privileges")
     private Collection<Role> roles;
+*/
 
     public Privilege() {
         super();

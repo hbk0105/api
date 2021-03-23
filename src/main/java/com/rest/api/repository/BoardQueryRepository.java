@@ -10,6 +10,7 @@ import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.rest.api.domain.Board;
 import com.rest.api.domain.Comment;
+import com.rest.api.domain.UserRoles;
 import com.rest.api.util.QueryDslUtil;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;

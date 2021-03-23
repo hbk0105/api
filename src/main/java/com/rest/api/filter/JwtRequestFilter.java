@@ -134,22 +134,29 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
     public void setAuthentication(HttpServletRequest request ,  HttpServletResponse response , Long id , boolean ref){
 
-        Optional<User> user  = Optional.ofNullable(userService.findById(id).orElseThrow(() -> new NoResultException("사용자가 존재하지 않습니다.")));
-        UserDetails userDetails = userService.userDetails(user.get().getEmail());
+        try {
 
-        UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new
-                UsernamePasswordAuthenticationToken(userDetails , null ,userDetails.getAuthorities());
-        usernamePasswordAuthenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+            Optional<User> user  = Optional.ofNullable(userService.findById(id).orElseThrow(() -> new NoResultException("사용자가 존재하지 않습니다.")));
+            UserDetails userDetails = userService.userDetails(user.get().getEmail());
 
-        SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
+            UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new
+                    UsernamePasswordAuthenticationToken(userDetails , null ,userDetails.getAuthorities());
+            usernamePasswordAuthenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
-        if(ref){
-            userDetails = userService.userDetails(user.get().getEmail());
-            String accessToken = jwtTokenUtil.generateAccessToken(userDetails);
-            CookieUtils.deleteCookie(request , response , JwtTokenUtil.ACCESS_TOKEN_NAME);
-            CookieUtils.addCookie(response , JwtTokenUtil.ACCESS_TOKEN_NAME , accessToken , (int)JwtTokenUtil.JWT_ACCESS_TOKEN_VALIDITY);
-            response.setHeader("Authorization","Bearer " + accessToken);
+            SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
+
+            if(ref){
+                userDetails = userService.userDetails(user.get().getEmail());
+                String accessToken = jwtTokenUtil.generateAccessToken(userDetails);
+                CookieUtils.deleteCookie(request , response , JwtTokenUtil.ACCESS_TOKEN_NAME);
+                CookieUtils.addCookie(response , JwtTokenUtil.ACCESS_TOKEN_NAME , accessToken , (int)JwtTokenUtil.JWT_ACCESS_TOKEN_VALIDITY);
+                response.setHeader("Authorization","Bearer " + accessToken);
+            }
+
+        }catch (Exception e){
+            e.printStackTrace();
         }
+
 
     }
 }

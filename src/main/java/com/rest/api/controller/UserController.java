@@ -2,6 +2,7 @@ package com.rest.api.controller;
 
 import com.rest.api.domain.Role;
 import com.rest.api.domain.User;
+import com.rest.api.domain.UserRoles;
 import com.rest.api.jwt.JwtTokenUtil;
 import com.rest.api.repository.UserQueryRepository;
 import com.rest.api.service.UserService;
@@ -134,22 +135,21 @@ public class UserController {
     // TODO: 사용자 조회
     @GetMapping("/users/{id}")
     public ResponseMessage users(@PathVariable Long id , HttpServletRequest req) throws Throwable {
+        ResponseMessage ms = new ResponseMessage();
         Optional<User> user  = Optional.ofNullable(userService.findById(id).orElseThrow(() -> new NoResultException("사용자가 존재하지 않습니다.")));
         if(!accessAuthCheck(user.get(), id , req)) throw new AuthenticationException("Unauthorized");
-        ResponseMessage ms = new ResponseMessage();
 
         Collection<Role.Response> role =  new ArrayList<>();
         user.get().getRoles().forEach((k) ->{
-            Role.Response r = Role.Response.builder().name(k.getName()).build();
+            Role.Response r = Role.Response.builder().name(k.getRole().getName()).build();
             role.add(r);
         });
 
-       ms.add("result",User.Response.builder()
+        ms.add("result",User.Response.builder()
                 .email(user.get().getEmail())
                 .firstName(user.get().getFirstName())
                 .lastName(user.get().getLastName())
                 .roles(role).build());
-
         return ms;
     }
 
@@ -190,14 +190,13 @@ public class UserController {
                     if("ROLE_ADMIN".equals(k.getName()))  return true; return@loop;
                 });*/
 
-                for(Role role :  tokenUser.get().getRoles()){
-                    if("ROLE_ADMIN".equals(role.getName())) return true;
+                for(UserRoles role :  tokenUser.get().getRoles()){
+                    if("ROLE_ADMIN".equals(role.getRole().getName())) return true;
                 }
             }
         }
         return false;
     }
-
 
     /**
      * 로그인

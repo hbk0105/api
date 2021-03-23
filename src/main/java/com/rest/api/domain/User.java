@@ -24,7 +24,7 @@ public class User {
     @Id
     @Column(unique = true, nullable = false)
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    private Long user_id;
 
     private String firstName;
 
@@ -47,9 +47,13 @@ public class User {
     @Column
     private LocalDateTime mailCertificationtDate;
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    /*@ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "users_roles", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
-    private Collection<Role> roles;
+    private Collection<Role> roles;*/
+
+    @OneToMany(fetch = FetchType.EAGER , mappedBy = "user")
+    private Collection<UserRoles> roles;
+
 
     public User() {
         super();

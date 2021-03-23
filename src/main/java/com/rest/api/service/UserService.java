@@ -4,9 +4,11 @@ import com.rest.api.config.RedisConfig;
 import com.rest.api.domain.Role;
 import com.rest.api.domain.Token;
 import com.rest.api.domain.User;
+import com.rest.api.domain.UserRoles;
 import com.rest.api.jwt.JwtTokenUtil;
 import com.rest.api.repository.RoleRepository;
 import com.rest.api.repository.UserRepository;
+import com.rest.api.repository.UserRoleRepository;
 import com.rest.api.util.CookieUtils;
 import com.rest.api.util.ResponseMessage;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +20,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.NoResultException;
 import javax.servlet.http.HttpServletRequest;
@@ -47,6 +50,10 @@ public class UserService {
     @Autowired
     private RedisConfig redisConfig;
 
+    @Autowired
+    private UserRoleRepository userRoleRepository;
+
+    @Transactional
     public User singUp(User.Request userReqDto){
         User user = userRepository.findByEmail(userReqDto.getEmail());
         if(user == null){
@@ -62,8 +69,15 @@ public class UserService {
             user.setMailCertificationtDate(date);
 
             Role role = roleRepository.findByName("ROLE_USER");
-            user.setRoles(new ArrayList<>(Arrays.asList(role)));
+           // user.setRoles(new ArrayList<>(Arrays.asList(role)));
             user = userRepository.save(user);
+
+            UserRoles userRole = new UserRoles();
+            userRole.setUser(user);
+            userRole.setRole(role);
+            userRoleRepository.save(userRole);
+
+
 
         }
         return user;
@@ -88,10 +102,10 @@ public class UserService {
         String userPw = passwordEncoder.encode(data.get("password"));
         if(passwordEncoder.matches(pw,userPw)){
             List<GrantedAuthority> roles = new ArrayList<>();
-            for(Role r :  user.getRoles()){
-                roles.add(new SimpleGrantedAuthority( r.getName()));
+            for(UserRoles r :  user.getRoles()){
+                roles.add(new SimpleGrantedAuthority(r.getRole().getName()));
             }
-            String username = user.getId()+"-"+user.getFirstName();
+            String username =  user.getUser_id()+"-"+user.getFirstName();
             UserDetails userDetails = userDetails(user.getEmail());
             String accessToken = jwtTokenUtil.generateAccessToken(userDetails);
             String refreshToken = jwtTokenUtil.generateRefreshToken(username);
@@ -123,10 +137,10 @@ public class UserService {
         if(user == null)
             throw new NoResultException("사용자가 존재하지 않습니다.");
         List<GrantedAuthority> roles = new ArrayList<>();
-        for(Role r :  user.getRoles()){
-            roles.add(new SimpleGrantedAuthority( r.getName()));
+        for(UserRoles r :  user.getRoles()){
+            roles.add(new SimpleGrantedAuthority(r.getRole().getName()));
         }
-        String username = user.getId()+"-"+user.getFirstName();
+        String username = user.getUser_id()+"-"+user.getFirstName();
         UserDetails userDetails = new org.springframework.security.core.userdetails.User(username, user.getPassword(), roles);
         return userDetails;
     }

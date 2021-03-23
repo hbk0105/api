@@ -13,21 +13,22 @@ import java.util.Date;
 @Setter
 @Entity
 @JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class)
-@IdClass(UserRolesId.class)
+//@IdClass(UserRolesId.class)
 public class UserRoles {
 
+    // https://coding-start.tistory.com/72
 
     @Id
     @Column
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long userRoles_id;
 
-    @Id
+    //@Id
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
 
-    @Id
+    //@Id
     @ManyToOne
     @JoinColumn(name = "role_id")
     private Role role;

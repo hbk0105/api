@@ -19,6 +19,9 @@ public class Role {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long role_id;
 
+    @OneToMany(fetch = FetchType.EAGER , mappedBy = "role")
+    private Collection<UserRoles> users;
+
     /*@ManyToMany(mappedBy = "roles")
     private Collection<User> users;*/
 /*

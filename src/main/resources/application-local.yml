@@ -21,6 +21,25 @@ spring :
     hibernate:
       ddl-auto: update #none
 
+
+##### Mysql 사용시
+  # datasource:
+  #    driver-class-name: com.mysql.cj.jdbc.Driver
+  #    url: jdbc:mysql://localhost:3306/testdb?serverTimezone=UTC&characterEncoding=UTF-8
+  #    username: htofu
+  #    password: htofu
+  #
+  # jpa:
+  #    database: mysql
+  #    database-platform: org.hibernate.dialect.MySQL8Dialect # 8.0.21 version
+  #    hibernate:
+  #      ddl-auto: create # 옵션은 확인 필수
+  #    show-sql: true
+  #    properties:
+  #      hibernate:
+  #        format_sql: true
+  #        ﻿use_sql_comments: true
+
   h2:
     console:
       enabled: true

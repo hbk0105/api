@@ -8,6 +8,7 @@ import javax.persistence.*;
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
+@Table
 public class Comment {
 
     @Id
@@ -15,7 +16,10 @@ public class Comment {
     @Column(name = "comment_id")
     private Long comment_id;
 
+    @Column
     private String title;
+
+    @Column
     private String content;
 
     @ManyToOne

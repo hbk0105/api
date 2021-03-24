@@ -8,6 +8,7 @@ import javax.persistence.*;
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
+@Table
 public class Board {
 
     @Id
@@ -15,7 +16,10 @@ public class Board {
     @Column(name = "board_id")
     private Long id;
 
+    @Column
     private String title;
+
+    @Column
     private String content;
 
     @Builder

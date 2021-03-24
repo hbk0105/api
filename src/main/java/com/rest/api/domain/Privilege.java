@@ -15,12 +15,14 @@ import java.util.Collection;
 @Setter
 @Entity
 @JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class)
+@Table
 public class Privilege {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long privilege_id;
 
+    @Column
     private String name;
 
     // https://m.blog.naver.com/PostView.nhn?blogId=rorean&logNo=221594572152&proxyReferer=https:%2F%2Fwww.google.com%2F

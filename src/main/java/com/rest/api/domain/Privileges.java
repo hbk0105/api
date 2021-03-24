@@ -15,6 +15,7 @@ import java.util.Date;
 @Setter
 @Entity
 @JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class)
+@Table
 public class Privileges {
 
     @Id

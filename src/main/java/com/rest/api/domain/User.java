@@ -18,6 +18,7 @@ import java.util.Collection;
 @Entity
 @ToString
 @JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class)
+@Table
 public class User {
 
     @Id
@@ -25,19 +26,25 @@ public class User {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long user_id;
 
+    @Column
     private String firstName;
 
+    @Column
     private String lastName;
 
+    @Column
     private String email;
 
     @Column(length = 60)
     private String password;
 
+    @Column
     private boolean enabled;
 
+    @Column
     private boolean isUsing2FA;
 
+    @Column
     private String secret;
 
     @ColumnDefault("false") //default false

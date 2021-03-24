@@ -16,7 +16,7 @@ import java.util.Date;
 @Setter
 @Entity
 @JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class)
-//@IdClass(UserRolesId.class)
+@Table
 public class UserRoles {
 
     // https://coding-start.tistory.com/72

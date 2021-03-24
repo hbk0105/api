@@ -15,6 +15,7 @@ import java.util.Collection;
 @Entity
 //https://m.blog.naver.com/PostView.nhn?blogId=rorean&logNo=221593255071&proxyReferer=https:%2F%2Fwww.google.com%2F
 @JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class)
+@Table
 public class Role {
 
     @Id
@@ -36,6 +37,7 @@ public class Role {
     private Collection<Privilege> privileges;
 */
 
+    @Column
     private String name;
 
     public Role() {

@@ -1,14 +1,9 @@
 package com.rest.api.service;
 
 import com.rest.api.config.RedisConfig;
-import com.rest.api.domain.Role;
-import com.rest.api.domain.Token;
-import com.rest.api.domain.User;
-import com.rest.api.domain.UserRoles;
+import com.rest.api.domain.*;
 import com.rest.api.jwt.JwtTokenUtil;
-import com.rest.api.repository.RoleRepository;
-import com.rest.api.repository.UserRepository;
-import com.rest.api.repository.UserRoleRepository;
+import com.rest.api.repository.*;
 import com.rest.api.util.CookieUtils;
 import com.rest.api.util.ResponseMessage;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,6 +48,12 @@ public class UserService {
     @Autowired
     private UserRoleRepository userRoleRepository;
 
+    @Autowired
+    private PrivilegeRepository privilegeRepository;
+
+    @Autowired
+    private PrivilegesRepository privilegesRepository;
+
     @Transactional
     public User singUp(User.Request userReqDto){
         User user = userRepository.findByEmail(userReqDto.getEmail());
@@ -77,10 +78,30 @@ public class UserService {
             userRole.setRole(role);
             userRoleRepository.save(userRole);
 
+            final Privilege readPrivilege = createPrivilegeIfNotFound("READ_PRIVILEGE");
+            final Privilege writePrivilege = createPrivilegeIfNotFound("WRITE_PRIVILEGE");
+            final List<Privilege> userPrivileges = new ArrayList<>(Arrays.asList(readPrivilege, writePrivilege));
+
+            for(int i = 0; i < userPrivileges.size(); i++){
+                Privileges privileges = new Privileges();
+                privileges.setRole(role);
+                privileges.setPrivilege(userPrivileges.get(i));
+                privilegesRepository.save(privileges);
+            }
 
 
         }
         return user;
+    }
+
+    @Transactional
+    Privilege createPrivilegeIfNotFound(final String name) {
+        Privilege privilege = privilegeRepository.findByName(name);
+        if (privilege == null) {
+            privilege = new Privilege(name);
+            privilege = privilegeRepository.save(privilege);
+        }
+        return privilege;
     }
 
     public Optional<User> findById(Long id){

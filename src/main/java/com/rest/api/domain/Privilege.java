@@ -5,6 +5,8 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 
 import javax.persistence.*;
 import java.util.Collection;
@@ -17,14 +19,18 @@ public class Privilege {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    private Long privilege_id;
 
     private String name;
-/*
 
+    // https://m.blog.naver.com/PostView.nhn?blogId=rorean&logNo=221594572152&proxyReferer=https:%2F%2Fwww.google.com%2F
+    @OneToMany(fetch = FetchType.LAZY , mappedBy = "privilege")
+    private Collection<Privileges> privileges;
+
+    /*
     @ManyToMany(mappedBy = "privileges")
     private Collection<Role> roles;
-*/
+    */
 
     public Privilege() {
         super();
@@ -63,7 +69,7 @@ public class Privilege {
     @Override
     public String toString() {
         final StringBuilder builder = new StringBuilder();
-        builder.append("Privilege [name=").append(name).append("]").append("[id=").append(id).append("]");
+        builder.append("Privilege [name=").append(name).append("]").append("[id=").append(privilege_id).append("]");
         return builder.toString();
     }
 }

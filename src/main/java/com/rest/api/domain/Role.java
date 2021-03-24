@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 
 import javax.persistence.*;
 import java.util.Collection;
@@ -19,8 +21,11 @@ public class Role {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long role_id;
 
-    @OneToMany(fetch = FetchType.EAGER , mappedBy = "role")
-    private Collection<UserRoles> users;
+    @OneToMany(fetch = FetchType.LAZY , mappedBy = "role")
+    private Collection<UserRoles> role;
+
+    @OneToMany(fetch = FetchType.LAZY , mappedBy = "role")
+    private Collection<Privileges> privileges;
 
     /*@ManyToMany(mappedBy = "roles")
     private Collection<User> users;*/

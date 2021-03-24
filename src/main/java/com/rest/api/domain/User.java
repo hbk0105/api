@@ -18,7 +18,6 @@ import java.util.Collection;
 @Entity
 @ToString
 @JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class)
-@Table(name = "user_account")
 public class User {
 
     @Id

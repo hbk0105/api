@@ -32,11 +32,10 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
     private PasswordEncoder passwordEncoder;
 
     @Autowired
-    private BoardQueryRepository boardQueryRepository;
-
-    @Autowired
     private UserRoleRepository userRoleRepository;
 
+    @Autowired
+    private PrivilegesRepository privilegesRepository;
 
     // API
 
@@ -50,19 +49,15 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
         // == create initial privileges
         final Privilege readPrivilege = createPrivilegeIfNotFound("READ_PRIVILEGE");
         final Privilege writePrivilege = createPrivilegeIfNotFound("WRITE_PRIVILEGE");
-        final Privilege passwordPrivilege = createPrivilegeIfNotFound("CHANGE_PASSWORD_PRIVILEGE");
+        final Privilege passwordPrivilege = createPrivilegeIfNotFound("CHANGE_PRIVILEGE");
 
         // == create initial roles
         final List<Privilege> adminPrivileges = new ArrayList<>(Arrays.asList(readPrivilege, writePrivilege, passwordPrivilege));
-        //final List<Privilege> userPrivileges = new ArrayList<>(Arrays.asList(readPrivilege, passwordPrivilege));
         final List<Privilege> userPrivileges = new ArrayList<>(Arrays.asList(readPrivilege, writePrivilege));
-        //final UserRoles adminRole = createRoleIfNotFound("ROLE_ADMIN", adminPrivileges);
-        //final UserRoles userRole = createRoleIfNotFound("ROLE_USER", userPrivileges);
-
 
         UserRoles adminRole = new UserRoles();
-        Role r = createRoleIfNotFound("ROLE_ADMIN");
-        adminRole.setRole(r);
+        Role a = createRoleIfNotFound("ROLE_ADMIN");
+        adminRole.setRole(a);
 
         UserRoles userRole = new UserRoles();
         Role u = createRoleIfNotFound("ROLE_USER");
@@ -75,19 +70,26 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
         adminRole.setUser(admin);
         userRole.setUser(user);
 
+        // == create initial  UserRoles
         createUserRolefNotFound(adminRole);
         createUserRolefNotFound(userRole);
 
-       /* for(int i = 0; i < 100; i++){
-            boardQueryRepository.save(Board.builder().title("title " + i).content("content- " +i).build());
-        }*/
+        // == create initial  privileges
+        createPrivilegesIfNotFound(adminPrivileges , a);
+        createPrivilegesIfNotFound(userPrivileges , u);
 
         alreadySetup = true;
     }
 
+
     @Transactional
-    void createUserRolefNotFound(UserRoles u) {
-        userRoleRepository.save(u);
+    void createPrivilegesIfNotFound(List<Privilege> p, Role u ) {
+        for(int i = 0; i < p.size(); i++){
+            Privileges privileges = new Privileges();
+            privileges.setRole(u);
+            privileges.setPrivilege(p.get(i));
+            privilegesRepository.save(privileges);
+        }
     }
 
     @Transactional
@@ -98,6 +100,11 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
             privilege = privilegeRepository.save(privilege);
         }
         return privilege;
+    }
+
+    @Transactional
+    void createUserRolefNotFound(UserRoles u) {
+        userRoleRepository.save(u);
     }
 
     @Transactional

@@ -67,8 +67,7 @@ https://www.baeldung.com/spring-batch-retry-logic
 1. 다 대 다 관계 정규화
 https://leoheo.github.io/JPA-ManyToMany/
 https://blog.leocat.kr/notes/2020/01/13/querydsl-duplication-problem-on-fetchjoin-with-onetomany
-
-# 다 대 다 - 복합키로 분리..
+# 다 대 다 - 복합키로 분리
 
 2. 파일 업로드/다운로드
 
@@ -97,4 +96,6 @@ https://blog.leocat.kr/notes/2020/01/13/querydsl-duplication-problem-on-fetchjoi
   - https://daddyprogrammer.org/post/4077/spring-websocket-chatting/
   - https://github.com/codej99/websocket-chat-server/tree/feature/redis-pub-sub
 
+5. CSRF 방어
+  - https://itstory.tk/entry/CSRF-%EA%B3%B5%EA%B2%A9%EC%9D%B4%EB%9E%80-%EA%B7%B8%EB%A6%AC%EA%B3%A0-CSRF-%EB%B0%A9%EC%96%B4-%EB%B0%A9%EB%B2%95
 

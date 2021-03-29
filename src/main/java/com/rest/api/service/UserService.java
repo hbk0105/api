@@ -5,24 +5,19 @@ import com.rest.api.domain.*;
 import com.rest.api.jwt.JwtTokenUtil;
 import com.rest.api.repository.*;
 import com.rest.api.util.CookieUtils;
-import com.rest.api.util.ResponseMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.ValueOperations;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import javax.persistence.NoResultException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 
 @Service
 public class UserService {
@@ -152,6 +147,8 @@ public class UserService {
 
        return  user;
     }
+
+
 
     public UserDetails userDetails(String email){
         User user = userRepository.findByEmail(email);

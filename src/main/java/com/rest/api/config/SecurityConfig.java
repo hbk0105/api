@@ -61,28 +61,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-
-        //https://stackoverflow.com/questions/22524470/spring-security-3-2-csrf-disable-for-specific-urls
-        // Build the request matcher for CSFR protection
-        RequestMatcher csrfRequestMatcher = new RequestMatcher() {
-
-            // Disable CSFR protection on the following urls:
-            private AntPathRequestMatcher[] requestMatchers = {
-                    new AntPathRequestMatcher("/api/**"),
-                    new AntPathRequestMatcher("/h2-console/**")
-            };
-
-            @Override
-            public boolean matches(HttpServletRequest request) {
-                // If the request match one url the CSFR protection will be disabled
-                for (AntPathRequestMatcher rm : requestMatchers) {
-                    if (rm.matches(request)) { return false; }
-                }
-                return true;
-            } // method matches
-
-        }; // new RequestMatcher
-
         // h2 console - https://www.slipp.net/questions/546
         // cors : https://whydda.tistory.com/entry/HTTP-%EC%A0%91%EA%B7%BC%EC%A0%9C%EC%96%B4-CORS%EB%9E%80
         // csrf : https://changrea.io/spring/spring-security-session-csrf/
@@ -91,7 +69,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.cors().and().csrf()
                 //.disable()
                 // https://cheese10yun.github.io/spring-csrf/
-                .requireCsrfProtectionMatcher(csrfRequestMatcher)
+                // //https://stackoverflow.com/questions/22524470/spring-security-3-2-csrf-disable-for-specific-urls
+                .ignoringAntMatchers("/api/**", "/h2-console/**")
                 // cookieCsrfTokenRepository CSRF-TOKEN는 쿠키로주어 X-CSRF-TOKEN헤더 이름으로 체크!
                 .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
                 //.csrfTokenRepository(csrfTokenRepository())

@@ -101,7 +101,7 @@ public class BoardController {
      * @throws Exception
      */
     // TODO: 게시글 등록
-    @PostMapping("/boards")
+    @PostMapping("/board")
     public ResponseMessage save(Board board , HttpServletRequest req) throws Exception{
         ResponseMessage ms = new ResponseMessage();
         boardQueryRepository.save(board);
@@ -117,7 +117,7 @@ public class BoardController {
      * @throws Exception
      */
     // TODO: 게시글 수정
-    @PutMapping("/boards/{id}")
+    @PutMapping("/board/{id}")
     public ResponseMessage update(@PathVariable Long id ,Board board , HttpServletRequest req) throws Exception{
         ResponseMessage ms = new ResponseMessage();
         board.setId(id);
@@ -134,7 +134,7 @@ public class BoardController {
      * @throws Exception
      */
     // TODO: 게시글 삭제
-    @DeleteMapping("/boards/{id}")
+    @DeleteMapping("/board/{id}")
     public ResponseMessage delete(@PathVariable Long id ,Board board , HttpServletRequest req) throws Exception{
         ResponseMessage ms = new ResponseMessage();
         board.setId(id);

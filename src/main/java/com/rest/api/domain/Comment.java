@@ -26,6 +26,10 @@ public class Comment {
     @JoinColumn(name = "board_id")
     private Board board;
 
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+
     @Builder
     public Comment(Board board ,Long comment_id , String title, String content) {
         this.board = board;

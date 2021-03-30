@@ -5,6 +5,7 @@ import com.rest.api.domain.Comment;
 import com.rest.api.domain.User;
 import com.rest.api.jwt.JwtTokenUtil;
 import com.rest.api.repository.BoardQueryRepository;
+import com.rest.api.service.UserService;
 import com.rest.api.util.CookieUtils;
 import com.rest.api.util.PageRequest;
 import com.rest.api.util.ResponseMessage;
@@ -17,6 +18,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.data.web.SortDefault;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
@@ -48,7 +50,13 @@ public class BoardController {
     private Logger logger = LoggerFactory.getLogger(BoardController.class);
 
     @Autowired
+    private JwtTokenUtil jwtTokenUtil;
+
+    @Autowired
     private BoardQueryRepository boardQueryRepository;
+
+    @Autowired
+    private UserService userService;
 
     /**
      * 게시판 리스트 조회
@@ -104,6 +112,9 @@ public class BoardController {
     @PostMapping("/board")
     public ResponseMessage save(Board board , HttpServletRequest req) throws Exception{
         ResponseMessage ms = new ResponseMessage();
+        User user = getUser(req);
+        if(user == null) return ms = new ResponseMessage(HttpStatus.NOT_FOUND, "사용자가 존재하지 않습니다.", req.getRequestURL().toString());
+        board.setUser(user);
         boardQueryRepository.save(board);
         return ms;
     }
@@ -120,6 +131,9 @@ public class BoardController {
     @PutMapping("/board/{id}")
     public ResponseMessage update(@PathVariable Long id ,Board board , HttpServletRequest req) throws Exception{
         ResponseMessage ms = new ResponseMessage();
+        User user = getUser(req);
+        if(user == null) return ms = new ResponseMessage(HttpStatus.NOT_FOUND, "사용자가 존재하지 않습니다.", req.getRequestURL().toString());
+        board.setUser(user);
         board.setId(id);
         boardQueryRepository.update(board);
         return ms;
@@ -138,6 +152,9 @@ public class BoardController {
     public ResponseMessage delete(@PathVariable Long id ,Board board , HttpServletRequest req) throws Exception{
         ResponseMessage ms = new ResponseMessage();
         board.setId(id);
+        User user = getUser(req);
+        if(user == null) return ms = new ResponseMessage(HttpStatus.NOT_FOUND, "사용자가 존재하지 않습니다.", req.getRequestURL().toString());
+        board.setUser(user);
 
         if(boardQueryRepository.commentCount(board) == 0){
             boardQueryRepository.delete(board);
@@ -173,9 +190,13 @@ public class BoardController {
     // TODO: 게시글 댓글 등록
     //@CrossOrigin(origins = "*", allowedHeaders = "*")
     @PostMapping("/board/{id}/comment")
-    public ResponseMessage createComment(@PathVariable Long id, Comment comment){
+    public ResponseMessage createComment(@PathVariable Long id, Comment comment , HttpServletRequest req){
         ResponseMessage ms = new ResponseMessage();
         Board board = boardQueryRepository.findById(id);
+        User user = getUser(req);
+        if(user == null) return ms = new ResponseMessage(HttpStatus.NOT_FOUND, "사용자가 존재하지 않습니다.", req.getRequestURL().toString());
+        board.setUser(user);
+        comment.setUser(user);
         comment.setBoard(board);
         boardQueryRepository.commentSave(comment);
         return ms;
@@ -192,9 +213,13 @@ public class BoardController {
     // TODO: 게시글 댓글 수정
     //@CrossOrigin(origins = "*", allowedHeaders = "*")
     @PutMapping("/board/{id}/comment/{commentId}")
-    public ResponseMessage updateComment(@PathVariable Long id, @PathVariable Long commentId, Comment comment){
+    public ResponseMessage updateComment(@PathVariable Long id, @PathVariable Long commentId, Comment comment , HttpServletRequest req){
         ResponseMessage ms = new ResponseMessage();
         Board board = boardQueryRepository.findById(id);
+        User user = getUser(req);
+        if(user == null) return ms = new ResponseMessage(HttpStatus.NOT_FOUND, "사용자가 존재하지 않습니다.", req.getRequestURL().toString());
+        board.setUser(user);
+        comment.setUser(user);
         comment.setComment_id(commentId);
         comment.setBoard(board);
         boardQueryRepository.commentUpdate(comment);
@@ -211,13 +236,39 @@ public class BoardController {
      * @throws Exception
      */
     // TODO: 게시글 댓글 삭제
-    //@CrossOrigin(origins = "*", allowedHeaders = "*")
+    // @CrossOrigin(origins = "*", allowedHeaders = "*")
     @DeleteMapping("/board/{id}/comment/{commentId}")
-    public ResponseMessage deleteComment(@PathVariable Long id, @PathVariable Long commentId , Comment comment){
+    public ResponseMessage deleteComment(@PathVariable Long id, @PathVariable Long commentId , Comment comment , HttpServletRequest req){
         ResponseMessage ms = new ResponseMessage();
+        Board board = boardQueryRepository.findById(id);
+        User user = getUser(req);
+        if(user == null) return ms = new ResponseMessage(HttpStatus.NOT_FOUND, "사용자가 존재하지 않습니다.", req.getRequestURL().toString());
+        board.setUser(user);
+        comment.setUser(user);
         comment.setComment_id(commentId);
         boardQueryRepository.commentDelete(comment);
         return ms;
+    }
+
+    private User getUser(HttpServletRequest req){
+        User user = null;
+        try {
+            String token = CookieUtils.accessToken(req,jwtTokenUtil);
+            if(StringUtils.isEmpty(token)){
+                token = CookieUtils.refreshToken(req,jwtTokenUtil);
+            }
+            String username = jwtTokenUtil.getUsername(token);
+            if(!StringUtils.isEmpty(username)) {
+                String r[] = username.split("-");
+                Long id = Long.parseLong(r[0]);
+                Optional<User> users  = Optional.ofNullable(userService.findById(id).orElseThrow(() -> new NoResultException("사용자가 존재하지 않습니다.")));
+                user = users.get();
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        } finally {
+            return user;
+        }
     }
 
 }

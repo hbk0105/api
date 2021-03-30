@@ -12,6 +12,7 @@ import org.jboss.aerogear.security.otp.api.Base32;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.List;
 
 @Getter
 @Setter
@@ -57,9 +58,14 @@ public class User {
     @JoinTable(name = "users_roles", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
     private Collection<Role> roles;*/
 
-    @OneToMany(fetch = FetchType.EAGER , mappedBy = "user")
+    @OneToMany(fetch = FetchType.LAZY , mappedBy = "user")
     private Collection<UserRoles> roles;
 
+    @OneToMany(fetch = FetchType.LAZY , mappedBy = "user")
+    private List<Board> board;
+
+    @OneToMany(fetch = FetchType.LAZY , mappedBy = "user")
+    private List<Comment> comment;
 
     public User() {
         super();

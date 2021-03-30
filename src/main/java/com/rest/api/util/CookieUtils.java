@@ -3,6 +3,7 @@ package com.rest.api.util;
 import com.rest.api.controller.BoardController;
 import com.rest.api.jwt.JwtTokenUtil;
 import io.jsonwebtoken.ExpiredJwtException;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -93,7 +94,7 @@ public class CookieUtils {
 
             if(cookie != null){
                 accessToken = cookie.getValue();
-                if(jwtTokenUtil.getUsername(accessToken) != null){
+                if(!StringUtils.isEmpty(accessToken)){
                     username = jwtTokenUtil.getUsername(accessToken);
                 }
             }
@@ -110,9 +111,9 @@ public class CookieUtils {
             if(CookieUtils.getCookie(req,jwtTokenUtil.REFRESH_TOKEN_NAME).isPresent()){
                 cookie = CookieUtils.getCookie(req,jwtTokenUtil.REFRESH_TOKEN_NAME).get();
             }
-            if(cookie != null){
+            if( cookie != null){
                 accessToken = cookie.getValue();
-                if(jwtTokenUtil.getUsername(accessToken) != null){
+                if(!StringUtils.isEmpty(accessToken)){
                     username = jwtTokenUtil.getUsername(accessToken);
                 }
             }
@@ -146,5 +147,32 @@ public class CookieUtils {
         }
 
     }
+
+
+    public static String accessToken(HttpServletRequest request, JwtTokenUtil jwtTokenUtil){
+        Cookie cookie = null;
+        if(CookieUtils.getCookie(request,jwtTokenUtil.ACCESS_TOKEN_NAME).isPresent()){
+            cookie = CookieUtils.getCookie(request,jwtTokenUtil.ACCESS_TOKEN_NAME).get();
+        }
+        String accessToken = null;
+        if(cookie != null){
+            accessToken = cookie.getValue();
+        }
+        return accessToken;
+    }
+
+    public static String refreshToken(HttpServletRequest request, JwtTokenUtil jwtTokenUtil){
+
+        Cookie cookie = null;
+        if(CookieUtils.getCookie(request,jwtTokenUtil.REFRESH_TOKEN_NAME).isPresent()){
+            cookie = CookieUtils.getCookie(request,jwtTokenUtil.REFRESH_TOKEN_NAME).get();
+        }
+        String refreshToken = null;
+        if(cookie != null){
+            refreshToken = cookie.getValue();
+        }
+        return refreshToken;
+    }
+
 
 }

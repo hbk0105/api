@@ -67,14 +67,16 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         // https://gigas-blog.tistory.com/124
         // https://stackoverflow.com/questions/32896966/how-do-i-set-x-frame-options-response-header-to-allow-from-values-using-spring
         http.cors().and().csrf()
-                //.disable()
+                .disable()
+                /* 원활한 테스트를 위해 임시 csrf().disable() 처리
                 // https://cheese10yun.github.io/spring-csrf/
                 // //https://stackoverflow.com/questions/22524470/spring-security-3-2-csrf-disable-for-specific-urls
                 .ignoringAntMatchers("/api/**", "/h2-console/**")
                 // cookieCsrfTokenRepository CSRF-TOKEN는 쿠키로주어 X-CSRF-TOKEN헤더 이름으로 체크!
-                .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+                .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()).and()
+                 */
                 //.csrfTokenRepository(csrfTokenRepository())
-                .and().headers().frameOptions().sameOrigin().and()
+                .headers().frameOptions().sameOrigin().and()
                 .cors().configurationSource(corsConfigurationSource()).and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS) // 토큰 기반 인증이므로 세션 역시 사용하지 않습니다.
                 .and()

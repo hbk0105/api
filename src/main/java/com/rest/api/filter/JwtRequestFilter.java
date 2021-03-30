@@ -9,6 +9,7 @@ import com.rest.api.service.UserService;
 import com.rest.api.util.CookieUtils;
 import io.jsonwebtoken.ExpiredJwtException;
 import lombok.SneakyThrows;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
@@ -64,32 +65,20 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         // https://do-study.tistory.com/106
         // https://velog.io/@ehdrms2034/Spring-Security-JWT-Redis%EB%A5%BC-%ED%86%B5%ED%95%9C-%ED%9A%8C%EC%9B%90%EC%9D%B8%EC%A6%9D%ED%97%88%EA%B0%80-%EA%B5%AC%ED%98%84
 
-
-        Cookie ckToken = null;
-        logger.info("CookieUtils.getCookie(request,jwtTokenUtil.ACCESS_TOKEN_NAME) :: " + CookieUtils.getCookie(request,jwtTokenUtil.ACCESS_TOKEN_NAME).isPresent());
-        if(CookieUtils.getCookie(request,jwtTokenUtil.ACCESS_TOKEN_NAME).isPresent()){
-            ckToken = CookieUtils.getCookie(request,jwtTokenUtil.ACCESS_TOKEN_NAME).get();
-        }
-        String requestTokenHeader = "";
-        if(ckToken != null){
-            logger.info("getName :: " + ckToken.getName() );
-            logger.info("getValue :: " + ckToken.getValue());
-            requestTokenHeader = "Bearer "+ckToken.getValue();
-        }
+        String accessToken = CookieUtils.accessToken(request,jwtTokenUtil);
+        accessToken = "Bearer" +accessToken;
 
         String username = null;
-        String jwtToken = null;
-        String refToken = null;
-        Cookie cookie = null;
+        String refreshToken = null;
 
         //String requestTokenHeader = request.getHeader("Authorization");
-        logger.info("### requestTokenHeader :: " + requestTokenHeader);
-        if (requestTokenHeader != null && requestTokenHeader.startsWith("Bearer ")) {
-            jwtToken = requestTokenHeader.substring(7).trim();
+        logger.info("### accessToken :: " + accessToken);
+        if (!StringUtils.isEmpty(accessToken)  && accessToken.startsWith("Bearer ")) {
+            accessToken = accessToken.substring(7).trim();
             try {
 
-                username = jwtTokenUtil.getUsername(jwtToken);
-                if(username != null){
+                username = jwtTokenUtil.getUsername(accessToken);
+                if(!StringUtils.isEmpty(username)){
                     String r[] = username.split("-");
                     Long id = Long.parseLong(r[0]);
                     setAuthentication(request , response , id,false);
@@ -101,22 +90,17 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             } catch (ExpiredJwtException e) {
                 e.printStackTrace();
                 logger.error("Expired  JWT Token");
-                cookie = null;
-                if(CookieUtils.getCookie(request,JwtTokenUtil.REFRESH_TOKEN_NAME).isPresent()){
-                    cookie = CookieUtils.getCookie(request,jwtTokenUtil.REFRESH_TOKEN_NAME).get();
-                }
-                if(cookie != null){
-                    refToken = cookie.getValue();
-                }
+                refreshToken = CookieUtils.refreshToken(request,jwtTokenUtil);
             }
         } else {
             logger.error("JWT Token does not begin with Bearer String");
+            refreshToken = CookieUtils.refreshToken(request,jwtTokenUtil);
         }
 
-        if(refToken != null){
+        if(!StringUtils.isEmpty(refreshToken)){
             try {
-                username = jwtTokenUtil.getUsername(refToken);
-                if(username != null){
+                username = jwtTokenUtil.getUsername(refreshToken);
+                if(!StringUtils.isEmpty(username)){
                     String r[] = username.split("-");
                     Long id = Long.parseLong(r[0]);
                     setAuthentication(request , response , id,true);
@@ -146,11 +130,10 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
 
             if(ref){
-                userDetails = userService.userDetails(user.get().getEmail());
                 String accessToken = jwtTokenUtil.generateAccessToken(userDetails);
                 CookieUtils.deleteCookie(request , response , JwtTokenUtil.ACCESS_TOKEN_NAME);
                 CookieUtils.addCookie(response , JwtTokenUtil.ACCESS_TOKEN_NAME , accessToken , (int)JwtTokenUtil.JWT_ACCESS_TOKEN_VALIDITY);
-                response.setHeader("Authorization","Bearer " + accessToken);
+                //response.setHeader("Authorization","Bearer " + accessToken);
             }
 
         }catch (Exception e){

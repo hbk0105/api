@@ -10,6 +10,7 @@ import com.rest.api.util.CookieUtils;
 import com.rest.api.util.MailUtil;
 import com.rest.api.util.ResponseMessage;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -150,6 +151,7 @@ public class UserController {
                 .firstName(user.get().getFirstName())
                 .lastName(user.get().getLastName())
                 .roles(role).build());
+
         return ms;
     }
 
@@ -166,17 +168,12 @@ public class UserController {
         //String requestTokenHeader = req.getHeader("Authorization");
         //String jwtToken = requestTokenHeader.substring(7).trim();
 
-        Cookie ckToken = null;
-        if(CookieUtils.getCookie(req,jwtTokenUtil.ACCESS_TOKEN_NAME).isPresent()){
-            ckToken = CookieUtils.getCookie(req,jwtTokenUtil.ACCESS_TOKEN_NAME).get();
+        String token = CookieUtils.accessToken(req,jwtTokenUtil);
+        if(StringUtils.isEmpty(token)){
+            token = CookieUtils.refreshToken(req,jwtTokenUtil);
         }
-        String requestTokenHeader = "";
-        if(ckToken != null){
-            requestTokenHeader = ckToken.getValue();
-        }
-
-        String username = jwtTokenUtil.getUsername(requestTokenHeader);
-        if(username != null){
+        String username = jwtTokenUtil.getUsername(token);
+        if(!StringUtils.isEmpty(username)){
             String r[] = username.split("-");
             Long id = Long.parseLong(r[0]);
             if(id == userId){
@@ -185,10 +182,10 @@ public class UserController {
                 Optional<User> tokenUser  = Optional.ofNullable(userService.findById(id).orElseThrow(() -> new NoResultException("사용자가 존재하지 않습니다.")));
 
                 // https://woowacourse.github.io/javable/post/2020-05-14-foreach-vs-forloop/
-                /*
-                tokenUser.get().getRoles().forEach((k) ->{
-                    if("ROLE_ADMIN".equals(k.getName()))  return true; return@loop;
-                });*/
+            /*
+            tokenUser.get().getRoles().forEach((k) ->{
+                if("ROLE_ADMIN".equals(k.getName()))  return true; return@loop;
+            });*/
 
                 for(UserRoles role :  tokenUser.get().getRoles()){
                     if("ROLE_ADMIN".equals(role.getRole().getName())) return true;

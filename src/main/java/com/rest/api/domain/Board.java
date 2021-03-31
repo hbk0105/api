@@ -1,13 +1,16 @@
 package com.rest.api.domain;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.*;
 
 import javax.persistence.*;
 import java.util.List;
 
+@JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class)
+@NoArgsConstructor
 @Getter
 @Setter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Table
 public class Board {
@@ -27,7 +30,7 @@ public class Board {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToMany(fetch = FetchType.EAGER , mappedBy = "board")
+    @OneToMany(fetch = FetchType.LAZY , mappedBy = "board")
     private List<Comment> comment;
 
     @Builder
@@ -36,5 +39,4 @@ public class Board {
         this.title = title;
         this.content = content;
     }
-
 }

@@ -150,6 +150,7 @@ public class UserService {
 
 
 
+    @Transactional // @Transactional 설정 이유 : https://www.inflearn.com/questions/33949
     public UserDetails userDetails(String email){
         User user = userRepository.findByEmail(email);
         if(user == null)

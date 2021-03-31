@@ -3,14 +3,12 @@ package com.rest.api.repository;
 
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.QueryResults;
-import com.querydsl.core.types.Expression;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.rest.api.domain.Board;
 import com.rest.api.domain.Comment;
-import com.rest.api.domain.UserRoles;
 import com.rest.api.util.QueryDslUtil;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
@@ -25,7 +23,6 @@ import org.springframework.util.CollectionUtils;
 
 import javax.persistence.EntityManager;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import static com.rest.api.domain.QBoard.board;
 import static com.rest.api.domain.QComment.comment;
@@ -54,11 +51,19 @@ public class BoardQueryRepository {
                 .limit(1).fetchOne();
     }
 
-    public List<Comment> findCommentsByComment(Board board){
+    public QueryResults<Comment> findCommentsByComment(Board board){
+            QueryResults<Comment> result = queryFactory.select(comment)
+                    .from(comment)
+                    .where(comment.board.eq(board))
+                    .orderBy(comment.comment_id.desc()) // 정렬도 가능하다
+                    .fetchResults();
+          return result;
+
+       /*
         return queryFactory.select(comment).from(comment)
                 .where(comment.board.eq(board))
                 .orderBy(comment.comment_id.desc())
-                .fetch();
+                .fetch();*/
     }
 
 

@@ -1,4 +1,4 @@
-
+{"email":"test@naver.com","password":"1234"}
 # PORT KILL
 netstat -ano | find "9090"
 taskkill /f /pid 11992

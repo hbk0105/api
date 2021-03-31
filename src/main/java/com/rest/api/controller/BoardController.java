@@ -70,7 +70,7 @@ public class BoardController {
      * @throws Exception
      */
     // TODO: 게시판 리스트 조회
-    @GetMapping("/board/all")
+    @GetMapping("/boards")
     public ResponseMessage listAll(
              @PageableDefault(page = 0, size = 10) PageRequest pageRequest,
              @RequestParam(value="ordr" , defaultValue = "DESC") String ordr,
@@ -94,7 +94,7 @@ public class BoardController {
      * @throws Exception
      */
     // TODO: 게시글 조회
-    @GetMapping("/board/{id}")
+    @GetMapping("/boards/{id}")
     public ResponseMessage getBoard( @PathVariable Long id , HttpServletRequest req) throws Exception{
         ResponseMessage ms = new ResponseMessage();
         ms.add("result",boardQueryRepository.selectOne(id));
@@ -109,7 +109,7 @@ public class BoardController {
      * @throws Exception
      */
     // TODO: 게시글 등록
-    @PostMapping("/board")
+    @PostMapping("/boards")
     public ResponseMessage save(Board board , HttpServletRequest req) throws Exception{
         ResponseMessage ms = new ResponseMessage();
         User user = getUser(req);
@@ -128,7 +128,7 @@ public class BoardController {
      * @throws Exception
      */
     // TODO: 게시글 수정
-    @PutMapping("/board/{id}")
+    @PutMapping("/boards/{id}")
     public ResponseMessage update(@PathVariable Long id ,Board board , HttpServletRequest req) throws Exception{
         ResponseMessage ms = new ResponseMessage();
         User user = getUser(req);
@@ -148,7 +148,7 @@ public class BoardController {
      * @throws Exception
      */
     // TODO: 게시글 삭제
-    @DeleteMapping("/board/{id}")
+    @DeleteMapping("/boards/{id}")
     public ResponseMessage delete(@PathVariable Long id ,Board board , HttpServletRequest req) throws Exception{
         ResponseMessage ms = new ResponseMessage();
         board.setId(id);
@@ -172,7 +172,7 @@ public class BoardController {
      */
     // TODO: 게시글 댓글 전체 조회
     //@CrossOrigin(origins = "*", allowedHeaders = "*")
-    @GetMapping("/board/{id}/comment")
+    @GetMapping("/boards/{id}/comments")
     public ResponseMessage  getPostComments(@PathVariable Long id){
         ResponseMessage ms = new ResponseMessage();
         Board board = boardQueryRepository.findById(id);
@@ -189,7 +189,7 @@ public class BoardController {
      */
     // TODO: 게시글 댓글 등록
     //@CrossOrigin(origins = "*", allowedHeaders = "*")
-    @PostMapping("/board/{id}/comment")
+    @PostMapping("/boards/{id}/comments")
     public ResponseMessage createComment(@PathVariable Long id, Comment comment , HttpServletRequest req){
         ResponseMessage ms = new ResponseMessage();
         Board board = boardQueryRepository.findById(id);
@@ -212,7 +212,7 @@ public class BoardController {
      */
     // TODO: 게시글 댓글 수정
     //@CrossOrigin(origins = "*", allowedHeaders = "*")
-    @PutMapping("/board/{id}/comment/{commentId}")
+    @PutMapping("/boards/{id}/comments/{commentId}")
     public ResponseMessage updateComment(@PathVariable Long id, @PathVariable Long commentId, Comment comment , HttpServletRequest req){
         ResponseMessage ms = new ResponseMessage();
         Board board = boardQueryRepository.findById(id);
@@ -237,7 +237,7 @@ public class BoardController {
      */
     // TODO: 게시글 댓글 삭제
     // @CrossOrigin(origins = "*", allowedHeaders = "*")
-    @DeleteMapping("/board/{id}/comment/{commentId}")
+    @DeleteMapping("/boards/{id}/comments/{commentId}")
     public ResponseMessage deleteComment(@PathVariable Long id, @PathVariable Long commentId , Comment comment , HttpServletRequest req){
         ResponseMessage ms = new ResponseMessage();
         Board board = boardQueryRepository.findById(id);

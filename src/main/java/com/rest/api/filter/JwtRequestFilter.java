@@ -65,6 +65,9 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         // https://do-study.tistory.com/106
         // https://velog.io/@ehdrms2034/Spring-Security-JWT-Redis%EB%A5%BC-%ED%86%B5%ED%95%9C-%ED%9A%8C%EC%9B%90%EC%9D%B8%EC%A6%9D%ED%97%88%EA%B0%80-%EA%B5%AC%ED%98%84
 
+
+        try {
+
         String accessToken = CookieUtils.accessToken(request,jwtTokenUtil);
         accessToken = "Bearer" +accessToken;
 
@@ -112,8 +115,13 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             }
         }
 
-        XssAndSqlHttpServletRequestWrapper xssRequestWrapper = new XssAndSqlHttpServletRequestWrapper(request);
-        chain.doFilter(xssRequestWrapper, response);
+            XssAndSqlHttpServletRequestWrapper xssRequestWrapper = new XssAndSqlHttpServletRequestWrapper(request);
+            chain.doFilter(xssRequestWrapper, response);
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
     }
 
     public void setAuthentication(HttpServletRequest request ,  HttpServletResponse response , Long id , boolean ref){

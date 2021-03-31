@@ -43,7 +43,7 @@ public class FileController {
      * @throws Exception
      */
     // TODO: 파일 등록
-    @PostMapping("/file")
+    @PostMapping("/files")
     public ResponseMessage fileUpload(@RequestParam("file") List<MultipartFile> files) throws Exception {
         ResponseMessage ms = new ResponseMessage();
 
@@ -68,7 +68,7 @@ public class FileController {
      * @throws Exception
      */
     // TODO: 파일 조회
-    @GetMapping("/file/{fileId}")
+    @GetMapping("/files/{fileId}")
     @Consumes(MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<byte[]> downloadDocument(
             @PathVariable Long fileId, HttpServletRequest req) throws Exception {
@@ -84,7 +84,7 @@ public class FileController {
      * @throws Exception
      */
     // TODO: 이미지 조회
-    @GetMapping("/image/{fileId}")
+    @GetMapping("/images/{fileId}")
     public  ResponseEntity<byte[]> getImage(@PathVariable Long fileId, HttpServletRequest req) throws Exception {
         Optional<Files> f = fileService.getFile(fileId);
         return  FileUtil.getImage(new File(f.get().getFilePath()));

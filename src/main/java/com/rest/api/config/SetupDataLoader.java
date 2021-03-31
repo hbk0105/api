@@ -3,9 +3,12 @@ package com.rest.api.config;
 
 import com.rest.api.domain.*;
 import com.rest.api.repository.*;
+import com.rest.api.service.UserService;
+import com.rest.api.util.PageRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.data.domain.Page;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,6 +40,13 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
     @Autowired
     private PrivilegesRepository privilegesRepository;
 
+
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    private BoardQueryRepository boardQueryRepository;
+
     // API
 
     @Override
@@ -64,8 +74,8 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
         userRole.setRole(u);
 
         // == create initial user
-        User admin = createUserIfNotFound("adsfdas@naver.com", "adsfdas", "admin", "1234", new ArrayList<UserRoles>(Arrays.asList(adminRole)));
-        User user = createUserIfNotFound("byungki9770@gmail.com", "byungki9770", "user", "1234", new ArrayList<>(Arrays.asList(userRole)));
+        User admin = createUserIfNotFound("test@naver.com", "test", "admin", "1234", new ArrayList<UserRoles>(Arrays.asList(adminRole)));
+        User user = createUserIfNotFound("test0@gmail.com", "test", "user", "1234", new ArrayList<>(Arrays.asList(userRole)));
 
         adminRole.setUser(admin);
         userRole.setUser(user);
@@ -77,6 +87,26 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
         // == create initial  privileges
         createPrivilegesIfNotFound(adminPrivileges , a);
         createPrivilegesIfNotFound(userPrivileges , u);
+
+        User test = userService.findByEmail("test@naver.com");
+
+        for(int i = 0; i < 3; i++){
+            Board board = new Board();
+            board.setUser(test);
+            board.setTitle("title " + i);
+            board.setContent("content " + i);
+            boardQueryRepository.save(board);
+        }
+        PageRequest pageRequest = new PageRequest();
+        Page<Board> board = boardQueryRepository.getList(pageRequest.of() , "" , "");
+        board.forEach((k) ->{
+            Comment c = new Comment();
+            c.setUser(test);
+            c.setBoard(k);
+            c.setTitle("댓글제목 - 게시글번호는 :  " + k.getId());
+            c.setContent("댓글내용  - 게시글번호는 :" + k.getId());
+            boardQueryRepository.commentSave(c);
+        });
 
         alreadySetup = true;
     }

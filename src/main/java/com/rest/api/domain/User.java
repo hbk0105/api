@@ -61,9 +61,11 @@ public class User {
     @OneToMany(fetch = FetchType.LAZY , mappedBy = "user")
     private Collection<UserRoles> roles;
 
+    @JsonManagedReference
     @OneToMany(fetch = FetchType.LAZY , mappedBy = "user")
     private List<Board> board;
 
+    @JsonManagedReference
     @OneToMany(fetch = FetchType.LAZY , mappedBy = "user")
     private List<Comment> comment;
 

@@ -23,6 +23,7 @@ import org.springframework.util.CollectionUtils;
 
 import javax.persistence.EntityManager;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import static com.rest.api.domain.QBoard.board;
 import static com.rest.api.domain.QComment.comment;
@@ -51,15 +52,31 @@ public class BoardQueryRepository {
                 .limit(1).fetchOne();
     }
 
-    public QueryResults<Comment> findCommentsByComment(Board board){
-            QueryResults<Comment> result = queryFactory.select(comment)
+    public Page<Comment.Response> findCommentsByComment(Board board , Pageable pageable){
+         QueryResults<Comment> result = queryFactory.select(comment)
                     .from(comment)
                     .where(comment.board.eq(board))
                     .orderBy(comment.comment_id.desc()) // 정렬도 가능하다
                     .fetchResults();
-          return result;
 
-       /*
+
+        List<Comment.Response> b = new ArrayList<>();
+        result.getResults().forEach((k)->{
+            b.add(Comment.Response.builder()
+                            .board_id(k.getBoard().getId())
+                            .comment_id(k.getComment_id())
+                            .title(k.getTitle())
+                            .content(k.getContent())
+                            .email(k.getUser().getEmail())
+                            .firstName(k.getUser().getFirstName())
+                            .lastName(k.getUser().getLastName()).build());
+        });
+
+        return new PageImpl<>(b, pageable, result.getTotal());
+
+
+
+/*
         return queryFactory.select(comment).from(comment)
                 .where(comment.board.eq(board))
                 .orderBy(comment.comment_id.desc())
@@ -234,20 +251,37 @@ public class BoardQueryRepository {
 
 
     // 최종
-    public Page<Board> getList(Pageable pageable,String title , String content) {
+    public Page<Board.Response> getList(Pageable pageable,String title , String content) {
 
         List<OrderSpecifier> ORDERS = getAllOrderSpecifiers(pageable);
 
         QueryResults<Board> result = queryFactory.select(board)
                 .from(board)
-                //.where(board.name.contains(name))
                 .where(dynamicBuilder(title,content))
+                //.join(board.user).fetchJoin() //.distinct()
+                //.join(board.comment).fetchJoin()
                 .orderBy(ORDERS.stream().toArray(OrderSpecifier[]::new))
                 //.orderBy(board.id.desc()) // 정렬도 가능하다
                 .limit(pageable.getPageSize()) // Limit 을 지정할 수 있고
                 .offset(pageable.getOffset()) // offset과
                 .fetchResults();
-        return new PageImpl<>(result.getResults(), pageable, result.getTotal());
+
+        List<Board.Response> b = new ArrayList<>();
+        result.getResults().forEach((k)->{
+            b.add(
+            Board.Response.builder()
+                    .id(k.getId())
+                    .title(k.getTitle())
+                    .content(k.getContent())
+                    .email(k.getUser().getEmail())
+                    .firstName(k.getUser().getFirstName())
+                    .lastName(k.getUser().getLastName()).build());
+        });
+
+        return new PageImpl<>(b, pageable, result.getTotal());
+
+
+       // return new PageImpl<>(result.getResults(), pageable, result.getTotal());
     }
 
     public BooleanBuilder dynamicBuilder(String title,String content){

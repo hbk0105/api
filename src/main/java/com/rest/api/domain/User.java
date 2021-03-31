@@ -54,9 +54,6 @@ public class User {
     @Column
     private LocalDateTime mailCertificationtDate;
 
-    /*@ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "users_roles", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
-    private Collection<Role> roles;*/
 
     @OneToMany(fetch = FetchType.LAZY , mappedBy = "user")
     private Collection<UserRoles> roles;
@@ -160,14 +157,6 @@ public class User {
 
     }
 
-
-    @Builder
-    public User(String email, String firstName, String lastName ,String password) {
-        this.email = email;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.password = password;
-    }
 
 }
 

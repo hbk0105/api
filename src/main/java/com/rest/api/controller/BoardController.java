@@ -15,6 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.data.web.SortDefault;
@@ -81,7 +82,10 @@ public class BoardController {
         if (!StringUtils.isEmpty(title) || !StringUtils.isEmpty(content)) {
             pageRequest.setPage(1);
         }
-        Page<Board> board = boardQueryRepository.getList(pageRequest.of(ordr,ordrNm) , title , content);
+        Page<Board.Response> board = boardQueryRepository.getList(pageRequest.of(ordr,ordrNm) , title , content);
+
+//        Page<Board.Response> result = new PageImpl<>(board.getTotalElements(), pageRequest.of(ordr,ordrNm),board.get().count());
+
         ms.add("result",board);
         return ms;
     }
@@ -173,10 +177,10 @@ public class BoardController {
     // TODO: 게시글 댓글 전체 조회
     //@CrossOrigin(origins = "*", allowedHeaders = "*")
     @GetMapping("/boards/{id}/comments")
-    public ResponseMessage  getPostComments(@PathVariable Long id){
+    public ResponseMessage  getPostComments(@PathVariable Long id , @PageableDefault(page = 0, size = 10) PageRequest pageRequest){
         ResponseMessage ms = new ResponseMessage();
         Board board = boardQueryRepository.findById(id);
-        ms.add("result",boardQueryRepository.findCommentsByComment(board));
+        ms.add("result",boardQueryRepository.findCommentsByComment(board , pageRequest.of()));
         return ms;
     }
 

@@ -98,15 +98,26 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
             boardQueryRepository.save(board);
         }
         PageRequest pageRequest = new PageRequest();
-        Page<Board> board = boardQueryRepository.getList(pageRequest.of() , "" , "");
-        board.forEach((k) ->{
-            Comment c = new Comment();
-            c.setUser(test);
-            c.setBoard(k);
-            c.setTitle("댓글제목 - 게시글번호는 :  " + k.getId());
-            c.setContent("댓글내용  - 게시글번호는 :" + k.getId());
-            boardQueryRepository.commentSave(c);
-        });
+        Page<Board.Response> board = boardQueryRepository.getList(pageRequest.of() , "" , "");
+
+        try {
+
+            board.forEach((k) ->{
+                for(int i = 0; i < 3; i++){
+                    Comment c = new Comment();
+                    c.setUser(test);
+                    Board b = boardQueryRepository.selectOne(k.getBoard_id());
+                    c.setBoard(b);
+                    c.setTitle("댓글제목 - 게시글번호는 :  " + k.getBoard_id());
+                    c.setContent("댓글내용  - 게시글번호는 :" + k.getBoard_id());
+                    boardQueryRepository.commentSave(c);
+                }
+            });
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
 
         alreadySetup = true;
     }

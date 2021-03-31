@@ -76,7 +76,7 @@ public class BoardTest {
 
         System.out.println("-----------------------------------------");
         System.out.println("-----------------------------------------");
-        Page<Board> list =  boardQueryRepository.getList(pageRequest.of(),"","1");
+        Page<Board.Response> list =  boardQueryRepository.getList(pageRequest.of(),"","1");
         System.out.println(list.getContent().get(0).getTitle());
         System.out.println("list.getTotalElements() :: " + list.getTotalElements());
 

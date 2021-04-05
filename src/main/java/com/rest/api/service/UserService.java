@@ -154,6 +154,7 @@ public class UserService {
         if(user.get() == null)
             throw new NoResultException("사용자가 존재하지 않습니다.");
         userRepository.delete(user.get());
+
     }
 
 

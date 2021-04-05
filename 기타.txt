@@ -3,7 +3,12 @@
 - https://www.kobis.or.kr/kobisopenapi/homepg/apiservice/searchServiceInfo.do
 - https://www.kobis.or.kr/kobisopenapi/homepg/apikey/ckUser/saveApikeyForm.do?apiKey=333cd3145f7a2dfdcdbc6aa6d45ac16a
 
+- 상세링크 ( dtCd = movieCd ) 와 같음
+ https://kobis.or.kr/kobis/business/mast/mvie/searchMovieList.do?dtTp=movie&dtCd=20112621
+
+
 {"email":"test@naver.com","password":"1234"}
+
 # PORT KILL
 netstat -ano | find "9090"
 taskkill /f /pid 11992

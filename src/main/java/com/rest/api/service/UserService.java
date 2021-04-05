@@ -153,13 +153,6 @@ public class UserService {
         Optional<User> user  = Optional.ofNullable(userRepository.findById(id).orElseThrow(() -> new NoResultException("사용자가 존재하지 않습니다.")));
         if(user.get() == null)
             throw new NoResultException("사용자가 존재하지 않습니다.");
-        //user.get().getRoles().remove(user);
-       /* for (UserRoles u : user.get().getRoles()) {
-            user.get().getRoles().remove(this);
-        }
-        user.get().getBoard().remove(user);
-        user.get().getComment().remove(user);*/
-
         userRepository.delete(user.get());
     }
 

@@ -156,6 +156,24 @@ public class UserController {
     }
 
     /**
+     * 사용자 삭제
+     * @param id
+     * @return ResponseMessage
+     * @throws Exception
+     */
+    // TODO: 사용자 삭제
+    @DeleteMapping("/users/{id}")
+    public ResponseMessage userDelete(@PathVariable Long id) throws Throwable {
+        ResponseMessage ms = new ResponseMessage();
+        try {
+            userService.deleteUser(id);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return ms;
+    }
+
+    /**
      * 권한 체크
      * @param user
      * @param userId

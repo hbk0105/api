@@ -8,6 +8,8 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+// https://hyeyoom.github.io/2019/03/16/How-to-log-all-client-ip-addresses-in-Spring/
+
 @Configuration
 public class AuthInterceptor extends HandlerInterceptorAdapter {
     @Override

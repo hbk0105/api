@@ -33,7 +33,7 @@ public class Board {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToMany(fetch = FetchType.LAZY , mappedBy = "board")
+    @OneToMany(fetch = FetchType.LAZY , mappedBy = "board" , cascade = CascadeType.REMOVE , orphanRemoval = true)
     private List<Comment> comment;
 
     @Builder

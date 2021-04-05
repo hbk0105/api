@@ -22,10 +22,10 @@ public class Role {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long role_id;
 
-    @OneToMany(fetch = FetchType.LAZY , mappedBy = "role")
+    @OneToMany(fetch = FetchType.LAZY , mappedBy = "role" , cascade = CascadeType.REMOVE , orphanRemoval = true)
     private Collection<UserRoles> role;
 
-    @OneToMany(fetch = FetchType.LAZY , mappedBy = "role")
+    @OneToMany(fetch = FetchType.LAZY , mappedBy = "role" , cascade = CascadeType.REMOVE , orphanRemoval = true)
     private Collection<Privileges> privileges;
 
     /*@ManyToMany(mappedBy = "roles")

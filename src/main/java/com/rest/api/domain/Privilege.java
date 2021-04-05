@@ -26,7 +26,7 @@ public class Privilege {
     private String name;
 
     // https://m.blog.naver.com/PostView.nhn?blogId=rorean&logNo=221594572152&proxyReferer=https:%2F%2Fwww.google.com%2F
-    @OneToMany(fetch = FetchType.LAZY , mappedBy = "privilege")
+    @OneToMany(fetch = FetchType.LAZY , mappedBy = "privilege" , cascade = CascadeType.REMOVE , orphanRemoval = true)
     private Collection<Privileges> privileges;
 
     /*

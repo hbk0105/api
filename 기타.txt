@@ -1,3 +1,8 @@
+# 영화 API
+- 333cd3145f7a2dfdcdbc6aa6d45ac16a [ hbk010 , qw46969740 ]
+- https://www.kobis.or.kr/kobisopenapi/homepg/apiservice/searchServiceInfo.do
+- https://www.kobis.or.kr/kobisopenapi/homepg/apikey/ckUser/saveApikeyForm.do?apiKey=333cd3145f7a2dfdcdbc6aa6d45ac16a
+
 {"email":"test@naver.com","password":"1234"}
 # PORT KILL
 netstat -ano | find "9090"

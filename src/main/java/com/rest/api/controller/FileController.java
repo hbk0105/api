@@ -11,9 +11,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import javax.persistence.NoResultException;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import java.io.*;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
 
@@ -59,6 +63,28 @@ public class FileController {
         return ms;
     }
 
+    /**
+     * 파일 삭제
+     * @param fileId
+     * @return ResponseMessage
+     * @throws Exception
+     */
+    // TODO: 파일 삭제
+    @DeleteMapping("/files/{fileId}")
+    public ResponseMessage fileDelete(@PathVariable Long fileId) throws Exception {
+        ResponseMessage ms = new ResponseMessage();
+            try {
+                Optional<Files> f =  Optional.ofNullable(fileService.getFile(fileId).orElseThrow(() -> new NoResultException("파일이 존재하지 않습니다..")));
+                Path file = Paths.get(f.get().getFilePath());
+                if(java.nio.file.Files.deleteIfExists(file))
+                    fileService.deleteFile(f.get());
+            } catch (Exception e) {
+                e.printStackTrace();
+                throw new RuntimeException(e.getMessage());
+            }
+        return ms;
+    }
+
 
     /**
      * 파일 조회
@@ -72,7 +98,7 @@ public class FileController {
     @Consumes(MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<byte[]> downloadDocument(
             @PathVariable Long fileId, HttpServletRequest req) throws Exception {
-        Optional<Files> f = fileService.getFile(fileId);
+        Optional<Files> f =  Optional.ofNullable(fileService.getFile(fileId).orElseThrow(() -> new NoResultException("파일이 존재하지 않습니다..")));
         return  FileUtil.fileDownload( f.get().getOrigFilename() , new File(f.get().getFilePath()) , req);
     }
 

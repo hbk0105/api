@@ -22,4 +22,8 @@ public class FileService {
         return fileRepository.findById(id);
     }
 
+    public void deleteFile(Files f){
+        fileRepository.delete(f);
+    }
+
 }

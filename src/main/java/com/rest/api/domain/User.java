@@ -54,16 +54,16 @@ public class User {
     @Column
     private LocalDateTime mailCertificationtDate;
 
-
-    @OneToMany(fetch = FetchType.LAZY , mappedBy = "user")
+    //  cascade = CascadeType.REMOVE --> http://wonwoo.ml/index.php/post/1002
+    @OneToMany(fetch = FetchType.LAZY , mappedBy = "user"  , cascade = CascadeType.REMOVE , orphanRemoval = true)
     private Collection<UserRoles> roles;
 
     @JsonManagedReference
-    @OneToMany(fetch = FetchType.LAZY , mappedBy = "user")
+    @OneToMany(fetch = FetchType.LAZY , mappedBy = "user" , cascade = CascadeType.REMOVE , orphanRemoval = true)
     private List<Board> board;
 
     @JsonManagedReference
-    @OneToMany(fetch = FetchType.LAZY , mappedBy = "user")
+    @OneToMany(fetch = FetchType.LAZY , mappedBy = "user" , cascade = CascadeType.REMOVE , orphanRemoval = true)
     private List<Comment> comment;
 
     public User() {

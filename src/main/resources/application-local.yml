@@ -84,6 +84,14 @@ spring :
         initial-interval: 5000
         max-attempt: 3
 
+
+#  kafka:
+#    bootstrap-servers: localhost:9092
+#app:
+#  topic: received message
+#    foo: foo.t
+
+
 app1:
   exchange:
     name: testmq1-exchange
@@ -117,3 +125,4 @@ logging:
             BasicBinder: TRACE
   ## log  파일 위치
   #config: classpath:logback-spring.xml # https://aljjabaegi.tistory.com/413
+

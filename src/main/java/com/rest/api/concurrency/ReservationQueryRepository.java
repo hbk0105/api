@@ -1,4 +1,4 @@
-package com.rest.api.repository;
+package com.rest.api.concurrency;
 
 
 import com.querydsl.core.BooleanBuilder;

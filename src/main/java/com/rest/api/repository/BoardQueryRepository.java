@@ -57,8 +57,9 @@ public class BoardQueryRepository {
                     .from(comment)
                     .where(comment.board.eq(board))
                     .orderBy(comment.comment_id.desc()) // 정렬도 가능하다
+                    .limit(pageable.getPageSize()) // Limit 을 지정할 수 있고
+                    .offset(pageable.getOffset()) // offset과
                     .fetchResults();
-
 
         List<Comment.Response> b = new ArrayList<>();
         result.getResults().forEach((k)->{
@@ -71,18 +72,15 @@ public class BoardQueryRepository {
                             .firstName(k.getUser().getFirstName())
                             .lastName(k.getUser().getLastName()).build());
         });
-
         return new PageImpl<>(b, pageable, result.getTotal());
 
-
-
-/*
+        /*
         return queryFactory.select(comment).from(comment)
                 .where(comment.board.eq(board))
                 .orderBy(comment.comment_id.desc())
-                .fetch();*/
+                .fetch();
+         */
     }
-
 
     public List<Board> findByTitle(String name) {
         return queryFactory.selectFrom(board)
@@ -129,8 +127,6 @@ public class BoardQueryRepository {
                 .fetchCount();
         return total;
     }
-
-
 
     @Transactional
     public long update(Board b){
@@ -279,7 +275,6 @@ public class BoardQueryRepository {
         });
 
         return new PageImpl<>(b, pageable, result.getTotal());
-
 
        // return new PageImpl<>(result.getResults(), pageable, result.getTotal());
     }

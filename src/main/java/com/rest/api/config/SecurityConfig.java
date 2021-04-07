@@ -83,7 +83,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests() // 요청에 대한 사용권한 체크
                 .antMatchers("/admin/**").hasRole("ADMIN")
                 .antMatchers("/users/**").hasAnyRole("USER","ADMIN")//.hasRole("USER")
-                .antMatchers("/api/**", "/h2-console/**").permitAll()
+                .antMatchers("/api/**", "/h2-console/**","/apply*").permitAll()
                 // https://ddakker.tistory.com/295
                 .and().logout()
                 /*.logoutUrl("/api/logout")

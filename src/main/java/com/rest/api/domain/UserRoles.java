@@ -19,6 +19,8 @@ import java.util.Date;
 @Table
 public class UserRoles {
 
+    // https://dublin-java.tistory.com/51
+    // https://homoefficio.github.io/2019/04/28/JPA-%EC%9D%BC%EB%8C%80%EB%8B%A4-%EB%8B%A8%EB%B0%A9%ED%96%A5-%EB%A7%A4%ED%95%91-%EC%9E%98%EB%AA%BB-%EC%82%AC%EC%9A%A9%ED%95%98%EB%A9%B4-%EB%B2%8C%EC%96%B4%EC%A7%80%EB%8A%94-%EC%9D%BC/
     // https://coding-start.tistory.com/72
 
     @Id

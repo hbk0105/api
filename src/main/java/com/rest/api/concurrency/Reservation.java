@@ -14,12 +14,19 @@ import javax.persistence.*;
 @Getter
 @Setter
 @Entity
+// https://velog.io/@conatuseus/%EC%97%94%ED%8B%B0%ED%8B%B0-%EB%A7%A4%ED%95%91-2-msk0kq84v5
+@SequenceGenerator(
+        name = "RESERVATION_SEQ_GENERATOR",
+        sequenceName = "RESERVATION_SEQ", //매핑할 데이터베이스 시퀀스 이름
+        initialValue = 1, allocationSize = 50)
 @Table
 @Data
 public class Reservation {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE,
+            generator = "RESERVATION_SEQ_GENERATOR")
+    //@GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "res_id")
     private Long id;
 

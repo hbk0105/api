@@ -19,12 +19,18 @@ import java.util.List;
 @Entity
 @ToString
 @JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class)
+// https://gmlwjd9405.github.io/2019/08/12/primary-key-mapping.html
+@SequenceGenerator(
+        name = "USER_SEQ_GENERATOR",
+        sequenceName = "USER_SEQ", //매핑할 데이터베이스 시퀀스 이름
+        initialValue = 1, allocationSize = 50)
 @Table
 public class User {
 
     @Id
     @Column(unique = true, nullable = false)
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    //@GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "USER_SEQ_GENERATOR")
     private Long user_id;
 
     @Column

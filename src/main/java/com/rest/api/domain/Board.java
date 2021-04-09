@@ -1,12 +1,12 @@
 package com.rest.api.domain;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.mysema.commons.lang.Assert;
 import lombok.*;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
 
@@ -16,7 +16,7 @@ import java.util.List;
 @Setter
 @Entity
 @Table
-public class Board {
+public class Board  {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -46,8 +46,9 @@ public class Board {
 
     @Getter
     @Setter
-    public static class Response {
+    public static class Response implements Serializable{
 
+        private static final long serialVersionUID = -7353484588260422449L;
         private Long board_id;
         private String title;
         private String content;

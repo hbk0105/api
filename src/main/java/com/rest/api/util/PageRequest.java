@@ -5,6 +5,8 @@ import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Sort;
 
+import java.io.Serializable;
+
 /**
  *
  * Description : 페이징 클래스
@@ -17,7 +19,7 @@ import org.springframework.data.domain.Sort;
  */
 @Setter
 @Getter
-public class PageRequest {
+public class PageRequest{
     private static int page;
     private static int size;
     private static Sort.Direction direction;

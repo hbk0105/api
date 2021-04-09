@@ -1,8 +1,7 @@
 package com.rest.api.config;
 
 import com.rest.api.domain.Token;
-import org.redisson.Redisson;
-import org.redisson.api.RedissonClient;
+import com.rest.api.util.LdapFailAwareRedisObjectSerializer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -10,17 +9,14 @@ import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.data.redis.core.ValueOperations;
-import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
-import org.springframework.data.redis.serializer.StringRedisSerializer;
-
-import java.time.Duration;
+import org.springframework.data.redis.serializer.*;
 
 @Configuration
 public class RedisConfig {
 
     @Autowired
     private StringRedisTemplate stringRedisTemplate;
+
 
     // https://hwigyeom.ntils.com/entry/Windows-%EC%97%90-Redis-%EC%84%A4%EC%B9%98%ED%95%98%EA%B8%B0-1
     // https://github.com/microsoftarchive/redis/releases/tag/win-3.2.100
@@ -35,6 +31,8 @@ public class RedisConfig {
         RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
         redisTemplate.setConnectionFactory(redisConnectionFactory());
         redisTemplate.setKeySerializer(new StringRedisSerializer());
+        redisTemplate.setValueSerializer(new GenericJackson2JsonRedisSerializer());
+        redisTemplate.setHashValueSerializer(new LdapFailAwareRedisObjectSerializer());
 
         //객체를 json 형태로 깨지지 않고 받기 위한 직렬화 작업
         redisTemplate.setValueSerializer(new Jackson2JsonRedisSerializer<>(Token.class));
@@ -49,4 +47,19 @@ public class RedisConfig {
         return redisson;
     }
     */
+/*
+
+    @Bean
+    public CacheManager redisCacheManager() {
+        RedisCacheConfiguration redisCacheConfiguration = RedisCacheConfiguration.defaultCacheConfig()
+                .serializeKeysWith(RedisSerializationContext.SerializationPair.fromSerializer(new StringRedisSerializer()))
+                .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(new GenericJackson2JsonRedisSerializer()))
+                .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(RedisSerializer.json()));
+        redisCacheConfiguration.usePrefix();
+        RedisCacheManager redisCacheManager = RedisCacheManager.RedisCacheManagerBuilder.fromConnectionFactory(redisConnectionFactory).cacheDefaults(redisCacheConfiguration).build();
+        return redisCacheManager;
+    }
+*/
+
+
 }

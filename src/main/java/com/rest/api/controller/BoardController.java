@@ -14,6 +14,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Sort;
@@ -82,11 +83,15 @@ public class BoardController {
         if (!StringUtils.isEmpty(title) || !StringUtils.isEmpty(content)) {
             pageRequest.setPage(1);
         }
-        Page<Board.Response> board = boardQueryRepository.getList(pageRequest.of(ordr,ordrNm) , title , content);
+        try {
+            Page<Board.Response> board = boardQueryRepository.getList(pageRequest.of(ordr,ordrNm) , title , content);
+            ms.add("result",board);
 
-//        Page<Board.Response> result = new PageImpl<>(board.getTotalElements(), pageRequest.of(ordr,ordrNm),board.get().count());
+        }catch (Exception e){
+            e.printStackTrace();
+        }
 
-        ms.add("result",board);
+        //  Page<Board.Response> result = new PageImpl<>(board.getTotalElements(), pageRequest.of(ordr,ordrNm),board.get().count());
         return ms;
     }
 

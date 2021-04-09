@@ -11,8 +11,10 @@ import com.rest.api.domain.Board;
 import com.rest.api.domain.Comment;
 import com.rest.api.util.QueryDslUtil;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -23,7 +25,6 @@ import org.springframework.util.CollectionUtils;
 
 import javax.persistence.EntityManager;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import static com.rest.api.domain.QBoard.board;
 import static com.rest.api.domain.QComment.comment;
@@ -154,7 +155,8 @@ public class BoardQueryRepository {
 
     /** 이름으로 하나의 멤버를 찾아오는 메소드
      * @return*/
-    public Board selectOne(Long id) {
+    @Cacheable(key="#id", value = "getBoards")
+    public Board selectOne(Long id) throws Exception{
         return queryFactory.select(board).from(board)
                 .where(board.id.eq(id))
                 .orderBy(board.id.desc())
@@ -247,8 +249,11 @@ public class BoardQueryRepository {
 
 
     // 최종
-    public Page<Board.Response> getList(Pageable pageable,String title , String content) {
-
+    // @Cacheable(key="{#bar.name, #bar.id}")
+    // https://stackoverflow.com/questions/46957867/how-to-define-multiple-keys-for-cacheput
+    @SneakyThrows
+    @Cacheable(key = "#p1 + #p2+ #p3"  , value = "boardList", unless = "#result == null")
+    public Page<Board.Response> getList(Pageable pageable, String title , String content) throws Exception {
         List<OrderSpecifier> ORDERS = getAllOrderSpecifiers(pageable);
 
         QueryResults<Board> result = queryFactory.select(board)
@@ -276,7 +281,7 @@ public class BoardQueryRepository {
 
         return new PageImpl<>(b, pageable, result.getTotal());
 
-       // return new PageImpl<>(result.getResults(), pageable, result.getTotal());
+
     }
 
     public BooleanBuilder dynamicBuilder(String title,String content){

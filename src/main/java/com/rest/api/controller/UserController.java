@@ -56,9 +56,6 @@ public class UserController {
     private JavaMailSender javaMailSender;
 
     @Autowired
-    private PasswordEncoder passwordEncoder;
-
-    @Autowired
     private JwtTokenUtil jwtTokenUtil;
 
     @Autowired
@@ -109,9 +106,10 @@ public class UserController {
     @GetMapping("/completed/{email}")
     public ResponseMessage completed(@PathVariable String email , HttpServletRequest req) {
         ResponseMessage ms = null;
-        User user = userService.findByEmail(email);
+        User user =  Optional.ofNullable(userService.findByEmail(email)).orElseThrow(() -> new NoResultException("사용자가 존재하지 않습니다."));
+
         // null 일 경우
-        if(user == null)  return ms = new ResponseMessage(HttpStatus.NOT_FOUND, "사용자가 존재하지 않습니다.", req.getRequestURL().toString());
+        //if(user == null)  return ms = new ResponseMessage(HttpStatus.NOT_FOUND, "사용자가 존재하지 않습니다.", req.getRequestURL().toString());
         LocalDateTime nowDate = LocalDateTime.now();
         if(user.getMailCertificationtDate() == null) return ms = new ResponseMessage(HttpStatus.NOT_FOUND, "사용자가 존재하지 않습니다.", req.getRequestURL().toString());
         LocalDateTime endDate  =  user.getMailCertificationtDate();

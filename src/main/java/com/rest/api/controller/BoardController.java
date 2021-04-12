@@ -14,26 +14,13 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.data.web.SortDefault;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.web.bind.annotation.*;
-
-import javax.naming.AuthenticationException;
 import javax.persistence.NoResultException;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.util.List;
 import java.util.Optional;
-
-import static com.rest.api.domain.QBoard.board;
 
 /**
  *
@@ -106,7 +93,16 @@ public class BoardController {
     @GetMapping("/boards/{id}")
     public ResponseMessage getBoard( @PathVariable Long id , HttpServletRequest req) throws Exception{
         ResponseMessage ms = new ResponseMessage();
-        ms.add("result",boardQueryRepository.selectOne(id));
+
+        Board borad = boardQueryRepository.selectOne(id);
+
+        ms.add("result",Board.Response.builder()
+                .id(borad.getId())
+                .title(borad.getTitle())
+                .content(borad.getContent())
+                .email(borad.getUser().getEmail())
+                .firstName(borad.getUser().getFirstName())
+                .lastName(borad.getUser().getLastName()).build());
         return ms;
     }
 
@@ -121,8 +117,8 @@ public class BoardController {
     @PostMapping("/boards")
     public ResponseMessage save(Board board , HttpServletRequest req) throws Exception{
         ResponseMessage ms = new ResponseMessage();
-        User user = getUser(req);
-        if(user == null) return ms = new ResponseMessage(HttpStatus.NOT_FOUND, "사용자가 존재하지 않습니다.", req.getRequestURL().toString());
+        User user =  Optional.ofNullable(getUser(req)).orElseThrow(() -> new NoResultException("사용자가 존재하지 않습니다."));
+        //if(user == null) return ms = new ResponseMessage(HttpStatus.NOT_FOUND, "사용자가 존재하지 않습니다.", req.getRequestURL().toString());
         board.setUser(user);
         boardQueryRepository.save(board);
         return ms;
@@ -140,8 +136,8 @@ public class BoardController {
     @PutMapping("/boards/{id}")
     public ResponseMessage update(@PathVariable Long id ,Board board , HttpServletRequest req) throws Exception{
         ResponseMessage ms = new ResponseMessage();
-        User user = getUser(req);
-        if(user == null) return ms = new ResponseMessage(HttpStatus.NOT_FOUND, "사용자가 존재하지 않습니다.", req.getRequestURL().toString());
+        User user =  Optional.ofNullable(getUser(req)).orElseThrow(() -> new NoResultException("사용자가 존재하지 않습니다."));
+        //if(user == null) return ms = new ResponseMessage(HttpStatus.NOT_FOUND, "사용자가 존재하지 않습니다.", req.getRequestURL().toString());
         board.setUser(user);
         board.setId(id);
         boardQueryRepository.update(board);
@@ -161,10 +157,9 @@ public class BoardController {
     public ResponseMessage delete(@PathVariable Long id ,Board board , HttpServletRequest req) throws Exception{
         ResponseMessage ms = new ResponseMessage();
         board.setId(id);
-        User user = getUser(req);
-        if(user == null) return ms = new ResponseMessage(HttpStatus.NOT_FOUND, "사용자가 존재하지 않습니다.", req.getRequestURL().toString());
+        User user =  Optional.ofNullable(getUser(req)).orElseThrow(() -> new NoResultException("사용자가 존재하지 않습니다."));
+        //if(user == null) return ms = new ResponseMessage(HttpStatus.NOT_FOUND, "사용자가 존재하지 않습니다.", req.getRequestURL().toString());
         board.setUser(user);
-
         if(boardQueryRepository.commentCount(board) == 0){
             boardQueryRepository.delete(board);
         }else{
@@ -181,11 +176,12 @@ public class BoardController {
      */
     // TODO: 게시글 댓글 전체 조회
     //@CrossOrigin(origins = "*", allowedHeaders = "*")
-    @GetMapping("/boards/{id}/comments")
-    public ResponseMessage  getPostComments(@PathVariable Long id , @PageableDefault(page = 0, size = 10) PageRequest pageRequest){
+    @GetMapping("/boards/{id}/comments/{commentId}")
+    public ResponseMessage  getPostComments(@PathVariable Long id  , @PathVariable Long commentId  ,  @PageableDefault(page = 0, size = 10) PageRequest pageRequest) throws Exception {
         ResponseMessage ms = new ResponseMessage();
         Board board = boardQueryRepository.findById(id);
-        ms.add("result",boardQueryRepository.findCommentsByComment(board , pageRequest.of()));
+        Comment comment = boardQueryRepository.selectCommentOne(commentId);
+        ms.add("result",boardQueryRepository.findByComment(board ,comment, pageRequest.of()));
         return ms;
     }
 
@@ -201,9 +197,10 @@ public class BoardController {
     @PostMapping("/boards/{id}/comments")
     public ResponseMessage createComment(@PathVariable Long id, Comment comment , HttpServletRequest req){
         ResponseMessage ms = new ResponseMessage();
-        Board board = boardQueryRepository.findById(id);
-        User user = getUser(req);
-        if(user == null) return ms = new ResponseMessage(HttpStatus.NOT_FOUND, "사용자가 존재하지 않습니다.", req.getRequestURL().toString());
+        // https://cselabnotes.com/kr/2021/03/31/60/
+        Board board = Optional.ofNullable(boardQueryRepository.findById(id)).orElseThrow(() -> new NoResultException("게시글이 존재하지 않습니다."));
+        User user =  Optional.ofNullable(getUser(req)).orElseThrow(() -> new NoResultException("사용자가 존재하지 않습니다."));
+        //if(user == null) return ms = new ResponseMessage(HttpStatus.NOT_FOUND, "사용자가 존재하지 않습니다.", req.getRequestURL().toString());
         board.setUser(user);
         comment.setUser(user);
         comment.setBoard(board);
@@ -225,8 +222,8 @@ public class BoardController {
     public ResponseMessage updateComment(@PathVariable Long id, @PathVariable Long commentId, Comment comment , HttpServletRequest req){
         ResponseMessage ms = new ResponseMessage();
         Board board = boardQueryRepository.findById(id);
-        User user = getUser(req);
-        if(user == null) return ms = new ResponseMessage(HttpStatus.NOT_FOUND, "사용자가 존재하지 않습니다.", req.getRequestURL().toString());
+        User user =  Optional.ofNullable(getUser(req)).orElseThrow(() -> new NoResultException("사용자가 존재하지 않습니다."));
+        //if(user == null) return ms = new ResponseMessage(HttpStatus.NOT_FOUND, "사용자가 존재하지 않습니다.", req.getRequestURL().toString());
         board.setUser(user);
         comment.setUser(user);
         comment.setComment_id(commentId);
@@ -250,8 +247,8 @@ public class BoardController {
     public ResponseMessage deleteComment(@PathVariable Long id, @PathVariable Long commentId , Comment comment , HttpServletRequest req){
         ResponseMessage ms = new ResponseMessage();
         Board board = boardQueryRepository.findById(id);
-        User user = getUser(req);
-        if(user == null) return ms = new ResponseMessage(HttpStatus.NOT_FOUND, "사용자가 존재하지 않습니다.", req.getRequestURL().toString());
+        User user =  Optional.ofNullable(getUser(req)).orElseThrow(() -> new NoResultException("사용자가 존재하지 않습니다."));
+        //if(user == null) return ms = new ResponseMessage(HttpStatus.NOT_FOUND, "사용자가 존재하지 않습니다.", req.getRequestURL().toString());
         board.setUser(user);
         comment.setUser(user);
         comment.setComment_id(commentId);

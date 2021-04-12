@@ -112,3 +112,10 @@ https://blog.leocat.kr/notes/2020/01/13/querydsl-duplication-problem-on-fetchjoi
 6. 사용자 , 게시판 , 댓글 관계 설정
   - 2021.3.31 CRUD 테스트
 
+7. Redis - 캐싱 추가
+  - 2021.4.9
+  - key별 캐싱 시간 커스텀
+
+8. TDD
+  - https://velog.io/@dsunni/Spring-Boot-02-%ED%85%8C%EC%8A%A4%ED%8A%B8-%EC%BD%94%EB%93%9C
+

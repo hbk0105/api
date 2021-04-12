@@ -25,7 +25,6 @@ import lombok.Getter;
  */
 @Setter
 @Getter
-@Data
 public class ResponseMessage extends BaseObject {
     // https://eblo.tistory.com/48
     private static final long serialVersionUID = 1L;

@@ -1,6 +1,5 @@
 package com.rest.api.repository;
 
-
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.QueryResults;
 import com.querydsl.core.types.Order;
@@ -22,7 +21,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
-
 import javax.persistence.EntityManager;
 import java.util.ArrayList;
 import java.util.List;
@@ -74,13 +72,38 @@ public class BoardQueryRepository {
                             .lastName(k.getUser().getLastName()).build());
         });
         return new PageImpl<>(b, pageable, result.getTotal());
+    }
 
-        /*
+    public Comment selectCommentOne(Long id) throws Exception{
         return queryFactory.select(comment).from(comment)
-                .where(comment.board.eq(board))
+                .where(comment.comment_id.eq(id))
                 .orderBy(comment.comment_id.desc())
-                .fetch();
-         */
+                .limit(1).fetchOne();
+    }
+
+    public Page<Comment.Response> findByComment(Board board , Comment c, Pageable pageable){
+        QueryResults<Comment> result = queryFactory.select(comment)
+                .from(comment)
+                .where(comment.board.eq(board))
+                .where(comment.comment_id.eq(c.getComment_id()))
+                .orderBy(comment.comment_id.desc()) // 정렬도 가능하다
+                .limit(pageable.getPageSize()) // Limit 을 지정할 수 있고
+                .offset(pageable.getOffset()) // offset과
+                .fetchResults();
+
+        List<Comment.Response> b = new ArrayList<>();
+        result.getResults().forEach((k)->{
+            b.add(Comment.Response.builder()
+                    .board_id(k.getBoard().getId())
+                    .comment_id(k.getComment_id())
+                    .title(k.getTitle())
+                    .content(k.getContent())
+                    .email(k.getUser().getEmail())
+                    .firstName(k.getUser().getFirstName())
+                    .lastName(k.getUser().getLastName()).build());
+        });
+        return new PageImpl<>(b, pageable, result.getTotal());
+
     }
 
     public List<Board> findByTitle(String name) {
@@ -153,9 +176,6 @@ public class BoardQueryRepository {
         return id;
     }
 
-    /** 이름으로 하나의 멤버를 찾아오는 메소드
-     * @return*/
-    @Cacheable(key="#id", value = "getBoards")
     public Board selectOne(Long id) throws Exception{
         return queryFactory.select(board).from(board)
                 .where(board.id.eq(id))

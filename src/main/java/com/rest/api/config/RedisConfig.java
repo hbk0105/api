@@ -32,8 +32,8 @@ public class RedisConfig {
         redisTemplate.setConnectionFactory(redisConnectionFactory());
         redisTemplate.setKeySerializer(new StringRedisSerializer());
         redisTemplate.setValueSerializer(new GenericJackson2JsonRedisSerializer());
-        redisTemplate.setHashValueSerializer(new LdapFailAwareRedisObjectSerializer());
-
+        // https://stackoverflow.com/questions/32751094/spring-boot-with-session-redis-serialization-error-with-bad-active-directory-lda
+        // redisTemplate.setHashValueSerializer(new LdapFailAwareRedisObjectSerializer());
         //객체를 json 형태로 깨지지 않고 받기 위한 직렬화 작업
         redisTemplate.setValueSerializer(new Jackson2JsonRedisSerializer<>(Token.class));
         return redisTemplate;

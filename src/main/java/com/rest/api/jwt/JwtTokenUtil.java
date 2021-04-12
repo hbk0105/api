@@ -5,9 +5,12 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.security.Keys;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Bean;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
+
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
@@ -24,6 +27,7 @@ import java.util.function.Function;
  * 2021. 3.  22.    MICHAEL						최초작성
  *
  */
+@Service
 @Component
 public class JwtTokenUtil implements Serializable {
 

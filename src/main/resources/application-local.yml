@@ -28,12 +28,6 @@ spring :
     host: localhost
     port: 6379
 
-    http:
-      encoding:
-        charset: UTF-8
-        enabled: true
-        force: true
-
   ##### Mysql 사용시
   # datasource:
   #    driver-class-name: com.mysql.cj.jdbc.Driver

@@ -28,7 +28,7 @@ public class UserQueryRepository {
         // clear를 해주지 않을 경우 update 자동으로 두번 실행.
         em.clear();
         long id = queryFactory.update(user)
-                //.set(user.mailCertification, true)
+                .set(user.mailCertification, true)
                 .where(user.user_id.eq(u.getUser_id()))
                 .execute();
         em.flush();

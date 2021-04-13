@@ -184,7 +184,7 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
             user.setLastName(lastName);
             user.setPassword(passwordEncoder.encode(password));
             user.setEmail(email);
-            user.setMailCertification(true);
+            user.setMailCertification(false);
             user.setEnabled(true);
         }
         user.setRoles(roles);

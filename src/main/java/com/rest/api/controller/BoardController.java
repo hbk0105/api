@@ -20,6 +20,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import javax.persistence.NoResultException;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.Optional;
 
 /**
@@ -115,9 +116,9 @@ public class BoardController {
      */
     // TODO: 게시글 등록
     @PostMapping("/boards")
-    public ResponseMessage save(Board board , HttpServletRequest req) throws Exception{
+    public ResponseMessage save(Board board , HttpServletRequest req,HttpServletResponse res) throws Exception{
         ResponseMessage ms = new ResponseMessage();
-        User user =  Optional.ofNullable(getUser(req)).orElseThrow(() -> new NoResultException("사용자가 존재하지 않습니다."));
+        User user =  Optional.ofNullable(getUser(req,res)).orElseThrow(() -> new NoResultException("사용자가 존재하지 않습니다."));
         //if(user == null) return ms = new ResponseMessage(HttpStatus.NOT_FOUND, "사용자가 존재하지 않습니다.", req.getRequestURL().toString());
         board.setUser(user);
         boardQueryRepository.save(board);
@@ -134,9 +135,9 @@ public class BoardController {
      */
     // TODO: 게시글 수정
     @PutMapping("/boards/{id}")
-    public ResponseMessage update(@PathVariable Long id ,Board board , HttpServletRequest req) throws Exception{
+    public ResponseMessage update(@PathVariable Long id ,Board board , HttpServletRequest req,HttpServletResponse res) throws Exception{
         ResponseMessage ms = new ResponseMessage();
-        User user =  Optional.ofNullable(getUser(req)).orElseThrow(() -> new NoResultException("사용자가 존재하지 않습니다."));
+        User user =  Optional.ofNullable(getUser(req,res)).orElseThrow(() -> new NoResultException("사용자가 존재하지 않습니다."));
         //if(user == null) return ms = new ResponseMessage(HttpStatus.NOT_FOUND, "사용자가 존재하지 않습니다.", req.getRequestURL().toString());
         board.setUser(user);
         board.setId(id);
@@ -154,10 +155,10 @@ public class BoardController {
      */
     // TODO: 게시글 삭제
     @DeleteMapping("/boards/{id}")
-    public ResponseMessage delete(@PathVariable Long id ,Board board , HttpServletRequest req) throws Exception{
+    public ResponseMessage delete(@PathVariable Long id ,Board board , HttpServletRequest req,HttpServletResponse res) throws Exception{
         ResponseMessage ms = new ResponseMessage();
         board.setId(id);
-        User user =  Optional.ofNullable(getUser(req)).orElseThrow(() -> new NoResultException("사용자가 존재하지 않습니다."));
+        User user =  Optional.ofNullable(getUser(req,res)).orElseThrow(() -> new NoResultException("사용자가 존재하지 않습니다."));
         //if(user == null) return ms = new ResponseMessage(HttpStatus.NOT_FOUND, "사용자가 존재하지 않습니다.", req.getRequestURL().toString());
         board.setUser(user);
         if(boardQueryRepository.commentCount(board) == 0){
@@ -195,11 +196,11 @@ public class BoardController {
     // TODO: 게시글 댓글 등록
     //@CrossOrigin(origins = "*", allowedHeaders = "*")
     @PostMapping("/boards/{id}/comments")
-    public ResponseMessage createComment(@PathVariable Long id, Comment comment , HttpServletRequest req){
+    public ResponseMessage createComment(@PathVariable Long id, Comment comment , HttpServletRequest req ,  HttpServletResponse res){
         ResponseMessage ms = new ResponseMessage();
         // https://cselabnotes.com/kr/2021/03/31/60/
         Board board = Optional.ofNullable(boardQueryRepository.findById(id)).orElseThrow(() -> new NoResultException("게시글이 존재하지 않습니다."));
-        User user =  Optional.ofNullable(getUser(req)).orElseThrow(() -> new NoResultException("사용자가 존재하지 않습니다."));
+        User user =  Optional.ofNullable(getUser(req,res)).orElseThrow(() -> new NoResultException("사용자가 존재하지 않습니다."));
         //if(user == null) return ms = new ResponseMessage(HttpStatus.NOT_FOUND, "사용자가 존재하지 않습니다.", req.getRequestURL().toString());
         board.setUser(user);
         comment.setUser(user);
@@ -219,10 +220,11 @@ public class BoardController {
     // TODO: 게시글 댓글 수정
     //@CrossOrigin(origins = "*", allowedHeaders = "*")
     @PutMapping("/boards/{id}/comments/{commentId}")
-    public ResponseMessage updateComment(@PathVariable Long id, @PathVariable Long commentId, Comment comment , HttpServletRequest req){
+    public ResponseMessage updateComment(@PathVariable Long id, @PathVariable Long commentId
+            , Comment comment , HttpServletRequest req , HttpServletResponse res){
         ResponseMessage ms = new ResponseMessage();
         Board board = boardQueryRepository.findById(id);
-        User user =  Optional.ofNullable(getUser(req)).orElseThrow(() -> new NoResultException("사용자가 존재하지 않습니다."));
+        User user =  Optional.ofNullable(getUser(req,res)).orElseThrow(() -> new NoResultException("사용자가 존재하지 않습니다."));
         //if(user == null) return ms = new ResponseMessage(HttpStatus.NOT_FOUND, "사용자가 존재하지 않습니다.", req.getRequestURL().toString());
         board.setUser(user);
         comment.setUser(user);
@@ -244,10 +246,11 @@ public class BoardController {
     // TODO: 게시글 댓글 삭제
     // @CrossOrigin(origins = "*", allowedHeaders = "*")
     @DeleteMapping("/boards/{id}/comments/{commentId}")
-    public ResponseMessage deleteComment(@PathVariable Long id, @PathVariable Long commentId , Comment comment , HttpServletRequest req){
+    public ResponseMessage deleteComment(@PathVariable Long id, @PathVariable Long commentId
+            , Comment comment , HttpServletRequest req ,  HttpServletResponse res){
         ResponseMessage ms = new ResponseMessage();
         Board board = boardQueryRepository.findById(id);
-        User user =  Optional.ofNullable(getUser(req)).orElseThrow(() -> new NoResultException("사용자가 존재하지 않습니다."));
+        User user =  Optional.ofNullable(getUser(req,res)).orElseThrow(() -> new NoResultException("사용자가 존재하지 않습니다."));
         //if(user == null) return ms = new ResponseMessage(HttpStatus.NOT_FOUND, "사용자가 존재하지 않습니다.", req.getRequestURL().toString());
         board.setUser(user);
         comment.setUser(user);
@@ -256,12 +259,12 @@ public class BoardController {
         return ms;
     }
 
-    private User getUser(HttpServletRequest req){
+    private User getUser(HttpServletRequest req , HttpServletResponse res){
         User user = null;
         try {
-            String token = CookieUtils.accessToken(req,jwtTokenUtil);
+            String token = CookieUtils.accessToken(req, res,jwtTokenUtil);
             if(StringUtils.isEmpty(token)){
-                token = CookieUtils.refreshToken(req,jwtTokenUtil);
+                token = CookieUtils.refreshToken(req , res,jwtTokenUtil);
             }
             String username = jwtTokenUtil.getUsername(token);
             if(!StringUtils.isEmpty(username)) {

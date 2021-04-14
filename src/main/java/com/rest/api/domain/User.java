@@ -2,12 +2,10 @@ package com.rest.api.domain;
 
 import com.fasterxml.jackson.annotation.*;
 import com.mysema.commons.lang.Assert;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 import org.jboss.aerogear.security.otp.api.Base32;
+import org.springframework.data.annotation.PersistenceConstructor;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -127,6 +125,7 @@ public class User {
 */
     @Getter
     @Setter
+    @NoArgsConstructor
     public static class Request {
         private String email;
         private String firstName;
@@ -134,6 +133,24 @@ public class User {
         private String password;
         private boolean mailCertification;
         private boolean enabled;
+
+      // 안전한 객채 생성 패턴
+      @Builder
+      public Request(String email , String firstName , String lastName , String password) {
+          //Assert.hasText(String.valueOf(id), "id must not be empty");
+          Assert.hasText(email, "email must not be empty");
+          Assert.hasText(firstName, "firstName must not be empty");
+          Assert.hasText(lastName, "lastName must not be empty");
+          Assert.hasText(password, "password must not be empty");
+
+          //this.id = id;
+          this.email = email;
+          this.firstName = firstName;
+          this.lastName = lastName;
+          this.password = password;
+          this.mailCertification=false;
+          this.enabled=true;
+      }
     }
 
     @Getter

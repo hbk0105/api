@@ -31,7 +31,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class CookieUtils {
 
-    private static Logger logger = LoggerFactory.getLogger(BoardController.class);
+    private static Logger logger = LoggerFactory.getLogger(CookieUtils.class);
 
     public static Optional<Cookie> getCookie(HttpServletRequest request, String name) {
         Cookie[] cookies = request.getCookies();
@@ -148,8 +148,41 @@ public class CookieUtils {
 
     }
 
+    /*
+     JWT 토큰을 쿠키와 헤더 둘중 하나 선택해서 사용,
+     헤더 사용할 경우,
+    */
+    public static String getHeaderToken(HttpServletRequest request , HttpServletResponse response) throws Exception{
+        boolean result = false;
+        String accessToken = request.getHeader("Authorization");
+        if (!StringUtils.isEmpty(accessToken)  && accessToken.startsWith("Bearer ")) {
+            accessToken = accessToken.substring(7).trim();
+        }
 
-    public static String accessToken(HttpServletRequest request, JwtTokenUtil jwtTokenUtil){
+       /* if(request.getMethod().equalsIgnoreCase ("POST")
+                || request.getMethod().equalsIgnoreCase ("PUT")
+                || request.getMethod().equalsIgnoreCase ("DELETE")){*/
+
+            Cookie cookie  = CookieUtils.getCookie(request,"CSRF_TOKEN").get();
+            if(cookie != null){
+               if(accessToken.equals(cookie.getValue())){
+                   CookieUtils.deleteCookie(request,response,"CSRF_TOKEN");
+                   result = true;
+               }
+            }
+
+            System.out.println("##### result :: " + result);
+
+            if(!result){
+                accessToken = "";
+            }
+      //  }
+
+
+        return accessToken;
+    }
+
+    public static String accessToken(HttpServletRequest request,  HttpServletResponse response , JwtTokenUtil jwtTokenUtil)throws Exception{
         Cookie cookie = null;
         if(CookieUtils.getCookie(request,jwtTokenUtil.ACCESS_TOKEN_NAME).isPresent()){
             cookie = CookieUtils.getCookie(request,jwtTokenUtil.ACCESS_TOKEN_NAME).get();
@@ -158,10 +191,15 @@ public class CookieUtils {
         if(cookie != null){
             accessToken = cookie.getValue();
         }
+
+        if (StringUtils.isEmpty(accessToken)) {
+            accessToken =  getHeaderToken(request , response);
+        }
+
         return accessToken;
     }
 
-    public static String refreshToken(HttpServletRequest request, JwtTokenUtil jwtTokenUtil){
+    public static String refreshToken(HttpServletRequest request,  HttpServletResponse response ,JwtTokenUtil jwtTokenUtil) throws Exception{
 
         Cookie cookie = null;
         if(CookieUtils.getCookie(request,jwtTokenUtil.REFRESH_TOKEN_NAME).isPresent()){
@@ -171,6 +209,11 @@ public class CookieUtils {
         if(cookie != null){
             refreshToken = cookie.getValue();
         }
+
+        if (StringUtils.isEmpty(refreshToken)) {
+            refreshToken =  getHeaderToken(request , response);
+        }
+
         return refreshToken;
     }
 

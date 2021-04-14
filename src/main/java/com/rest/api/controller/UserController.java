@@ -44,7 +44,7 @@ public class UserController {
     // https://velog.io/@ehdrms2034/Spring-Security-JWT-Redis%EB%A5%BC-%ED%86%B5%ED%95%9C-%ED%9A%8C%EC%9B%90%EC%9D%B8%EC%A6%9D%ED%97%88%EA%B0%80-%EA%B5%AC%ED%98%84-4-%ED%9A%8C%EC%9B%90%EA%B0%80%EC%9E%85-%EC%9D%B8%EC%A6%9D-%EC%9D%B4%EB%A9%94%EC%9D%BC-%EC%95%84%EC%9D%B4%EB%94%94-%EB%B9%84%EB%B0%80%EB%B2%88%ED%98%B8-%EC%B0%BE%EA%B8%B0
     private final JwtTokenUtil jwtTokenProvider;
 
-    private Logger logger = LoggerFactory.getLogger(BoardController.class);
+    private Logger logger = LoggerFactory.getLogger(UserController.class);
 
     @Autowired
     private UserService userService;
@@ -81,8 +81,9 @@ public class UserController {
      * @throws Exception
      */
     // TODO: 사용자 등록
-    @PostMapping("/users")
+    @PostMapping("/api/users")
     public ResponseMessage signUp(User.Request user) throws RuntimeException{
+        System.out.println(user);
         ResponseMessage ms = new ResponseMessage();
         try {
             userService.singUp(user);
@@ -133,11 +134,10 @@ public class UserController {
      */
     // TODO: 사용자 조회
     @GetMapping("/users/{id}")
-    public ResponseMessage users(@PathVariable Long id , HttpServletRequest req) throws Throwable {
+    public ResponseMessage users(@PathVariable Long id , HttpServletRequest req,HttpServletResponse res) throws Exception {
         ResponseMessage ms = new ResponseMessage();
         Optional<User> user  = Optional.ofNullable(userService.findById(id).orElseThrow(() -> new NoResultException("사용자가 존재하지 않습니다.")));
-        if(!accessAuthCheck(user.get(), id , req)) throw new AuthenticationException("Unauthorized");
-
+        if(!accessAuthCheck(user.get(), id , req,res)) throw new AuthenticationException("Unauthorized");
         Collection<Role.Response> role =  new ArrayList<>();
         user.get().getRoles().forEach((k) ->{
             Role.Response r = Role.Response.builder().name(k.getRole().getName()).build();
@@ -180,13 +180,13 @@ public class UserController {
      * @throws Exception
      */
     // TODO: 권한 체크
-    public boolean accessAuthCheck(User user ,  Long userId , HttpServletRequest req) throws Exception {
+    public boolean accessAuthCheck(User user ,  Long userId , HttpServletRequest req ,  HttpServletResponse res) throws Exception {
         //String requestTokenHeader = req.getHeader("Authorization");
         //String jwtToken = requestTokenHeader.substring(7).trim();
 
-        String token = CookieUtils.accessToken(req,jwtTokenUtil);
+        String token = CookieUtils.accessToken(req,res,jwtTokenUtil);
         if(StringUtils.isEmpty(token)){
-            token = CookieUtils.refreshToken(req,jwtTokenUtil);
+            token = CookieUtils.refreshToken(req,res,jwtTokenUtil);
         }
         String username = jwtTokenUtil.getUsername(token);
         if(!StringUtils.isEmpty(username)){
@@ -198,10 +198,6 @@ public class UserController {
                 Optional<User> tokenUser  = Optional.ofNullable(userService.findById(id).orElseThrow(() -> new NoResultException("사용자가 존재하지 않습니다.")));
 
                 // https://woowacourse.github.io/javable/post/2020-05-14-foreach-vs-forloop/
-            /*
-            tokenUser.get().getRoles().forEach((k) ->{
-                if("ROLE_ADMIN".equals(k.getName()))  return true; return@loop;
-            });*/
 
                 for(UserRoles role :  tokenUser.get().getRoles()){
                     if("ROLE_ADMIN".equals(role.getRole().getName())) return true;

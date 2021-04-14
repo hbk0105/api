@@ -68,14 +68,14 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
         try {
 
-        String accessToken = CookieUtils.accessToken(request,jwtTokenUtil);
+        String accessToken = CookieUtils.accessToken(request,response,jwtTokenUtil);
         accessToken = "Bearer" +accessToken;
 
         String username = null;
         String refreshToken = null;
 
         //String requestTokenHeader = request.getHeader("Authorization");
-        logger.info("### accessToken :: " + accessToken);
+        System.out.println("### accessToken :: " + accessToken);
         if (!StringUtils.isEmpty(accessToken)  && accessToken.startsWith("Bearer ")) {
             accessToken = accessToken.substring(7).trim();
             try {
@@ -93,11 +93,11 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             } catch (ExpiredJwtException e) {
                 e.printStackTrace();
                 logger.error("Expired  JWT Token");
-                refreshToken = CookieUtils.refreshToken(request,jwtTokenUtil);
+                refreshToken = CookieUtils.refreshToken(request,response,jwtTokenUtil);
             }
         } else {
             logger.error("JWT Token does not begin with Bearer String");
-            refreshToken = CookieUtils.refreshToken(request,jwtTokenUtil);
+            refreshToken = CookieUtils.refreshToken(request,response,jwtTokenUtil);
         }
 
         if(!StringUtils.isEmpty(refreshToken)){

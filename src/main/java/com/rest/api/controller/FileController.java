@@ -35,7 +35,7 @@ import java.util.Optional;
 @RestController
 public class FileController {
 
-    private Logger logger = LoggerFactory.getLogger(BoardController.class);
+    private Logger logger = LoggerFactory.getLogger(FileController.class);
 
     @Autowired
     private FileService fileService;

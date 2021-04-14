@@ -105,7 +105,6 @@ dependencies {
 	// https://mvnrepository.com/artifact/org.redisson/redisson
 	implementation group: 'org.redisson', name: 'redisson', version: '3.13.6'
 
-
 }
 
 

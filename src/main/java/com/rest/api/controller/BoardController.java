@@ -177,12 +177,11 @@ public class BoardController {
      */
     // TODO: 게시글 댓글 전체 조회
     //@CrossOrigin(origins = "*", allowedHeaders = "*")
-    @GetMapping("/boards/{id}/comments/{commentId}")
-    public ResponseMessage  getPostComments(@PathVariable Long id  , @PathVariable Long commentId  ,  @PageableDefault(page = 0, size = 10) PageRequest pageRequest) throws Exception {
+    @GetMapping("/boards/{id}/comments")
+    public ResponseMessage  getPostComments(@PathVariable Long id , @PageableDefault(page = 0, size = 10) PageRequest pageRequest) throws Exception {
         ResponseMessage ms = new ResponseMessage();
         Board board = boardQueryRepository.findById(id);
-        Comment comment = boardQueryRepository.selectCommentOne(commentId);
-        ms.add("result",boardQueryRepository.findByComment(board ,comment, pageRequest.of()));
+        ms.add("result",boardQueryRepository.findByComment(board , pageRequest.of()));
         return ms;
     }
 

@@ -2,6 +2,8 @@ package com.rest.api.config;
 
 import com.rest.api.domain.Token;
 import com.rest.api.util.LdapFailAwareRedisObjectSerializer;
+import org.redisson.Redisson;
+import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -40,15 +42,14 @@ public class RedisConfig {
     }
 
     // redis 세션 임시 주석
-    /*
+
     @Bean
     public RedissonClient redissonClient(){
         RedissonClient redisson = Redisson.create();
         return redisson;
     }
-    */
-/*
 
+/*
     @Bean
     public CacheManager redisCacheManager() {
         RedisCacheConfiguration redisCacheConfiguration = RedisCacheConfiguration.defaultCacheConfig()

@@ -2,6 +2,7 @@ package com.rest.api.concurrency;
 
 import com.rest.api.config.RedisConfig;
 import lombok.RequiredArgsConstructor;
+import org.redisson.api.RLock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 @RequiredArgsConstructor
 @RestController
@@ -90,7 +92,7 @@ public class ConcurrencyTestController {
 
     // https://kkambi.tistory.com/196
     // redis 임시주석
-    /*
+
     public boolean test(Reservation reservation) {
         boolean result = false;
         // 레디스 락 데이터 생성 후 2초 대기, 3초후 락 해제
@@ -121,5 +123,5 @@ public class ConcurrencyTestController {
         }
 
     }
-    */
+
 }

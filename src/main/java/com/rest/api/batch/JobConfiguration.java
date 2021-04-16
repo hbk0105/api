@@ -29,9 +29,6 @@ public class JobConfiguration {
     @Autowired
     private LockTableRepository lockTableRepository;
 
-    @Autowired
-    private PayInfoRepository payInfoRepository;
-
     private String instanceId = "play-batch";
 
     @Bean
@@ -89,7 +86,7 @@ public class JobConfiguration {
     public Step step2(){
         return stepBuilderFactory.get("step2")
                 .tasklet((stepContribution, chunkContext) -> {
-                    int itemCnt = payInfoRepository.countAllBySuccessYn(false);
+                    int itemCnt = 0;
                     log.info("======= 처리할 Item 개수 : {}", itemCnt);
                     if(0 == itemCnt){
                         log.info("======= 처리할 Item 이 없어 종료 ");
@@ -106,17 +103,7 @@ public class JobConfiguration {
     public Step step3(){
         return stepBuilderFactory.get("step3")
                 .tasklet((stepContribution, chunkContext) -> {
-
-                    List<PayInfo> payInfoList = payInfoRepository.findAllBySuccessYn(false);
                     log.info("## step3 :: ");
-                    for(PayInfo payInfo: payInfoList){
-                        // 무언가를 처리하고 결과값이 TRUE 일때 결과 성공 처리
-                        if(true){
-                            payInfo.setRequestDateTime(LocalDateTime.now());
-                            payInfo.setSuccessYn(true);
-                            payInfoRepository.save(payInfo);
-                        }
-                    }
                     return RepeatStatus.FINISHED;
                 }).build();
     }

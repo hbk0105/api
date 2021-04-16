@@ -35,8 +35,6 @@ public class CustomLogoutSuccessHandler extends SimpleUrlLogoutSuccessHandler {
             new SecurityContextLogoutHandler().logout(request, response, auth);
         }
 
-        System.out.println("@@@ 타나요?");
-
         ResponseMessage ms = new ResponseMessage();
         response.setContentType("application/json; charset=utf-8");
         PrintWriter out = response.getWriter();

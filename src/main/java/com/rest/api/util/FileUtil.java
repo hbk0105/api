@@ -5,6 +5,7 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.tika.Tika;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -26,7 +27,8 @@ import java.io.*;
  */
 public class FileUtil {
 
-    public static final String uploadDir =  "C:\\upload";
+    @Value("${file.uploadDir}")
+    private static String uploadDir;
 
     /**
      * 파일 업로드

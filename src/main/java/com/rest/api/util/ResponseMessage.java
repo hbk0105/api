@@ -1,14 +1,9 @@
 package com.rest.api.util;
 
-import java.io.Serializable;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-
-import com.fasterxml.jackson.annotation.JsonInclude;
-import lombok.Data;
 import lombok.Setter;
-import lombok.ToString;
 import org.apache.commons.pool2.BaseObject;
 import org.springframework.http.HttpStatus;
 import lombok.Getter;

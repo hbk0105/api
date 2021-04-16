@@ -163,13 +163,16 @@ public class CookieUtils {
                 || request.getMethod().equalsIgnoreCase ("PUT")
                 || request.getMethod().equalsIgnoreCase ("DELETE")){*/
 
+        if( CookieUtils.getCookie(request,"CSRF_TOKEN").isPresent()){
             Cookie cookie  = CookieUtils.getCookie(request,"CSRF_TOKEN").get();
             if(cookie != null){
-               if(accessToken.equals(cookie.getValue())){
-                   CookieUtils.deleteCookie(request,response,"CSRF_TOKEN");
-                   result = true;
-               }
+                if(accessToken.equals(cookie.getValue())){
+                    CookieUtils.deleteCookie(request,response,"CSRF_TOKEN");
+                    result = true;
+                }
             }
+        }
+
 
             System.out.println("##### result :: " + result);
 

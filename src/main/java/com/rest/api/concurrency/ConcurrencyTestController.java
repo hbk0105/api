@@ -5,6 +5,9 @@ import lombok.RequiredArgsConstructor;
 import org.redisson.api.RLock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -69,6 +72,14 @@ public class ConcurrencyTestController {
            return  result;
        }
     }
+
+    @GetMapping("/test")
+    public ResponseEntity<HashMap<String, Object>> getTicketList(@RequestBody Map<String, Object> vo) {
+        HashMap<String,Object> data = new HashMap<>();
+        data.put("key1","value");
+        return new ResponseEntity<HashMap<String,Object>>((HashMap<String, Object>) data, HttpStatus.OK);
+    }
+
 
     @PostMapping("/apply3")
     private Boolean apply3(Reservation reservation) {

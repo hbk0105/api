@@ -69,8 +69,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         // https://gigas-blog.tistory.com/124
         // https://stackoverflow.com/questions/32896966/how-do-i-set-x-frame-options-response-header-to-allow-from-values-using-spring
         http.cors().and().csrf()
-                .disable()
-                /* 원활한 테스트를 위해 임시 csrf().disable() 처리
+                .disable() // rest api이므로 csrf 보안이 필요없으므로 disable처리.
+                /*
                 // https://cheese10yun.github.io/spring-csrf/
                 // //https://stackoverflow.com/questions/22524470/spring-security-3-2-csrf-disable-for-specific-urls
                 .ignoringAntMatchers("/api/**", "/h2-console/**")

@@ -91,8 +91,8 @@ public class UserController {
         System.out.println(user);
         ResponseMessage ms = new ResponseMessage();
         try {
-            userService.singUp(user);
-            MailUtil.signCertificationMail("test","마이클",user.getEmail(),user.getLastName() , javaMailSender);
+            User u = userService.singUp(user);
+            MailUtil.signCertificationMail("test","마이클",user.getEmail(),user.getLastName() ,u.getMailCertificationtNo() , javaMailSender);
             ms.setMessage("본인 확인 메일이 발송 되었습니다");
         }catch (Exception e){
             e.printStackTrace();
@@ -110,8 +110,8 @@ public class UserController {
      */
     // TODO: 이메일 본인 인증
     @ApiOperation(value = "이메일 인증", notes = "이메일 인증을 한다.")
-    @GetMapping("/completed/{email}")
-    public ResponseMessage completed(@PathVariable String email , HttpServletRequest req) {
+    @GetMapping("/completed/{email}/{no}")
+    public ResponseMessage completed(@PathVariable String email , @PathVariable Long no, HttpServletRequest req) {
         ResponseMessage ms = null;
         User user =  Optional.ofNullable(userService.findByEmail(email)).orElseThrow(() -> new NoResultException("사용자가 존재하지 않습니다."));
 
@@ -121,7 +121,7 @@ public class UserController {
         if(user.getMailCertificationtDate() == null) return ms = new ResponseMessage(HttpStatus.NOT_FOUND, "사용자가 존재하지 않습니다.", req.getRequestURL().toString());
         LocalDateTime endDate  =  user.getMailCertificationtDate();
         // startTime이 endTime 보다 이전 시간 인지 비교
-        if(nowDate.isBefore(endDate)){
+        if(nowDate.isBefore(endDate) && user.getMailCertificationtNo().equals(no)){
             user.setMailCertification(true);
             userQueryRepository.update(user);
             ms = new ResponseMessage();

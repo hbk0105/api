@@ -19,6 +19,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
 
 @Service
 public class UserService {
@@ -64,6 +65,7 @@ public class UserService {
             LocalDateTime startDate = LocalDateTime.now();
             LocalDateTime date  = startDate.plusMinutes(10);
             user.setMailCertificationtDate(date);
+            user.setMailCertificationtNo((long) ThreadLocalRandom.current().nextInt(100000, 1000000));
 
             Role role = roleRepository.findByName("ROLE_USER");
            // user.setRoles(new ArrayList<>(Arrays.asList(role)));

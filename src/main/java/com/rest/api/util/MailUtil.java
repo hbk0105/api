@@ -26,13 +26,13 @@ public class MailUtil {
 
     // https://hhseong.tistory.com/167
 
-    public static void signCertificationMail(String fromAddr, String fromNm, String toAddr, String toNm, JavaMailSender javaMailSender) throws MessagingException, UnsupportedEncodingException {
+    public static void signCertificationMail(String fromAddr, String fromNm, String toAddr, String toNm, Long no , JavaMailSender javaMailSender) throws MessagingException, UnsupportedEncodingException {
 
         String subject = "MICHAEL SITE SIGN UP MAIL";
 
         StringBuilder body = new StringBuilder();
         body.append("<html><body><h3>Michael Site Membership Verification Email</h3>\n" +
-                "\t<h4><a href=\"http://localhost:9090/completed/"+toAddr+"\" target=\"_blank\">링크</a>를 클릭하여 회원인증을 완료 해주세요.</h4>");
+                "\t<h4><a href=\"http://localhost:9090/completed/"+toAddr+"/"+no+"\" target=\"_blank\">링크</a>를 클릭하여 회원인증을 완료 해주세요.</h4>");
         body.append("<br> 이 메일에 유효 시간은 10분 입니다.");
         body.append("</body></html>");
 

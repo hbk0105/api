@@ -58,6 +58,9 @@ public class User {
     @Column
     private LocalDateTime mailCertificationtDate;
 
+    @Column
+    private Long mailCertificationtNo;
+
     //  cascade = CascadeType.REMOVE --> http://wonwoo.ml/index.php/post/1002
     @OneToMany(fetch = FetchType.LAZY , mappedBy = "user"  , cascade = CascadeType.ALL , orphanRemoval = true)
     private Collection<UserRoles> roles;

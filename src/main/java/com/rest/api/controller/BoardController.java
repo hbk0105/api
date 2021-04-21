@@ -9,6 +9,8 @@ import com.rest.api.service.UserService;
 import com.rest.api.util.CookieUtils;
 import com.rest.api.util.PageRequest;
 import com.rest.api.util.ResponseMessage;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -33,6 +35,7 @@ import java.util.Optional;
  * 2021. 3.  22.    MICHAEL						최초작성
  *
  */
+@Api(tags = {"2. Board"})
 @RequiredArgsConstructor
 @RestController
 public class BoardController {
@@ -60,6 +63,7 @@ public class BoardController {
      * @throws Exception
      */
     // TODO: 게시판 리스트 조회
+    @ApiOperation(value = "게시글 전체", notes = "게시글 전체를 조회한다")
     @GetMapping("/boards")
     public ResponseMessage listAll(
              @PageableDefault(page = 0, size = 10) PageRequest pageRequest,
@@ -91,6 +95,7 @@ public class BoardController {
      * @throws Exception
      */
     // TODO: 게시글 조회
+    @ApiOperation(value = "게시글 조회", notes = "게시글을 조회한다")
     @GetMapping("/boards/{id}")
     public ResponseMessage getBoard( @PathVariable Long id , HttpServletRequest req) throws Exception{
         ResponseMessage ms = new ResponseMessage();
@@ -115,6 +120,7 @@ public class BoardController {
      * @throws Exception
      */
     // TODO: 게시글 등록
+    @ApiOperation(value = "게시글 등록", notes = "게시글을 등록한다")
     @PostMapping("/boards")
     public ResponseMessage save(Board board , HttpServletRequest req,HttpServletResponse res) throws Exception{
         ResponseMessage ms = new ResponseMessage();
@@ -134,6 +140,7 @@ public class BoardController {
      * @throws Exception
      */
     // TODO: 게시글 수정
+    @ApiOperation(value = "게시글 수정", notes = "게시글을 수정한다")
     @PutMapping("/boards/{id}")
     public ResponseMessage update(@PathVariable Long id ,Board board , HttpServletRequest req,HttpServletResponse res) throws Exception{
         ResponseMessage ms = new ResponseMessage();
@@ -154,6 +161,7 @@ public class BoardController {
      * @throws Exception
      */
     // TODO: 게시글 삭제
+    @ApiOperation(value = "게시글 삭제", notes = "게시글을 삭제한다")
     @DeleteMapping("/boards/{id}")
     public ResponseMessage delete(@PathVariable Long id ,Board board , HttpServletRequest req,HttpServletResponse res) throws Exception{
         ResponseMessage ms = new ResponseMessage();
@@ -177,6 +185,7 @@ public class BoardController {
      */
     // TODO: 게시글 댓글 전체 조회
     //@CrossOrigin(origins = "*", allowedHeaders = "*")
+    @ApiOperation(value = "댓글 전체", notes = "댓글 전체 조회한다")
     @GetMapping("/boards/{id}/comments")
     public ResponseMessage  getPostComments(@PathVariable Long id , @PageableDefault(page = 0, size = 10) PageRequest pageRequest) throws Exception {
         ResponseMessage ms = new ResponseMessage();
@@ -194,6 +203,8 @@ public class BoardController {
      */
     // TODO: 게시글 댓글 등록
     //@CrossOrigin(origins = "*", allowedHeaders = "*")
+    @ApiOperation(value = "댓글 등록", notes = "댓글 등록한다")
+
     @PostMapping("/boards/{id}/comments")
     public ResponseMessage createComment(@PathVariable Long id, Comment comment , HttpServletRequest req ,  HttpServletResponse res){
         ResponseMessage ms = new ResponseMessage();
@@ -218,6 +229,7 @@ public class BoardController {
      */
     // TODO: 게시글 댓글 수정
     //@CrossOrigin(origins = "*", allowedHeaders = "*")
+    @ApiOperation(value = "댓글 수정", notes = "댓글 수정한다")
     @PutMapping("/boards/{id}/comments/{commentId}")
     public ResponseMessage updateComment(@PathVariable Long id, @PathVariable Long commentId
             , Comment comment , HttpServletRequest req , HttpServletResponse res){
@@ -244,6 +256,7 @@ public class BoardController {
      */
     // TODO: 게시글 댓글 삭제
     // @CrossOrigin(origins = "*", allowedHeaders = "*")
+    @ApiOperation(value = "댓글 삭제", notes = "댓글 삭제한다")
     @DeleteMapping("/boards/{id}/comments/{commentId}")
     public ResponseMessage deleteComment(@PathVariable Long id, @PathVariable Long commentId
             , Comment comment , HttpServletRequest req ,  HttpServletResponse res){

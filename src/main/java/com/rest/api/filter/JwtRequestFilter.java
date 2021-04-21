@@ -75,7 +75,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         String refreshToken = null;
 
         //String requestTokenHeader = request.getHeader("Authorization");
-        System.out.println("### accessToken :: " + accessToken);
+        //System.out.println("### accessToken :: " + accessToken);
         if (!StringUtils.isEmpty(accessToken)  && accessToken.startsWith("Bearer ")) {
             accessToken = accessToken.substring(7).trim();
             try {

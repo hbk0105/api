@@ -131,8 +131,6 @@ public class User {
         private String firstName;
         private String lastName;
         private String password;
-        private boolean mailCertification;
-        private boolean enabled;
 
       // 안전한 객채 생성 패턴
       @Builder
@@ -148,8 +146,6 @@ public class User {
           this.firstName = firstName;
           this.lastName = lastName;
           this.password = password;
-          this.mailCertification=false;
-          this.enabled=true;
       }
     }
 

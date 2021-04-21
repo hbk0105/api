@@ -4,6 +4,8 @@ import com.rest.api.domain.Files;
 import com.rest.api.util.FileUtil;
 import com.rest.api.service.FileService;
 import com.rest.api.util.ResponseMessage;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,6 +33,7 @@ import java.util.Optional;
  * 2021. 3.  22.    MICHAEL						최초작성
  *
  */
+@Api(tags = {"3. File"})
 @RequiredArgsConstructor
 @RestController
 public class FileController {
@@ -47,6 +50,7 @@ public class FileController {
      * @throws Exception
      */
     // TODO: 파일 등록
+    @ApiOperation(value = "파일 등록", notes = "파일을 등록한다")
     @PostMapping("/files")
     public ResponseMessage fileUpload(@RequestParam("file") List<MultipartFile> files) throws Exception {
         ResponseMessage ms = new ResponseMessage();
@@ -70,6 +74,7 @@ public class FileController {
      * @throws Exception
      */
     // TODO: 파일 삭제
+    @ApiOperation(value = "파일 삭제", notes = "파일을 삭제한다")
     @DeleteMapping("/files/{fileId}")
     public ResponseMessage fileDelete(@PathVariable Long fileId) throws Exception {
         ResponseMessage ms = new ResponseMessage();
@@ -94,6 +99,7 @@ public class FileController {
      * @throws Exception
      */
     // TODO: 파일 조회
+    @ApiOperation(value = "파일 조회", notes = "파일을 조회한다")
     @GetMapping("/files/{fileId}")
     @Consumes(MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<byte[]> downloadDocument(
@@ -110,6 +116,7 @@ public class FileController {
      * @throws Exception
      */
     // TODO: 이미지 조회
+    @ApiOperation(value = "이미지 조회", notes = "이미지를 조회한다")
     @GetMapping("/images/{fileId}")
     public  ResponseEntity<byte[]> getImage(@PathVariable Long fileId, HttpServletRequest req) throws Exception {
         Optional<Files> f = fileService.getFile(fileId);

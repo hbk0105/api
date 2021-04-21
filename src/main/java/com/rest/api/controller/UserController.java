@@ -9,6 +9,8 @@ import com.rest.api.service.UserService;
 import com.rest.api.util.CookieUtils;
 import com.rest.api.util.MailUtil;
 import com.rest.api.util.ResponseMessage;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -37,6 +39,7 @@ import java.util.*;
  * 2021. 3.  22.    MICHAEL						최초작성
  *
  */
+@Api(tags = {"1. User"})
 @RequiredArgsConstructor
 @RestController
 public class UserController {
@@ -68,6 +71,7 @@ public class UserController {
      * @throws Exception
      */
     // TODO: 에러 테스트
+    @ApiOperation(value = "에러 테스트", notes = "에러 테스트를 한다")
     @GetMapping("/api/error")
     public ResponseMessage error(HttpServletRequest req) throws Exception {
         throw new Exception("Exception");
@@ -81,6 +85,7 @@ public class UserController {
      * @throws Exception
      */
     // TODO: 사용자 등록
+    @ApiOperation(value = "회원 가입", notes = "회원 가입을 한다.")
     @PostMapping("/api/users")
     public ResponseMessage signUp(User.Request user) throws RuntimeException{
         System.out.println(user);
@@ -104,6 +109,7 @@ public class UserController {
      * @throws Exception
      */
     // TODO: 이메일 본인 인증
+    @ApiOperation(value = "이메일 인증", notes = "이메일 인증을 한다.")
     @GetMapping("/completed/{email}")
     public ResponseMessage completed(@PathVariable String email , HttpServletRequest req) {
         ResponseMessage ms = null;
@@ -133,6 +139,7 @@ public class UserController {
      * @throws Exception
      */
     // TODO: 사용자 조회
+    @ApiOperation(value = "회원 조회", notes = "회원 조회를 한다.")
     @GetMapping("/users/{id}")
     public ResponseMessage users(@PathVariable Long id , HttpServletRequest req,HttpServletResponse res) throws Exception {
         ResponseMessage ms = new ResponseMessage();
@@ -160,6 +167,7 @@ public class UserController {
      * @throws Exception
      */
     // TODO: 사용자 삭제
+    @ApiOperation(value = "회원 삭제", notes = "회원 삭제를 한다.")
     @DeleteMapping("/users/{id}")
     public ResponseMessage userDelete(@PathVariable Long id) throws Throwable {
         ResponseMessage ms = new ResponseMessage();
@@ -216,6 +224,7 @@ public class UserController {
      * @throws Exception
      */
     // TODO: 로그인
+    @ApiOperation(value = "로그인", notes = "로그인을 한다.")
     @PostMapping("/api/login")
     public ResponseMessage login(@RequestBody Map<String, String> data , HttpServletRequest req , HttpServletResponse res){
         ResponseMessage ms = new ResponseMessage();
@@ -235,6 +244,7 @@ public class UserController {
      * @throws Exception
      */
     // TODO: 로그아웃
+    @ApiOperation(value = "로그아웃", notes = "로그아웃을 한다.")
     @GetMapping(value="/api/logout")
     public ResponseMessage logout(HttpServletRequest req , HttpServletResponse res) throws Exception {
         ResponseMessage ms = new ResponseMessage();

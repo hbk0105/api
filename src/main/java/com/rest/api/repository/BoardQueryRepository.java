@@ -51,29 +51,6 @@ public class BoardQueryRepository {
                 .limit(1).fetchOne();
     }
 
-    public Page<Comment.Response> findCommentsByComment(Board board , Pageable pageable){
-         QueryResults<Comment> result = queryFactory.select(comment)
-                    .from(comment)
-                    .where(comment.board.eq(board))
-                    .orderBy(comment.comment_id.desc()) // 정렬도 가능하다
-                    .limit(pageable.getPageSize()) // Limit 을 지정할 수 있고
-                    .offset(pageable.getOffset()) // offset과
-                    .fetchResults();
-
-        List<Comment.Response> b = new ArrayList<>();
-        result.getResults().forEach((k)->{
-            b.add(Comment.Response.builder()
-                            .board_id(k.getBoard().getId())
-                            .comment_id(k.getComment_id())
-                            .title(k.getTitle())
-                            .content(k.getContent())
-                            .email(k.getUser().getEmail())
-                            .firstName(k.getUser().getFirstName())
-                            .lastName(k.getUser().getLastName()).build());
-        });
-        return new PageImpl<>(b, pageable, result.getTotal());
-    }
-
     public Comment selectCommentOne(Long id) throws Exception{
         return queryFactory.select(comment).from(comment)
                 .where(comment.comment_id.eq(id))

@@ -56,7 +56,7 @@ public class Board  {
         private String firstName;
         private String lastName;
 
-        // 안전한 객채 생성 패턴
+        // 안전한 객채 생성 패턴 - https://cheese10yun.github.io/spring-builder-pattern/
         @Builder
         public Response(Long id ,String title , String content ,String email , String firstName , String lastName ) {
             Assert.hasText(String.valueOf(id), "id must not be empty");

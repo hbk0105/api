@@ -119,3 +119,6 @@ https://blog.leocat.kr/notes/2020/01/13/querydsl-duplication-problem-on-fetchjoi
 8. TDD
   - https://velog.io/@dsunni/Spring-Boot-02-%ED%85%8C%EC%8A%A4%ED%8A%B8-%EC%BD%94%EB%93%9C
 
+9. 조인
+  - querydsl join 테스트..
+    https://thxwelchs.github.io/JPA-N+1/  , https://meetup.toast.com/posts/87

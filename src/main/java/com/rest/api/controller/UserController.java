@@ -198,8 +198,7 @@ public class UserController {
         }
         String username = jwtTokenUtil.getUsername(token);
         if(!StringUtils.isEmpty(username)){
-            String r[] = username.split("-");
-            Long id = Long.parseLong(r[0]);
+            Long id = Long.parseLong(username.substring(0,username.indexOf("-")));
             if(id == userId){
                 return true;
             }else{

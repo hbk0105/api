@@ -82,8 +82,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
                 username = jwtTokenUtil.getUsername(accessToken);
                 if(!StringUtils.isEmpty(username)){
-                    String r[] = username.split("-");
-                    Long id = Long.parseLong(r[0]);
+                    Long id = Long.parseLong(username.substring(0,username.indexOf("-")));
                     setAuthentication(request , response , id,false);
                 }
 
@@ -104,8 +103,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             try {
                 username = jwtTokenUtil.getUsername(refreshToken);
                 if(!StringUtils.isEmpty(username)){
-                    String r[] = username.split("-");
-                    Long id = Long.parseLong(r[0]);
+                    Long id = Long.parseLong(username.substring(0,username.indexOf("-")));
                     setAuthentication(request , response , id,true);
                 }
 

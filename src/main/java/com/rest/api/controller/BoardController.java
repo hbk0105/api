@@ -280,8 +280,7 @@ public class BoardController {
             }
             String username = jwtTokenUtil.getUsername(token);
             if(!StringUtils.isEmpty(username)) {
-                String r[] = username.split("-");
-                Long id = Long.parseLong(r[0]);
+                Long id = Long.parseLong(username.substring(0,username.indexOf("-")));
                 Optional<User> users  = Optional.ofNullable(userService.findById(id).orElseThrow(() -> new NoResultException("사용자가 존재하지 않습니다.")));
                 user = users.get();
             }

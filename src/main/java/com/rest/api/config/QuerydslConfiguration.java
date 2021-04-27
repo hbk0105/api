@@ -9,6 +9,7 @@ import javax.persistence.PersistenceContext;
 @Configuration
 public class QuerydslConfiguration {
 
+    // https://jojoldu.tistory.com/372
     @PersistenceContext
     private EntityManager entityManager;
 

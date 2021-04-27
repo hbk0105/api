@@ -63,7 +63,7 @@ public class BoardQueryRepository {
                 .from(comment)
                 .where(comment.board.eq(board))
                 //.where(comment.comment_id.eq(c.getComment_id()))
-                .orderBy(comment.comment_id.desc()) // 정렬도 가능하다
+                .orderBy(comment.comment_id.asc()) // 정렬도 가능하다
                 .limit(pageable.getPageSize()) // Limit 을 지정할 수 있고
                 .offset(pageable.getOffset()) // offset과
                 .fetchResults();

@@ -248,8 +248,6 @@ public class UserController {
     public ResponseMessage logout(HttpServletRequest req , HttpServletResponse res) throws Exception {
         ResponseMessage ms = new ResponseMessage();
         CookieUtils.logout(jwtTokenUtil,redisTemplate,req,res);
-        CookieUtils.deleteCookie(req,res, JwtTokenUtil.ACCESS_TOKEN_NAME);
-        CookieUtils.deleteCookie(req,res, JwtTokenUtil.REFRESH_TOKEN_NAME);
         return ms;
     }
 

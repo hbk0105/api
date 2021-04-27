@@ -119,6 +119,9 @@ public class CookieUtils {
             }
         }   catch (Exception e) {
             e.printStackTrace();
+        } finally {
+            CookieUtils.deleteCookie(req,res, JwtTokenUtil.ACCESS_TOKEN_NAME);
+            CookieUtils.deleteCookie(req,res, JwtTokenUtil.REFRESH_TOKEN_NAME);
         }
 
         /*

@@ -86,6 +86,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/admin/**").hasRole("ADMIN")
                 .antMatchers("/users/**").hasAnyRole("USER","ADMIN")//.hasRole("USER")
                 .antMatchers("/api/**", "/h2-console/**","/apply*" , "/boards/**","swagger-ui.html").permitAll()
+                .anyRequest().authenticated()
                 // https://ddakker.tistory.com/295
                 .and().logout()
                 /*.logoutUrl("/api/logout")

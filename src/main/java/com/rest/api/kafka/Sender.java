@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
+
 @Service
 public class Sender {
 
@@ -15,11 +17,13 @@ public class Sender {
     @Autowired
     private KafkaTemplate<String, String> kafkaTemplate;
 
-    //@Value("${app.topic.foo}")
+    @Value("${app.topic.foo}")
     private String topic;
 
     public void send(String message){
         LOG.info("sending message='{}' to topic='{}'", message, topic);
         kafkaTemplate.send(topic, message);
     }
+
+
 }

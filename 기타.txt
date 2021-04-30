@@ -101,6 +101,7 @@ https://blog.leocat.kr/notes/2020/01/13/querydsl-duplication-problem-on-fetchjoi
 
     - https://oingdaddy.tistory.com/166
     - https://github.com/Jayden-Song/springRabbit
+    - https://umanking.github.io/2020/11/25/spring-rabbitmq-tutorial/
 
 4. 채팅 구현
   - https://daddyprogrammer.org/post/4077/spring-websocket-chatting/
@@ -122,3 +123,9 @@ https://blog.leocat.kr/notes/2020/01/13/querydsl-duplication-problem-on-fetchjoi
 9. 조인
   - querydsl join 테스트..
     https://thxwelchs.github.io/JPA-N+1/  , https://meetup.toast.com/posts/87
+
+10. Elasticsearch
+  - https://lng1982.tistory.com/284  ,  https://gomip.tistory.com/19
+
+11. 스트림
+  - https://mkyong.com/java8/java-8-streams-map-examples/

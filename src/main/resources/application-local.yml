@@ -90,11 +90,11 @@ spring :
         max-attempt: 3
 
 
-#  kafka:
-#    bootstrap-servers: localhost:9092
-#app:
-#  topic: received message
-#    foo: foo.t
+  kafka:
+    bootstrap-servers: localhost:9092
+app:
+  topic: #received message
+      foo: foo.t
 
 
 app1:

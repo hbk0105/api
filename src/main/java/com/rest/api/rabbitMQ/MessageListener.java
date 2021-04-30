@@ -23,7 +23,7 @@ public class MessageListener {
      */
 
     @RabbitListener(queues = "${app1.queue.name}")
-    public void receiveMessageForApp1(final UserDetails data) {
+    public void receiveMessageForApp1(final Object data) {
         log.info("메세지 수신 : {} FROM testApp1 Queue.", data);
 
         try {
@@ -34,13 +34,13 @@ public class MessageListener {
             log.info("<< 메세지 수신 성공111111111 API call.");
 
         } catch(HttpClientErrorException ex) {
-
+            ex.printStackTrace();
             if(ex.getStatusCode() == HttpStatus.NOT_FOUND) {
                 log.info("Delay...");
                 try {
                     Thread.sleep(ApplicationConstant.MESSAGE_RETRY_DELAY);
                 } catch (InterruptedException e) {
-                    ;
+                    e.printStackTrace();
                 }
 
                 log.info("Throwing exception so that message will be requed in the queue.");
@@ -53,6 +53,7 @@ public class MessageListener {
             }
 
         } catch(Exception e) {
+            e.printStackTrace();
             log.error("Internal server error occurred in API call. Bypassing message requeue {}", e);
             throw new AmqpRejectAndDontRequeueException(e);
         }
@@ -73,13 +74,13 @@ public class MessageListener {
             log.info("<< 메세지 수신 성공222222222 API call.");
 
         } catch(HttpClientErrorException  ex) {
-
+            ex.printStackTrace();
             if(ex.getStatusCode() == HttpStatus.NOT_FOUND) {
                 log.info("Delay...");
                 try {
                     Thread.sleep(ApplicationConstant.MESSAGE_RETRY_DELAY);
                 } catch (InterruptedException e) {
-                    ;
+                    e.printStackTrace();
                 }
 
                 log.info("Throwing exception so that message will be requed in the queue.");
@@ -92,6 +93,7 @@ public class MessageListener {
             }
 
         } catch(Exception e) {
+            e.printStackTrace();
             log.error("Internal server error occurred in API call. Bypassing message requeue {}", e);
             throw new AmqpRejectAndDontRequeueException(e);
         }

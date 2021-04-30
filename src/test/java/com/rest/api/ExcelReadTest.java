@@ -1,22 +1,12 @@
 package com.rest.api;
 
-
-import com.rest.api.domain.Privilege;
-import com.rest.api.domain.Role;
-import com.rest.api.domain.User;
-import com.rest.api.repository.PrivilegeRepository;
-import com.rest.api.repository.RoleRepository;
-import com.rest.api.repository.UserRepository;
-import com.rest.api.service.UserService;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,35 +15,13 @@ import java.io.FileInputStream;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @Transactional
-public class JpaRelationShipTest {
-
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private RoleRepository roleRepository;
-
-    @Autowired
-    private PrivilegeRepository privilegeRepository;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-
-    private User user;
-    private Role role;
-    private Privilege privilege;
-
-    @Autowired
-    private UserService userService;
-
-    // tests
+public class ExcelReadTest {
 
     @Test
-    public void TEST_가자() {
-
+    public void excelTest()  throws Exception{
         try {
             // 경로에 있는 파일을 읽
-            FileInputStream file = new FileInputStream("C:\\upload\\files\\이름.xlsx");
+            FileInputStream file = new FileInputStream("C:\\upload\\testExcel.xlsx");
             XSSFWorkbook workbook = new XSSFWorkbook(file);
 
             int rowNo = 0;
@@ -98,8 +66,5 @@ public class JpaRelationShipTest {
         }catch(Exception e) {
             e.printStackTrace();
         }
-
-
     }
-
 }

@@ -1,9 +1,5 @@
 package com.rest.api;
 
-import com.fasterxml.jackson.core.Version;
-import com.fasterxml.jackson.databind.Module;
-import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.rest.api.jwt.JwtTokenUtil;
 import com.rest.api.kafka.Sender;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,11 +7,10 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cache.annotation.EnableCaching;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.web.filter.CharacterEncodingFilter;
 
+@EnableAspectJAutoProxy // AOP
 @EnableCaching // 캐시
 @EnableBatchProcessing // 배치
 @EnableScheduling // 배치

@@ -2,11 +2,13 @@ package com.rest.api.config;
 
 import com.rest.api.exception.RestAccessDeniedExceptionHandler;
 import com.rest.api.exception.RestAuthenticationExceptionHandler;
+import com.rest.api.filter.CorsFilter;
 import com.rest.api.filter.JwtRequestFilter;
 import com.rest.api.handler.CustomLogoutSuccessHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -14,16 +16,19 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.access.channel.ChannelProcessingFilter;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.CorsUtils;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CharacterEncodingFilter;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Arrays;
 
 @Configuration
 @EnableWebSecurity
@@ -79,10 +84,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                  */
                 //.csrfTokenRepository(csrfTokenRepository())
                 .headers().frameOptions().sameOrigin().and()
-                .cors().configurationSource(corsConfigurationSource()).and()
+                //.cors().configurationSource(corsConfigurationSource()).and()
+                // cors 허용
+                .cors().and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS) // 토큰 기반 인증이므로 세션 역시 사용하지 않습니다.
-                .and()
-                .authorizeRequests() // 요청에 대한 사용권한 체크
+                .and().authorizeRequests() // 요청에 대한 사용권한 체크
                 .antMatchers("/admin/**").hasRole("ADMIN")
                 .antMatchers("/users/**").hasAnyRole("USER","ADMIN")//.hasRole("USER")
                 .antMatchers("/api/**", "/h2-console/**","/apply*" , "/boards/**","swagger-ui.html").permitAll()
@@ -97,10 +103,16 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .invalidateHttpSession(true)
                 .clearAuthentication(true)
                 .and().exceptionHandling().accessDeniedHandler(accessDeniedHandler()).authenticationEntryPoint(authenticationExceptionHandler())
-                .and().addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
+                .and().addFilterBefore(new CorsFilter(), ChannelProcessingFilter.class)
+                .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
     }
 
     // CORS 허용 적용 - https://oddpoet.net/blog/2017/04/27/cors-with-spring-security/
+    /*
+    스프링 부트 2.4 버전은 너무 높아 configuration * 사용시 오류 발생하여
+    .and().addFilterBefore(new CorsFilter(), ChannelProcessingFilter.class) 로직으로 처리
+    참고 , https://blog.csdn.net/ASAS1314/article/details/110524116
+    https://www.programmersought.com/article/42496438777/ ,
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
@@ -114,7 +126,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         source.registerCorsConfiguration("/**", configuration);
         return source;
     }
-
+    */
     @Bean
     public CharacterEncodingFilter characterEncodingFilter() {
         CharacterEncodingFilter characterEncodingFilter = new CharacterEncodingFilter();

@@ -8,6 +8,7 @@ import org.jboss.aerogear.security.otp.api.Base32;
 import org.springframework.data.annotation.PersistenceConstructor;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
@@ -130,9 +131,16 @@ public class User {
     @Setter
     @NoArgsConstructor
     public static class Request {
+
+        // https://woowacourse.github.io/javable/post/2020-09-20-validation-in-spring-boot/
+        // https://lemontia.tistory.com/942 ,
+        @NotBlank(message = "email must not be empty.")
         private String email;
+        @NotBlank(message = "firstName must not be empty.")
         private String firstName;
+        @NotBlank(message = "lastName must not be empty.")
         private String lastName;
+        @NotBlank(message = "password must not be empty.")
         private String password;
 
       // 안전한 객채 생성 패턴

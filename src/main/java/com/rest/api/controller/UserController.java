@@ -20,12 +20,17 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
+
+import javax.mail.MessagingException;
 import javax.naming.AuthenticationException;
 import javax.persistence.NoResultException;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
+import java.io.UnsupportedEncodingException;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -87,17 +92,11 @@ public class UserController {
     // TODO: 사용자 등록
     @ApiOperation(value = "회원 가입", notes = "회원 가입을 한다.")
     @PostMapping("/api/users")
-    public ResponseMessage signUp(User.Request user) throws RuntimeException{
-        System.out.println(user);
+    public ResponseMessage signUp(@Valid User.Request user) throws Exception{
         ResponseMessage ms = new ResponseMessage();
-        try {
-            User u = userService.singUp(user);
-            MailUtil.signCertificationMail("test","마이클",user.getEmail(),user.getLastName() ,u.getMailCertificationtNo() , javaMailSender);
-            ms.setMessage("본인 확인 메일이 발송 되었습니다");
-        }catch (Exception e){
-            e.printStackTrace();
-            throw new RuntimeException(e.getMessage());
-        }
+        User u = userService.singUp(user);
+        MailUtil.signCertificationMail("test","마이클",user.getEmail(),user.getLastName() ,u.getMailCertificationtNo() , javaMailSender);
+        ms.setMessage("본인 확인 메일이 발송 되었습니다");
         return ms;
     }
 

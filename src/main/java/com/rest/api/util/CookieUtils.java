@@ -158,13 +158,18 @@ public class CookieUtils {
     public static String getHeaderToken(HttpServletRequest request , HttpServletResponse response) throws Exception{
         boolean result = false;
         String accessToken = request.getHeader("Authorization");
+
         if (!StringUtils.isEmpty(accessToken)  && accessToken.startsWith("Bearer ")) {
             accessToken = accessToken.substring(7).trim();
         }
 
-       /* if(request.getMethod().equalsIgnoreCase ("POST")
+        // REST API csrf 보안이 필요없으므로 주석
+        /*
+       if(request.getMethod().equalsIgnoreCase ("POST")
                 || request.getMethod().equalsIgnoreCase ("PUT")
-                || request.getMethod().equalsIgnoreCase ("DELETE")){*/
+                || request.getMethod().equalsIgnoreCase ("DELETE")){
+
+
 
         if( CookieUtils.getCookie(request,"CSRF_TOKEN").isPresent()){
             Cookie cookie  = CookieUtils.getCookie(request,"CSRF_TOKEN").get();
@@ -177,13 +182,12 @@ public class CookieUtils {
         }
 
 
-            //System.out.println("##### result :: " + result);
 
             if(!result){
                 accessToken = "";
             }
-      //  }
-
+       }
+        */
 
         return accessToken;
     }

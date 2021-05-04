@@ -63,7 +63,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     public void configure(WebSecurity web) throws Exception {
         // static 디렉터리의 하위 파일 목록은 인증 무시 ( = 항상통과 )
-        // web.ignoring().antMatchers("/css/**", "/js/**", "/img/**", "/lib/**","/air-datepicker/**" ,"/assets/**" ,"/sweetalert/**");
+        //web.ignoring().antMatchers("/css/**", "/js/**", "/img/**", "/lib/**","/air-datepicker/**" ,"/assets/**" ,"/sweetalert/**","webjars/**");
+        web.ignoring().mvcMatchers("/swagger-ui.html/**", "/configuration/**","/swagger-resources/**", "/v2/api-docs","/webjars/**");
     }
 
     @Override
@@ -91,7 +92,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and().authorizeRequests() // 요청에 대한 사용권한 체크
                 .antMatchers("/admin/**").hasRole("ADMIN")
                 .antMatchers("/users/**").hasAnyRole("USER","ADMIN")//.hasRole("USER")
-                .antMatchers("/api/**", "/h2-console/**","/apply*" , "/boards/**","swagger-ui.html").permitAll()
+                // ,"/webjars/**","/swagger-ui/index.html**","/swagger-ui/**"
+                .antMatchers("/api/**", "/h2-console/**","/apply*" , "/boards/**","/swagger-ui.html/**").permitAll()
                 .anyRequest().authenticated()
                 // https://ddakker.tistory.com/295
                 .and().logout()

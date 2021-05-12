@@ -13,6 +13,7 @@
 netstat -ano | find "9090"
 taskkill /f /pid 11992
 
+
 # RESTful API 설계 가이드
 https://velog.io/@kjh107704/REST-%EC%84%9C%EB%B2%84-REST-API%EB%9E%80
 https://sanghaklee.tistory.com/57
@@ -26,6 +27,8 @@ https://gaemi606.tistory.com/154
 
 # jpa
 - 설정: https://velog.io/@aidenshin/Querydsl-Gradle-%EC%84%A4%EC%A0%95
+        * https://ict-nroo.tistory.com/117   ,    https://jojoldu.tistory.com/372
+           https://lelecoder.com/145  ,  https://velog.io/@ljinsk3/Querydsl-4
 
 # domain 추가 후 테스트는
 Gradle > other > compileQuerydsl 실행

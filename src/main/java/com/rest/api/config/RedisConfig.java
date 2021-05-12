@@ -1,7 +1,6 @@
 package com.rest.api.config;
 
 import com.rest.api.domain.Token;
-import com.rest.api.util.LdapFailAwareRedisObjectSerializer;
 import org.redisson.Redisson;
 import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -5,8 +5,6 @@ import com.mysema.commons.lang.Assert;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 import org.jboss.aerogear.security.otp.api.Base32;
-import org.springframework.data.annotation.PersistenceConstructor;
-
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
@@ -109,24 +107,6 @@ public class User {
         return true;
     }
 
-  /*  @Override
-    public String toString() {
-        final StringBuilder builder = new StringBuilder();
-        builder.append("User [id=")
-                .append(id)
-                .append(", firstName=").append(firstName)
-                .append(", lastName=").append(lastName)
-                .append(", email=").append(email)
-                .append(", mailCertification=").append(mailCertification)
-                .append(", mailCertificationDate=").append(mailCertificationtDate)
-                .append(", enabled=").append(enabled)
-                .append(", isUsing2FA=").append(isUsing2FA)
-                .append(", secret=").append(secret)
-                .append(", roles=").append(roles)
-                .append("]");
-        return builder.toString();
-    }
-*/
     @Getter
     @Setter
     @NoArgsConstructor

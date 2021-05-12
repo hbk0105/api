@@ -82,8 +82,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/admin/**").hasRole("ADMIN")
                 .antMatchers("/users/**").hasAnyRole("USER","ADMIN")//.hasRole("USER")
                 // ,"/webjars/**","/swagger-ui/index.html**","/swagger-ui/**"
-                .antMatchers("/api/**", "/h2-console/**","/apply*" , "/boards/**","/swagger-ui.html/**").permitAll()
+                .antMatchers( "/api/**","/h2-console/**","/apply*" , "/boards/**","/swagger-ui.html/**").permitAll()
                 .anyRequest().authenticated()
+
+                // https://www.baeldung.com/spring-channel-security-https
+                //.and().requiresChannel().antMatchers("/api/login").requiresSecure()
+
                 // https://ddakker.tistory.com/295
                 .and().logout()
                 /*.logoutUrl("/api/logout")

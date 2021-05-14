@@ -12,7 +12,7 @@
 # PORT KILL
 netstat -ano | find "9090"
 taskkill /f /pid 11992
-
+X-Token
 
 # RESTful API 설계 가이드
 https://velog.io/@kjh107704/REST-%EC%84%9C%EB%B2%84-REST-API%EB%9E%80
@@ -132,3 +132,6 @@ https://blog.leocat.kr/notes/2020/01/13/querydsl-duplication-problem-on-fetchjoi
 
 11. 스트림
   - https://mkyong.com/java8/java-8-streams-map-examples/
+
+12. 애널리틱스
+  - https://github.com/codingspecialist/Springboot-Sentry-Analytics-Easy

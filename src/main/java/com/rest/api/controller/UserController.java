@@ -63,6 +63,10 @@ public class UserController {
     @Autowired
     RedisTemplate<String, Object> redisTemplate;
 
+    @Autowired
+    MailUtil mailUtil;
+
+
     /**
      * 에러 테스트
      * @param req
@@ -89,7 +93,7 @@ public class UserController {
     public ResponseMessage signUp(@Valid User.Request user) throws Exception{
         ResponseMessage ms = new ResponseMessage();
         User u = userService.singUp(user);
-        MailUtil.signCertificationMail("test","마이클",user.getEmail(),user.getLastName() ,u.getMailCertificationtNo() , javaMailSender);
+        mailUtil.signCertificationMail("test","마이클",user.getEmail(),user.getLastName() ,u.getMailCertificationtNo() , javaMailSender);
         ms.setMessage("본인 확인 메일이 발송 되었습니다");
         return ms;
     }
@@ -103,7 +107,7 @@ public class UserController {
      */
     // TODO: 이메일 본인 인증
     @ApiOperation(value = "이메일 인증", notes = "이메일 인증을 한다.")
-    @GetMapping("/completed/{email}/{no}")
+    @GetMapping("/api/completed/{email}/{no}")
     public ResponseMessage completed(@PathVariable String email , @PathVariable Long no, HttpServletRequest req) {
         ResponseMessage ms = null;
         User user =  Optional.ofNullable(userService.findByEmail(email)).orElseThrow(() -> new NoResultException("사용자가 존재하지 않습니다."));

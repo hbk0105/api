@@ -41,12 +41,14 @@ public class RedisConfig {
     }
 
     // redis 세션 임시 주석
+/*
 
     @Bean
     public RedissonClient redissonClient(){
         RedissonClient redisson = Redisson.create();
         return redisson;
     }
+*/
 
 /*
     @Bean

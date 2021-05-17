@@ -42,9 +42,10 @@ public class CacheConfig {
     // https://stackoverflow.com/questions/59602797/clear-redis-cache-on-spring-boot-application-startup
     @EventListener
     public void onApplicationEvent(ApplicationReadyEvent event) {
-        redisCacheManager().getCacheNames()
+        // redis 임시주석
+       /* redisCacheManager().getCacheNames()
                 .parallelStream()
-                .forEach(n -> redisCacheManager().getCache(n).clear());
+                .forEach(n -> redisCacheManager().getCache(n).clear());*/
     }
 
 }

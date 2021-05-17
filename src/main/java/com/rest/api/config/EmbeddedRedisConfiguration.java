@@ -12,7 +12,7 @@ import java.io.IOException;
  *
  * @author akageun
  */
-@Component
+//@Component
 public class EmbeddedRedisConfiguration {
 
     @Value("${spring.redis.port}")

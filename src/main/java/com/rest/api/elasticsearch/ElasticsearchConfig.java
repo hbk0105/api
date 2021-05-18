@@ -9,6 +9,8 @@ import org.springframework.data.elasticsearch.client.RestClients;
 import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
 import org.springframework.data.elasticsearch.core.ElasticsearchRestTemplate;
 
+import javax.annotation.PostConstruct;
+
 @Configuration
 //@EnableElasticsearchRepositories(basePackages = "com.rest.api.elasticsearch")
 @ComponentScan//(basePackages = {"com.rest.api.elasticsearch"})
@@ -37,4 +39,10 @@ public class ElasticsearchConfig {
     public ElasticsearchOperations elasticsearchTemplate() {
         return new ElasticsearchRestTemplate(client());
     }
+    /*
+    // https://turtles7.tistory.com/44
+    @PostConstruct
+    void init() {
+        System.setProperty("es.set.netty.runtime.available.processors", "false");
+    }*/
 }

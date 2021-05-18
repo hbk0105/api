@@ -43,9 +43,9 @@ public class CacheConfig {
     @EventListener
     public void onApplicationEvent(ApplicationReadyEvent event) {
         // redis 임시주석
-       /* redisCacheManager().getCacheNames()
+       redisCacheManager().getCacheNames()
                 .parallelStream()
-                .forEach(n -> redisCacheManager().getCache(n).clear());*/
+                .forEach(n -> redisCacheManager().getCache(n).clear());
     }
 
 }

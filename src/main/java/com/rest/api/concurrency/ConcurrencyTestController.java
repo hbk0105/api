@@ -103,13 +103,13 @@ public class ConcurrencyTestController {
 
     // https://kkambi.tistory.com/196
     // redis 임시주석
-/*
+
 
     public boolean test(Reservation reservation) {
         boolean result = false;
         // 레디스 락 데이터 생성 후 2초 대기, 3초후 락 해제
 
-        //RLock lock = redisConfig.redissonClient().getLock("sample");
+        RLock lock = redisConfig.redissonClient().getLock("sample");
         try {
             boolean isLocked = lock.tryLock(2, 3, TimeUnit.SECONDS);
             if (!isLocked) {
@@ -135,6 +135,6 @@ public class ConcurrencyTestController {
         }
 
     }
-*/
+
 
 }

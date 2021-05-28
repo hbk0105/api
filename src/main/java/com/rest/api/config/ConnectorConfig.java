@@ -22,7 +22,7 @@ public class ConnectorConfig {
                 SecurityConstraint securityConstraint = new SecurityConstraint();
                 securityConstraint.setUserConstraint("CONFIDENTIAL");
                 SecurityCollection collection = new SecurityCollection();
-                collection.addPattern("/*");
+                //collection.addPattern("/*");
                 // 특정 경로에 대해서만 https로 리다이렉트시키기
                 //collection.addPattern("/boards");
                 securityConstraint.addCollection(collection);

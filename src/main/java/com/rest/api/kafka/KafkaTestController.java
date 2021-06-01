@@ -12,6 +12,7 @@ import java.util.Map;
 
 // https://memorynotfound.com/spring-kafka-consume-producer-example/
 // https://cookiethecat2020.blogspot.com/2020/03/blog-post.html
+// https://blog.voidmainvoid.net/339
 /*
     cd C:\kafka_2.12-2.7.0\bin\windows
 

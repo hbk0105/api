@@ -30,7 +30,7 @@ public class Reservation {
     @Column(name = "res_id")
     private Long id;
 
-    @Column(name="no" , unique=true)
+    @Column(name="no")
     private Long no;
 
 }

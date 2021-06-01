@@ -48,7 +48,7 @@ public class ConcurrencyTestController {
             try {
 
                 if(reservationQueryRepository.findById(reservation) == 0){
-                    reservationRepository.save(reservation);
+                    reservationService.save2(reservation);
                     logger.info("@@@@@@@@@@@@@@@@@ SUCCESS @@@@@@@@@@@@@@@@@");
                 }else{
                     logger.info("@@@@@@@@@@@@@@@@@ FAIL @@@@@@@@@@@@@@@@@");

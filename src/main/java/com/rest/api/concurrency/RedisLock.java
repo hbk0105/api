@@ -5,7 +5,7 @@ import javax.validation.constraints.NotNull;
 import java.lang.annotation.*;
 import java.util.concurrent.TimeUnit;
 
-// https://www.fatalerrors.org/a/spring-boot-2.x-implementation-of-a-simple-distributed-lock.html
+// 설정 참조 : https://www.fatalerrors.org/a/spring-boot-2.x-implementation-of-a-simple-distributed-lock.html
 // Indicates that the method can be annotated
 @Target({ElementType.METHOD})
 // Annotation retention time, runtime retention

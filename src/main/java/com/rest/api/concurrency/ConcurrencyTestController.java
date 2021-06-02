@@ -1,15 +1,16 @@
 package com.rest.api.concurrency;
 
+import com.google.common.collect.ImmutableMap;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.web.client.RestTemplateBuilder;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 import javax.annotation.Resource;
+import java.net.URI;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -36,9 +37,13 @@ public class ConcurrencyTestController {
     @Resource
     RedisLockUtil redisLockUtil;
 
+    @Autowired
+    private RestTemplate rest;
+
     @RequestMapping("/buy")
     public String buy(@RequestParam String goodId , Reservation reservation) {
         long timeout = 15;
+
         TimeUnit timeUnit = TimeUnit.SECONDS;
         // UUID as value
         String lockValue = UUID.randomUUID().toString();
@@ -118,8 +123,39 @@ public class ConcurrencyTestController {
        }
     }
 
+    String app_id= "855b6fd6-76dc-4290-8926-bc9ba9b980f6";
+
     @RequestMapping("/test")
-    public ResponseEntity<HashMap<String, Object>> getTicketList(@RequestBody Map<String, Object> vo) {
+    public ResponseEntity<HashMap<String, Object>> test() {
+
+        // 윈도우 크롬 알림 설정 - https://bustar.tistory.com/216
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Basic ODdjYmY0YjUtMWRjZC00OGEwLTkyZGEtODgzODNmZTgwZGQ5");
+
+        /* request json body
+            {
+                "app_id": "ONESIGNAL APP ID",
+                "included_segments": ["All"],
+                "contents": {"en": "푸쉬 메시지 보내기 테스트"}
+            }
+        */
+
+        Map<String, Object> body = ImmutableMap.of(
+                "app_id", "855b6fd6-76dc-4290-8926-bc9ba9b980f6",
+                "included_segments", Arrays.asList("All"),
+                "web_url","https://www.naver.com/",
+                "headings",ImmutableMap.of("en", "가보자잇"),
+                "contents", ImmutableMap.of("en", "푸쉬 메시지 보내기 테스트")
+        );
+
+        HttpEntity<Map<String, Object>> request = new HttpEntity<>(body, headers);
+
+        ResponseEntity<Map> sample = rest.postForEntity("https://onesignal.com/api/v1/notifications", request,
+                Map.class);
+
+        System.out.println(sample.getBody());
+
         HashMap<String,Object> data = new HashMap<>();
         data.put("key1","value");
         return new ResponseEntity<HashMap<String,Object>>((HashMap<String, Object>) data, HttpStatus.OK);

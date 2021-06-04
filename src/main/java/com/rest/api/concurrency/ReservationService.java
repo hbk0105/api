@@ -40,6 +40,7 @@ public class ReservationService {
 
     @Transactional
     public void save2(Reservation reservation){
+        // https://kkambi.tistory.com/196
         boolean result = false;
         // 레디스 락 데이터 생성 후 2초 대기, 3초후 락 해제
         RLock lock = redisConfig.redissonClient().getLock("sample");

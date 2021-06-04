@@ -7,10 +7,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 import javax.annotation.Resource;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
+
+
 
 @RequiredArgsConstructor
 @RestController
@@ -120,7 +120,6 @@ public class ConcurrencyTestController {
     }
 
 
-
     @RequestMapping("/apply3")
     private Boolean apply3(Reservation reservation) {
         Boolean result = false;
@@ -141,6 +140,15 @@ public class ConcurrencyTestController {
         }
 
     }
+
+
+    // https://kkambi.tistory.com/196
+    // redis 임시주석
+    /*
+        https://bbaeggar.tistory.com/48
+        https://www.fatalerrors.org/a/spring-boot-2.x-implementation-of-a-simple-distributed-lock.html
+    */
+
 
     public boolean test(Reservation reservation) {
         reservationService.save(reservation);

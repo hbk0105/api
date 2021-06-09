@@ -1,6 +1,5 @@
 package com.rest.api.concurrency;
 
-import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,11 +9,7 @@ import javax.annotation.Resource;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
-
-
-@RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/test/")
 public class ConcurrencyTestController {
 
     Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -33,10 +28,13 @@ public class ConcurrencyTestController {
     @Resource
     RedisLockUtil redisLockUtil;
 
+    /*
+    // 아래 로직은 redisLockUtil 설정 때문인지,, Autowired가 먹지않고 new로 생성해야만 커넥션 이루어짐
     @Autowired
-    private RestTemplate rest;
+    RestTemplate restTemplate;
+    */
 
-    @RequestMapping("/buy")
+    @RequestMapping("/api/test/buy")
     public String buy(@RequestParam String goodId , Reservation reservation) {
         long timeout = 15;
 
@@ -69,7 +67,7 @@ public class ConcurrencyTestController {
         return "Please try again later";
     }
 
-    @RequestMapping("/buybuybuy")
+    @RequestMapping("/api/test/buybuybuy")
     @RedisLock(key = "lock_key", value = "lock_value")
     public String buybuybuy(@RequestParam(value = "goodId") String goodId) {
         try {
@@ -80,7 +78,7 @@ public class ConcurrencyTestController {
         return "Purchase successful";
     }
 
-   @RequestMapping("/apply")
+   @RequestMapping("/api/test/apply")
     public boolean apply(Reservation reservation) {
         return isAvailableCreate(reservation);
     }
@@ -104,7 +102,7 @@ public class ConcurrencyTestController {
 
     }
 
-    @RequestMapping("/apply2")
+    @RequestMapping("/api/test/apply2")
     public Boolean apply2(@RequestBody Map<String, Object> vo) {
         Boolean result = false;
        try {
@@ -120,7 +118,7 @@ public class ConcurrencyTestController {
     }
 
 
-    @RequestMapping("/apply3")
+    @RequestMapping("/api/apply3")
     private Boolean apply3(Reservation reservation) {
         Boolean result = false;
         try {
@@ -128,11 +126,11 @@ public class ConcurrencyTestController {
             Map<String, Object> params = new HashMap<>();
             params.put("id", reservation.getId());
             params.put("no", reservation.getNo());
-
             RestTemplate restTemplate = new RestTemplate();
-            //RestTemplate restTemplate = restTemplateBuilder.build();
             String restApiUrl = "http://localhost:9090/api/test/apply2";
+            // https://preamtree.tistory.com/167
             result = restTemplate.postForObject(restApiUrl,params , Boolean.class);
+
         }catch (Exception e){
             e.printStackTrace();
         }finally {
@@ -140,23 +138,19 @@ public class ConcurrencyTestController {
         }
 
     }
-
-
-    // https://kkambi.tistory.com/196
-    // redis 임시주석
-    /*
-        https://bbaeggar.tistory.com/48
-        https://www.fatalerrors.org/a/spring-boot-2.x-implementation-of-a-simple-distributed-lock.html
-    */
-
-
     public boolean test(Reservation reservation) {
-        reservationService.save(reservation);
-        logger.info("##############################################################");
+        try{
 
-        Reservation r = new Reservation();
-        r.setNo((long) 200);
-        reservationService.save2(r);
+            reservationService.save(reservation);
+            logger.info("##############################################################");
+
+            Reservation r = new Reservation();
+            r.setNo((long) 200);
+            reservationService.save2(r);
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
 
         return true;
     }

@@ -38,19 +38,16 @@ public class ApiApplication implements CommandLineRunner {
 		// sender.send("Spring Kafka Producer and Consumer Example");
 	}
 
-
-
 	@Bean
 	public RestTemplate restTemplate(RestTemplateBuilder builder) {
 		return builder.additionalInterceptors(new ClientHttpRequestInterceptor() {
 			@Override
 			public ClientHttpResponse intercept(HttpRequest request, byte[] body, ClientHttpRequestExecution execution)
 					throws IOException {
-				request.getHeaders().set("Authorization", "Basic ODdjYmY0YjUtMWRjZC00OGEwLTkyZGEtODgzODNmZTgwZGQ5");
+				//request.getHeaders().set("Authorization", "Basic ODdjYmY0YjUtMWRjZC00OGEwLTkyZGEtODgzODNmZTgwZGQ5");
 				return execution.execute(request, body);
 			}
 		}).build();
 	}
-
 
 }

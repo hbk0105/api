@@ -3,11 +3,12 @@ package com.rest.api.controller;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.*;
+import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.RestTemplate;
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSession;
@@ -19,16 +20,18 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
+import java.net.URI;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
+ *
+ *
+ *
  *
  * Description : 공공데이터포털 API 컨트롤러
  *
@@ -344,6 +347,104 @@ public class DataApiController {
     }
 
 
+    @RequestMapping(value = "/corona/test", produces="application/xml;charset=utf-8")
+    @ResponseBody
+    public ResponseEntity<String> test(HttpServletRequest req, HttpServletResponse res ) {
+        // https://www.data.go.kr/data/15043378/openapi.do
+        ResponseEntity<String> re = null;
+        try{
+
+            // SSL 인증서 오류 방지
+            SSLContext ctx = SSLContext.getInstance("TLS");
+            ctx.init(null, new TrustManager[] { new TrustManager() }, null);
+            SSLContext.setDefault(ctx);
+
+            // 파라미터 셋팅
+            Map<String, String> body = new HashMap<>();
+            body.put(URLEncoder.encode("ServiceKey","UTF-8") , "EA%2BL0pXtzc04Vf6fi9AaKqWiOpG6kssrT6D9ajZh0ZTaHbGxK2uBFs4Usink8kQyukngeP2lp69tU4v14HC5QA%3D%3D"); /*Service Key*/
+            body.put(URLEncoder.encode("pageNo","UTF-8") , URLEncoder.encode("1", "UTF-8"));  /*페이지번호*/
+            body.put(URLEncoder.encode("numOfRows","UTF-8") , URLEncoder.encode("10", "UTF-8")); /*한 페이지 결과 수*/
+            body.put(URLEncoder.encode("startCreateDt","UTF-8") , URLEncoder.encode("20210609", "UTF-8")); /*검색할 생성일 범위의 시작*/
+            body.put(URLEncoder.encode("endCreateDt","UTF-8") , URLEncoder.encode("20210609", "UTF-8"));/*검색할 생성일 범위의 종료*/
+            String parameters =  mapToString(body);
+            // 파라미터 셋팅
+            String url ="http://openapi.data.go.kr/openapi/service/rest/Covid19/getCovid19SidoInfStateJson?"+parameters;
+            RestTemplate restTemplate = new RestTemplate();
+            restTemplate.getMessageConverters()
+                    .add(0, new StringHttpMessageConverter(StandardCharsets.UTF_8));// UTF-8 설정
+            HttpHeaders headers = new HttpHeaders();
+            headers.setAccept(Arrays.asList(MediaType.APPLICATION_XML));
+            HttpEntity<String> entity = new HttpEntity<String>("parameters", headers);
+            headers.add("Content-Type", MediaType.APPLICATION_FORM_URLENCODED_VALUE + ";charset=UTF-8");
+            URI apiUrl = URI.create(url);
+            re = restTemplate.exchange(apiUrl ,HttpMethod.GET , entity , String.class );
+
+            System.out.println("조회결과 : " + re.toString());
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }finally {
+            if(in != null){
+                try{
+                    in.close();
+                }catch(IOException i){
+                    i.printStackTrace();
+                }
+            }
+
+            if(con != null){
+                con.disconnect();
+            }
+        }
+        return new ResponseEntity<String>(re.getBody(), HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/corona/test2")
+    @ResponseBody
+    public ResponseEntity<String> test2(HttpServletRequest req, HttpServletResponse res ) {
+        // https://www.data.go.kr/data/15043378/openapi.do
+        ResponseEntity<String> re = null;
+        try{
+
+            // SSL 인증서 오류 방지
+            SSLContext ctx = SSLContext.getInstance("TLS");
+            ctx.init(null, new TrustManager[] { new TrustManager() }, null);
+            SSLContext.setDefault(ctx);
+
+            String url ="https://developers.mydatakorea.org:9443/v1/bank/accounts/invest/basic";
+            Map<String, String> body = new HashMap<>();
+            body.put(URLEncoder.encode("org_code","UTF-8") , "값");
+            body.put(URLEncoder.encode("account_num","UTF-8") , URLEncoder.encode("1", "UTF-8"));
+            String auth = "Bearer token";
+            RestTemplate restTemplate = new RestTemplate();
+            restTemplate.getMessageConverters()
+                    .add(0, new StringHttpMessageConverter(StandardCharsets.UTF_8));// UTF-8 설정
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("Content-Type", "application/json");
+            headers.add("Authorization", auth);
+            HttpEntity entity = new HttpEntity(body, headers);
+            re = restTemplate.exchange(url ,HttpMethod.POST , entity , String.class );
+
+            System.out.println("조회결과 : " + re.toString());
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }finally {
+            if(in != null){
+                try{
+                    in.close();
+                }catch(IOException i){
+                    i.printStackTrace();
+                }
+            }
+
+            if(con != null){
+                con.disconnect();
+            }
+        }
+        return new ResponseEntity<String>(re.toString(), HttpStatus.OK);
+    }
+
     /**
      * Method mapToString.
      * @return String
@@ -375,7 +476,7 @@ public class DataApiController {
         }
     }
 
-    private static class TrustManager implements X509TrustManager {
+    public static class TrustManager implements X509TrustManager {
 
         @Override
         public X509Certificate[] getAcceptedIssuers() {

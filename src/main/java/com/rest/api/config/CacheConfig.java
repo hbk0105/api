@@ -19,7 +19,7 @@ public class CacheConfig {
 
     // https://deveric.tistory.com/98
     // https://happyer16.tistory.com/entry/Redis-Spring-Boot%EC%97%90-%EC%84%A4%EC%A0%95%ED%95%98%EA%B8%B0-%EB%B0%8F-%EA%B0%9C%EC%9A%94
-    // https://j0free.tistory.com/3
+    // https://j0free.tistory.com/3JSONArray
     // https://www.skyer9.pe.kr/wordpress/?p=1571
     // https://tram-devlog.tistory.com/entry/Spring-EhCache-%EC%A0%81%EC%9A%A9%ED%95%98%EA%B8%B0
 

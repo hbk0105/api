@@ -1,5 +1,7 @@
 package com.rest.api.controller;
 
+import com.rest.api.util.HttpURLUtil;
+import com.rest.api.util.RestTemplateUtil;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -65,145 +67,27 @@ public class DataApiController {
     @ResponseBody
     public ResponseEntity<String> status(HttpServletRequest req, HttpServletResponse res ) {
         // https://www.data.go.kr/data/15043378/openapi.do
+
+        String result = "";
         try{
 
-            // SSL 인증서 오류 방지
-            SSLContext ctx = SSLContext.getInstance("TLS");
-            ctx.init(null, new TrustManager[] { new TrustManager() }, null);
-            SSLContext.setDefault(ctx);
-
-            StringBuilder urlBuilder = new StringBuilder("http://openapi.data.go.kr/openapi/service/rest/Covid19/getCovid19SidoInfStateJson?"); /*URL*/
-
             // 파라미터 셋팅
-            Map<String, String> body = new HashMap<>();
-            body.put(URLEncoder.encode("ServiceKey","UTF-8") , "EA%2BL0pXtzc04Vf6fi9AaKqWiOpG6kssrT6D9ajZh0ZTaHbGxK2uBFs4Usink8kQyukngeP2lp69tU4v14HC5QA%3D%3D"); /*Service Key*/
-            body.put(URLEncoder.encode("pageNo","UTF-8") , URLEncoder.encode("1", "UTF-8"));  /*페이지번호*/
-            body.put(URLEncoder.encode("numOfRows","UTF-8") , URLEncoder.encode("10", "UTF-8")); /*한 페이지 결과 수*/
-            body.put(URLEncoder.encode("startCreateDt","UTF-8") , URLEncoder.encode("20210609", "UTF-8")); /*검색할 생성일 범위의 시작*/
-            body.put(URLEncoder.encode("endCreateDt","UTF-8") , URLEncoder.encode("20210609", "UTF-8"));/*검색할 생성일 범위의 종료*/
-            String parameters =  mapToString(body);
+            Map<String, String> param = new HashMap<>();
+            param.put(URLEncoder.encode("ServiceKey","UTF-8") , "EA%2BL0pXtzc04Vf6fi9AaKqWiOpG6kssrT6D9ajZh0ZTaHbGxK2uBFs4Usink8kQyukngeP2lp69tU4v14HC5QA%3D%3D"); /*Service Key*/
+            param.put(URLEncoder.encode("pageNo","UTF-8") , URLEncoder.encode("1", "UTF-8"));  /*페이지번호*/
+            param.put(URLEncoder.encode("numOfRows","UTF-8") , URLEncoder.encode("10", "UTF-8")); /*한 페이지 결과 수*/
+            param.put(URLEncoder.encode("startCreateDt","UTF-8") , URLEncoder.encode("20210706", "UTF-8")); /*검색할 생성일 범위의 시작*/
+            param.put(URLEncoder.encode("endCreateDt","UTF-8") , URLEncoder.encode("20210706", "UTF-8"));/*검색할 생성일 범위의 종료*/
             // 파라미터 셋팅
-
-            String url ="http://openapi.data.go.kr/openapi/service/rest/Covid19/getCovid19SidoInfStateJson?"+parameters;
-
-            obj = new URL(url);
-            con = (HttpURLConnection) obj.openConnection();
-            con.setRequestMethod("GET");
-            con.setRequestProperty("Content-type", "application/json");
-
-            // 필요시 사용
-            //con.setConnectTimeout(10000);       //컨텍션타임아웃 10초
-            //con.setReadTimeout(5000);           //컨텐츠조회 타임아웃 5총
-            responseCode = con.getResponseCode();
-            System.out.println("\nSending 'GET' request to URL : " + url);
-            System.out.println("Response Code : " + responseCode);
-            in = new BufferedReader(new InputStreamReader(con.getInputStream(), "UTF-8"));
-            String inputLine;
-            response = new StringBuffer();
-            while ((inputLine = in.readLine()) != null) {
-                response.append(inputLine);
-            }
-
-            System.out.println("조회결과 : " + response.toString());
+            String url ="http://openapi.data.go.kr/openapi/service/rest/Covid19/getCovid19SidoInfStateJson";
+            result = HttpURLUtil.getJson(req,res,url,param);
 
         }catch (Exception e){
             e.printStackTrace();
         }finally {
-            if(in != null){
-                try{
-                    in.close();
-                }catch(IOException i){
-                    i.printStackTrace();
-                }
-            }
-
-            if(con != null){
-                con.disconnect();
-            }
+            return new ResponseEntity<String>(result, HttpStatus.OK);
         }
-        return new ResponseEntity<String>(response.toString(), HttpStatus.OK);
     }
-
-
-    // POST 방식
-    @RequestMapping(value = "/corona/status2", produces="application/xml;charset=utf-8")
-    @ResponseBody
-    public ResponseEntity<String> status2(HttpServletRequest req, HttpServletResponse res ) {
-
-        try{
-
-            // SSL 인증서 오류 방지
-            SSLContext ctx = SSLContext.getInstance("TLS");
-            ctx.init(null, new TrustManager[] { new TrustManager() }, null);
-            SSLContext.setDefault(ctx);
-
-            // 파라미터 셋팅
-            Map<String, String> body = new HashMap<>();
-            body.put(URLEncoder.encode("ServiceKey","UTF-8") , "EA%2BL0pXtzc04Vf6fi9AaKqWiOpG6kssrT6D9ajZh0ZTaHbGxK2uBFs4Usink8kQyukngeP2lp69tU4v14HC5QA%3D%3D"); /*Service Key*/
-            body.put(URLEncoder.encode("pageNo","UTF-8") , URLEncoder.encode("1", "UTF-8"));  /*페이지번호*/
-            body.put(URLEncoder.encode("numOfRows","UTF-8") , URLEncoder.encode("10", "UTF-8")); /*한 페이지 결과 수*/
-            body.put(URLEncoder.encode("startCreateDt","UTF-8") , URLEncoder.encode("20210609", "UTF-8")); /*검색할 생성일 범위의 시작*/
-            body.put(URLEncoder.encode("endCreateDt","UTF-8") , URLEncoder.encode("20210609", "UTF-8"));/*검색할 생성일 범위의 종료*/
-            String parameters =  mapToString(body);
-            // 파라미터 셋팅
-
-            String url ="http://openapi.data.go.kr/openapi/service/rest/Covid19/getCovid19SidoInfStateJson?"+parameters;
-
-            obj = new URL(url);
-            con = (HttpURLConnection) obj.openConnection();
-            con.setRequestMethod("POST");
-            con.setDoOutput(true);
-
-            //Request Header 정의 - 필요시 사용
-            //con.setRequestProperty("x-user-ci", "uKM41JqzBg8kUlKf4YM7jsqdhagQURkE");
-            con.setRequestProperty("Content-type", "application/json");
-            out = new DataOutputStream(con.getOutputStream());
-            out.write(parameters.getBytes("utf-8"));
-            out.flush();
-
-            // 필요시 사용
-            //con.setConnectTimeout(10000);       //컨텍션타임아웃 10초
-            //con.setReadTimeout(5000);           //컨텐츠조회 타임아웃 5총
-
-            responseCode = con.getResponseCode();
-            System.out.println("\nSending 'POST' request to URL : " + url);
-            System.out.println("Response Code : " + responseCode);
-
-            in = new BufferedReader(new InputStreamReader(con.getInputStream(), "UTF-8"));
-            String inputLine;
-            response = new StringBuffer();
-            while ((inputLine = in.readLine()) != null) {
-                response.append(inputLine);
-            }
-
-            System.out.println("조회결과 : " + response.toString());
-
-        }catch (Exception e){
-            e.printStackTrace();
-        }finally {
-            if(in != null){
-                try{
-                    in.close();
-                }catch(IOException i){
-                    i.printStackTrace();
-                }
-            }
-
-            if(out != null){
-                try{
-                    out.close();
-                }catch(IOException i){
-                    i.printStackTrace();
-                }
-            }
-
-            if(con != null){
-                con.disconnect();
-            }
-        }
-        return new ResponseEntity<String>(response.toString(), HttpStatus.OK);
-    }
-
 
     /**
      * 기상청_동네예보 조회서비스
@@ -216,64 +100,32 @@ public class DataApiController {
     public ResponseEntity<String> weather(HttpServletRequest req, HttpServletResponse res ) {
         // https://www.data.go.kr/data/15057682/openapi.do
         // X , Y 좌표는 위 링크가서 첨부파일(엑셀) 활용
+
+        String result = "";
         try{
 
-            // SSL 인증서 오류 방지
-            SSLContext ctx = SSLContext.getInstance("TLS");
-            ctx.init(null, new TrustManager[] { new TrustManager() }, null);
-            SSLContext.setDefault(ctx);
-
             // 파라미터 셋팅
-            Map<String, String> body = new HashMap<>();
-            body.put(URLEncoder.encode("ServiceKey","UTF-8") , "EA%2BL0pXtzc04Vf6fi9AaKqWiOpG6kssrT6D9ajZh0ZTaHbGxK2uBFs4Usink8kQyukngeP2lp69tU4v14HC5QA%3D%3D"); /*Service Key*/
-            body.put(URLEncoder.encode("pageNo","UTF-8") , URLEncoder.encode("1", "UTF-8"));  /*페이지번호*/
-            body.put(URLEncoder.encode("numOfRows","UTF-8") , URLEncoder.encode("10", "UTF-8")); /*한 페이지 결과 수*/
-            body.put(URLEncoder.encode("dataType","UTF-8") , URLEncoder.encode("XML", "UTF-8")); /*요청자료형식(XML/JSON)Default: XML*/
-            body.put(URLEncoder.encode("base_date","UTF-8") , URLEncoder.encode("20210609", "UTF-8"));  /*21년 6월 9일 발표*/
-            body.put(URLEncoder.encode("base_time","UTF-8") , URLEncoder.encode("1400", "UTF-8")); /*14시 발표(정시단위)*/
-            body.put(URLEncoder.encode("nx","UTF-8") , URLEncoder.encode("63", "UTF-8"));/*예보지점의 X 좌표값*/
-            body.put(URLEncoder.encode("ny","UTF-8") , URLEncoder.encode("125", "UTF-8")); /*예보지점 Y 좌표*/
-            String parameters =  mapToString(body);
+            Map<String, String> param = new HashMap<>();
+            param.put(URLEncoder.encode("ServiceKey","UTF-8") , "EA%2BL0pXtzc04Vf6fi9AaKqWiOpG6kssrT6D9ajZh0ZTaHbGxK2uBFs4Usink8kQyukngeP2lp69tU4v14HC5QA%3D%3D"); /*Service Key*/
+            param.put(URLEncoder.encode("pageNo","UTF-8") , URLEncoder.encode("1", "UTF-8"));  /*페이지번호*/
+            param.put(URLEncoder.encode("numOfRows","UTF-8") , URLEncoder.encode("10", "UTF-8")); /*한 페이지 결과 수*/
+            param.put(URLEncoder.encode("dataType","UTF-8") , URLEncoder.encode("XML", "UTF-8")); /*요청자료형식(XML/JSON)Default: XML*/
+            param.put(URLEncoder.encode("base_date","UTF-8") , URLEncoder.encode("20210706", "UTF-8"));  /*21년 6월 9일 발표*/
+            param.put(URLEncoder.encode("base_time","UTF-8") , URLEncoder.encode("1400", "UTF-8")); /*14시 발표(정시단위)*/
+            param.put(URLEncoder.encode("nx","UTF-8") , URLEncoder.encode("63", "UTF-8"));/*예보지점의 X 좌표값*/
+            param.put(URLEncoder.encode("ny","UTF-8") , URLEncoder.encode("125", "UTF-8")); /*예보지점 Y 좌표*/
             // 파라미터 셋팅
 
-            String url ="http://apis.data.go.kr/1360000/VilageFcstInfoService/getUltraSrtNcst?"+parameters;
+            String url ="http://apis.data.go.kr/1360000/VilageFcstInfoService/getUltraSrtNcst";
+            result = HttpURLUtil.getJson(req,res,url,param);
 
-            obj = new URL(url);
-            con = (HttpURLConnection) obj.openConnection();
-            con.setRequestMethod("GET");
-            con.setRequestProperty("Content-type", "application/json");
-
-            // 필요시 사용
-            //con.setConnectTimeout(10000);       //컨텍션타임아웃 10초
-            //con.setReadTimeout(5000);           //컨텐츠조회 타임아웃 5총
-            responseCode = con.getResponseCode();
-            System.out.println("\nSending 'GET' request to URL : " + url);
-            System.out.println("Response Code : " + responseCode);
-            in = new BufferedReader(new InputStreamReader(con.getInputStream(), "UTF-8"));
-            String inputLine;
-            response = new StringBuffer();
-            while ((inputLine = in.readLine()) != null) {
-                response.append(inputLine);
-            }
-
-            System.out.println("조회결과 : " + response.toString());
+            System.out.println("조회결과 : " + result);
 
         }catch (Exception e){
             e.printStackTrace();
         }finally {
-            if(in != null){
-                try{
-                    in.close();
-                }catch(IOException i){
-                    i.printStackTrace();
-                }
-            }
-
-            if(con != null){
-                con.disconnect();
-            }
+            return new ResponseEntity<String>(result, HttpStatus.OK);
         }
-        return new ResponseEntity<String>(response.toString(), HttpStatus.OK);
     }
 
 
@@ -288,62 +140,30 @@ public class DataApiController {
     public ResponseEntity<String> fineDust(HttpServletRequest req, HttpServletResponse res ) {
         // https://www.data.go.kr/data/15073885/openapi.do
         // 첨부파일(엑셀) 활용
+
+        String result = "";
+
         try{
 
-            // SSL 인증서 오류 방지
-            SSLContext ctx = SSLContext.getInstance("TLS");
-            ctx.init(null, new TrustManager[] { new TrustManager() }, null);
-            SSLContext.setDefault(ctx);
-
             // 파라미터 셋팅
-            Map<String, String> body = new HashMap<>();
-            body.put(URLEncoder.encode("ServiceKey","UTF-8") , "EA%2BL0pXtzc04Vf6fi9AaKqWiOpG6kssrT6D9ajZh0ZTaHbGxK2uBFs4Usink8kQyukngeP2lp69tU4v14HC5QA%3D%3D"); /*Service Key*/
-            body.put(URLEncoder.encode("returnType","UTF-8") , URLEncoder.encode("xml", "UTF-8"));  /*xml 또는 json*/
-            body.put(URLEncoder.encode("numOfRows","UTF-8") , URLEncoder.encode("100", "UTF-8")); /*한 페이지 결과 수*/
-            body.put(URLEncoder.encode("pageNo","UTF-8") , URLEncoder.encode("1", "UTF-8"));  /*페이지번호*/
-            body.put(URLEncoder.encode("year","UTF-8") , URLEncoder.encode("2021", "UTF-8")); /*측정 연도*/
-            body.put(URLEncoder.encode("itemCode","UTF-8") , URLEncoder.encode("PM10", "UTF-8"));  /*미세먼지 항목 구분(PM10, PM25), PM10/PM25 모두 조회할*/
-            String parameters =  mapToString(body);
+            Map<String, String> param = new HashMap<>();
+            param.put(URLEncoder.encode("ServiceKey","UTF-8") , "EA%2BL0pXtzc04Vf6fi9AaKqWiOpG6kssrT6D9ajZh0ZTaHbGxK2uBFs4Usink8kQyukngeP2lp69tU4v14HC5QA%3D%3D"); /*Service Key*/
+            param.put(URLEncoder.encode("returnType","UTF-8") , URLEncoder.encode("xml", "UTF-8"));  /*xml 또는 json*/
+            param.put(URLEncoder.encode("numOfRows","UTF-8") , URLEncoder.encode("100", "UTF-8")); /*한 페이지 결과 수*/
+            param.put(URLEncoder.encode("pageNo","UTF-8") , URLEncoder.encode("1", "UTF-8"));  /*페이지번호*/
+            param.put(URLEncoder.encode("year","UTF-8") , URLEncoder.encode("2021", "UTF-8")); /*측정 연도*/
+            param.put(URLEncoder.encode("itemCode","UTF-8") , URLEncoder.encode("PM10", "UTF-8"));  /*미세먼지 항목 구분(PM10, PM25), PM10/PM25 모두 조회할*/
             // 파라미터 셋팅
+            String url ="http://apis.data.go.kr/B552584/UlfptcaAlarmInqireSvc/getUlfptcaAlarmInfo";
+            result = HttpURLUtil.getJson(req,res,url,param);
 
-            String url ="http://apis.data.go.kr/B552584/UlfptcaAlarmInqireSvc/getUlfptcaAlarmInfo?"+parameters;
-
-            obj = new URL(url);
-            con = (HttpURLConnection) obj.openConnection();
-            con.setRequestMethod("GET");
-            con.setRequestProperty("Content-type", "application/json");
-
-            // 필요시 사용
-            //con.setConnectTimeout(10000);       //컨텍션타임아웃 10초
-            //con.setReadTimeout(5000);           //컨텐츠조회 타임아웃 5총
-            responseCode = con.getResponseCode();
-            System.out.println("\nSending 'GET' request to URL : " + url);
-            System.out.println("Response Code : " + responseCode);
-            in = new BufferedReader(new InputStreamReader(con.getInputStream(), "UTF-8"));
-            String inputLine;
-            response = new StringBuffer();
-            while ((inputLine = in.readLine()) != null) {
-                response.append(inputLine);
-            }
-
-            System.out.println("조회결과 : " + response.toString());
+            System.out.println("조회결과 : " + result);
 
         }catch (Exception e){
             e.printStackTrace();
         }finally {
-            if(in != null){
-                try{
-                    in.close();
-                }catch(IOException i){
-                    i.printStackTrace();
-                }
-            }
-
-            if(con != null){
-                con.disconnect();
-            }
+            return new ResponseEntity<String>(result, HttpStatus.OK);
         }
-        return new ResponseEntity<String>(response.toString(), HttpStatus.OK);
     }
 
 
@@ -354,49 +174,29 @@ public class DataApiController {
         ResponseEntity<String> re = null;
         try{
 
-            // SSL 인증서 오류 방지
-            SSLContext ctx = SSLContext.getInstance("TLS");
-            ctx.init(null, new TrustManager[] { new TrustManager() }, null);
-            SSLContext.setDefault(ctx);
+            // 파라미터 셋팅
+            Map<String, String> param = new HashMap<>();
+            param.put(URLEncoder.encode("ServiceKey","UTF-8") , "EA%2BL0pXtzc04Vf6fi9AaKqWiOpG6kssrT6D9ajZh0ZTaHbGxK2uBFs4Usink8kQyukngeP2lp69tU4v14HC5QA%3D%3D"); /*Service Key*/
+            param.put(URLEncoder.encode("pageNo","UTF-8") , URLEncoder.encode("1", "UTF-8"));  /*페이지번호*/
+            param.put(URLEncoder.encode("numOfRows","UTF-8") , URLEncoder.encode("10", "UTF-8")); /*한 페이지 결과 수*/
+            param.put(URLEncoder.encode("startCreateDt","UTF-8") , URLEncoder.encode("20210609", "UTF-8")); /*검색할 생성일 범위의 시작*/
+            param.put(URLEncoder.encode("endCreateDt","UTF-8") , URLEncoder.encode("20210609", "UTF-8"));/*검색할 생성일 범위의 종료*/
+            // 파라미터 셋팅
+            String url ="http://openapi.data.go.kr/openapi/service/rest/Covid19/getCovid19SidoInfStateJson";
 
-            // 파라미터 셋팅
-            Map<String, String> body = new HashMap<>();
-            body.put(URLEncoder.encode("ServiceKey","UTF-8") , "EA%2BL0pXtzc04Vf6fi9AaKqWiOpG6kssrT6D9ajZh0ZTaHbGxK2uBFs4Usink8kQyukngeP2lp69tU4v14HC5QA%3D%3D"); /*Service Key*/
-            body.put(URLEncoder.encode("pageNo","UTF-8") , URLEncoder.encode("1", "UTF-8"));  /*페이지번호*/
-            body.put(URLEncoder.encode("numOfRows","UTF-8") , URLEncoder.encode("10", "UTF-8")); /*한 페이지 결과 수*/
-            body.put(URLEncoder.encode("startCreateDt","UTF-8") , URLEncoder.encode("20210609", "UTF-8")); /*검색할 생성일 범위의 시작*/
-            body.put(URLEncoder.encode("endCreateDt","UTF-8") , URLEncoder.encode("20210609", "UTF-8"));/*검색할 생성일 범위의 종료*/
-            String parameters =  mapToString(body);
-            // 파라미터 셋팅
-            String url ="http://openapi.data.go.kr/openapi/service/rest/Covid19/getCovid19SidoInfStateJson?"+parameters;
-            RestTemplate restTemplate = new RestTemplate();
-            restTemplate.getMessageConverters()
-                    .add(0, new StringHttpMessageConverter(StandardCharsets.UTF_8));// UTF-8 설정
             HttpHeaders headers = new HttpHeaders();
             headers.setAccept(Arrays.asList(MediaType.APPLICATION_XML));
             HttpEntity<String> entity = new HttpEntity<String>("parameters", headers);
             headers.add("Content-Type", MediaType.APPLICATION_FORM_URLENCODED_VALUE + ";charset=UTF-8");
-            URI apiUrl = URI.create(url);
-            re = restTemplate.exchange(apiUrl ,HttpMethod.GET , entity , String.class );
 
-            System.out.println("조회결과 : " + re.toString());
+            re = RestTemplateUtil.getJson(req,res,url,param,entity);
 
         }catch (Exception e){
             e.printStackTrace();
         }finally {
-            if(in != null){
-                try{
-                    in.close();
-                }catch(IOException i){
-                    i.printStackTrace();
-                }
-            }
 
-            if(con != null){
-                con.disconnect();
-            }
+            return new ResponseEntity<String>(re.getBody(), HttpStatus.OK);
         }
-        return new ResponseEntity<String>(re.getBody(), HttpStatus.OK);
     }
 
     @RequestMapping(value = "/corona/test2")
@@ -406,24 +206,25 @@ public class DataApiController {
         ResponseEntity<String> re = null;
         try{
 
-            // SSL 인증서 오류 방지
-            SSLContext ctx = SSLContext.getInstance("TLS");
-            ctx.init(null, new TrustManager[] { new TrustManager() }, null);
-            SSLContext.setDefault(ctx);
-
             String url ="https://developers.mydatakorea.org:9443/v1/bank/accounts/invest/basic";
-            Map<String, String> body = new HashMap<>();
-            body.put(URLEncoder.encode("org_code","UTF-8") , "값");
-            body.put(URLEncoder.encode("account_num","UTF-8") , URLEncoder.encode("1", "UTF-8"));
-            String auth = "Bearer token";
-            RestTemplate restTemplate = new RestTemplate();
-            restTemplate.getMessageConverters()
-                    .add(0, new StringHttpMessageConverter(StandardCharsets.UTF_8));// UTF-8 설정
+            Map<String, String> param = new HashMap<>();
+            param.put(URLEncoder.encode("org_code","UTF-8") , "SHTB010101");
+            param.put(URLEncoder.encode("account_num","UTF-8") , URLEncoder.encode("1", "UTF-8"));
+            param.put(URLEncoder.encode("seqno","UTF-8") , URLEncoder.encode("10", "UTF-8"));
+            param.put(URLEncoder.encode("search_timestamp","UTF-8") , URLEncoder.encode("20210629100800", "UTF-8"));
+
+            String header = "Bearer eyJhbGciOiJSUzI1NiJ9.eyJzdWIiOiIxODkiLCJpc3MiOiJ0ZXN0IGJlZCIsImF1ZCI6IjgyIiwianRpIjoiMDAwMDAxNzktZDYwYS1jNGUyLTAwMDAtMDE3OWJjMjhiM2JiIiwiZXhwIjoxNjMwNTY5NzAwLCJzY29wZSI6ImNhIGJhbmsubGlzdCBiYW5rLmludmVzdCBiYW5rLmxvYW4gYmFuay5pcnAgY2FyZC5saXN0IGNhcmQuY2FyZCBjYXJkLnBvaW50IGNhcmQuYmlsbCBjYXJkLmxvYW4gaW52ZXN0Lmxpc3QgaW52ZXN0LmFjY291bnQgaW52ZXN0LmlycCBiYW5rLmRlcG9zaXQgZWZpbi5wcmVwYWlkIGVmaW4ucGFpZCBpbnN1Lmxpc3QgaW5zdS5pbnN1cmFuY2UgaW5zdS5sb2FuIGluc3UuaXJwIGVmaW4ubGlzdCBjYXBpdGFsLmxpc3QgY2FwaXRhbC5sb2FuIGdpbnN1Lmxpc3QgZ2luc3UuaW5zdXJhbmNlIHRlbGVjb20ubGlzdCB0ZWxlY29tLm1nbXQgbWFuYWdlIn0.D60Zlc8fyq6fHVSQZBrgyKibthbhz08qrkULmljOsqPUmGurT6MWBe-d24-f13TVN_i1R_ew9nHAeI1tFo6bG_LW5kRbIqD83UWxnIrMfzWcLxHRBKu_rDSFnxmlHxQem3C3tiEpsFVIrzrFCQQswD_3pwz0OWZEU6dDSkHsFxOJ-xKPvcWqmXpsv2b3qv78cMWHETiWwd8KRKYvvobY7chpjkkm22BGeZ5FWAKqypsOuTAJhTQRyKSLM6QKjG_Na1e5FvmEFnR0e0dwFnU9qu-j5wAHjR7qakbMDWdBvnLdCiHxulW0EZXEbV7XrK-0YWolB_k0TNO7p87upQaWRg";
+
             HttpHeaders headers = new HttpHeaders();
             headers.add("Content-Type", "application/json");
-            headers.add("Authorization", auth);
-            HttpEntity entity = new HttpEntity(body, headers);
-            re = restTemplate.exchange(url ,HttpMethod.POST , entity , String.class );
+            headers.add("Authorization", header);
+            headers.add("x-user-ci", "uKM41JqzBg8kUlKf4YM7jsqdhagQURkE");
+            headers.add("x-api-tran-id", "4048801311MA20210603");
+            headers.add("X-FSI-SVC-DATA-KEY", "Y");
+            headers.add("X-FSI-UTCT-TYPE", "TGC00001");
+            HttpEntity entity = new HttpEntity(param, headers);
+
+            re = RestTemplateUtil.postJson(req,res,url,param,entity);
 
             System.out.println("조회결과 : " + re.toString());
 

@@ -10,6 +10,7 @@ server:
     trust-store: classpath:localSSL.ts #C:\\localSSL.ts # 2번에서 생성한 Trust-Store 경로
     trust-store-password: hee0701 # Trust-Store 비밀번호
 
+
 spring :
   datasource:
     platform: h2
@@ -136,6 +137,9 @@ logging:
           descriptor:
             sql: TRACE
             BasicBinder: TRACE
+  file:
+    name: D:/elk_logging.log
+
   ## log  파일 위치
   #config: classpath:logback-spring.xml # https://aljjabaegi.tistory.com/413
 
